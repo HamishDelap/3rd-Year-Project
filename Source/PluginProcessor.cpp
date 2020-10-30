@@ -22,6 +22,7 @@ ThirdYearProjectAudioProcessor::ThirdYearProjectAudioProcessor()
                        )
 #endif
 {
+
     mySynth.clearVoices();
     // Create 5 voices.
     for (int i = 0; i < 5; i++) {
@@ -105,11 +106,14 @@ void ThirdYearProjectAudioProcessor::prepareToPlay (double sampleRate, int sampl
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
-    
+
+
     ignoreUnused(samplesPerBlock);
 
     lastSampleRate = sampleRate;
     mySynth.setCurrentPlaybackSampleRate(lastSampleRate);
+
+    midiCollector.reset(sampleRate);
 }
 
 void ThirdYearProjectAudioProcessor::releaseResources()
@@ -170,8 +174,6 @@ void ThirdYearProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buf
     {
         auto* channelData = buffer.getWritePointer (channel);
 
-
-
         // ..do something to the data...
     }
 }
@@ -184,7 +186,7 @@ bool ThirdYearProjectAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* ThirdYearProjectAudioProcessor::createEditor()
 {
-    return new ThirdYearProjectAudioProcessorEditor (*this);
+    return new ThirdYearProjectAudioProcessorEditor(*this);
 }
 
 //==============================================================================

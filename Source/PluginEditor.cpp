@@ -15,7 +15,17 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
-    setSize (400, 300);
+    setSize (500, 300);
+
+    // Adding slider
+    addAndMakeVisible(modIndexSlider);
+    modIndexSlider.setRange(0, 12);
+    modIndexSlider.setTextValueSuffix("x");
+
+    // Adding label
+    addAndMakeVisible(modIndexLabel);
+    modIndexLabel.setText("Modulation Index", juce::dontSendNotification);
+    modIndexLabel.attachToComponent(&modIndexSlider, true);
 }
 
 ThirdYearProjectAudioProcessorEditor::~ThirdYearProjectAudioProcessorEditor()
@@ -37,4 +47,7 @@ void ThirdYearProjectAudioProcessorEditor::resized()
 {
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
+
+	auto sliderLeft = 120;
+	modIndexSlider.setBounds(sliderLeft, 20, getWidth() - sliderLeft - 10, 20);
 }

@@ -59,6 +59,8 @@ private:
     Synthesiser mySynth;
     SynthVoice* myVoice;
 
+    MidiMessageCollector midiCollector;
+
     double lastSampleRate;
 
     //==============================================================================
