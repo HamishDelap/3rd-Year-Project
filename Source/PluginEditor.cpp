@@ -21,11 +21,15 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
     addAndMakeVisible(modIndexSlider);
     modIndexSlider.setRange(0, 12);
     modIndexSlider.setTextValueSuffix("x");
+    modIndexSlider.addListener(this);
 
     // Adding label
     addAndMakeVisible(modIndexLabel);
     modIndexLabel.setText("Modulation Index", juce::dontSendNotification);
     modIndexLabel.attachToComponent(&modIndexSlider, true);
+
+    modIndexSliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.apvt, "MODINDEX", modIndexSlider);
+
 }
 
 ThirdYearProjectAudioProcessorEditor::~ThirdYearProjectAudioProcessorEditor()
@@ -50,4 +54,10 @@ void ThirdYearProjectAudioProcessorEditor::resized()
 
 	auto sliderLeft = 120;
 	modIndexSlider.setBounds(sliderLeft, 20, getWidth() - sliderLeft - 10, 20);
+}
+
+void ThirdYearProjectAudioProcessorEditor::sliderValueChanged(Slider* slider) {
+    if (slider == &modIndexSlider) {
+        audioProcessor.modIndex = modIndexSlider.getValue();
+    }
 }

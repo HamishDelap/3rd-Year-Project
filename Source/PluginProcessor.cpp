@@ -19,9 +19,15 @@ ThirdYearProjectAudioProcessor::ThirdYearProjectAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ),
+    apvt(*this, nullptr)
 #endif
 {
+    // Preparing the value tree state
+    NormalisableRange<float> modIndexParam(0, 12);
+    apvt.createAndAddParameter("MODINDEX", "ModIndex", "Mod Index", modIndexParam, 0.0f, nullptr, nullptr);
+
+    apvt.state = ValueTree("apvt");
 
     mySynth.clearVoices();
     // Create 5 voices.
@@ -148,6 +154,14 @@ bool ThirdYearProjectAudioProcessor::isBusesLayoutSupported (const BusesLayout& 
 
 void ThirdYearProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
+
+    for (int i = 0; i < mySynth.getNumVoices(); i++) {
+        // Check that myVoice is a SynthVoice*
+        if (myVoice = dynamic_cast<SynthVoice*>(mySynth.getVoice(i))) {
+            myVoice->getParam(apvt.getRawParameterValue("MODINDEX"));
+        }
+    }
+
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();

@@ -55,6 +55,10 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+    float modIndex = 0.1;
+
+    AudioProcessorValueTreeState apvt;
+
 private:
     Synthesiser mySynth;
     SynthVoice* myVoice;

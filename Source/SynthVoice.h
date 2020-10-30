@@ -22,6 +22,11 @@ public:
         // If the sound can be cast to the class SynthSound it will return true, otherwise it will return false.
         return dynamic_cast<SynthSound*>(sound) != nullptr;
     }
+	//===============================================//
+
+    void getParam(float* modindex) {
+        modIndex = *modindex;
+    }
 
     //===============================================//
 
@@ -108,9 +113,11 @@ public:
             }
         }
     }
-    double modIndex = 3.2;
+    
 private:
     double frequency;
+
+    double modIndex = 0.0;
 
     double osc1Angle = 0.0;
     double osc2Angle = 0.0;
