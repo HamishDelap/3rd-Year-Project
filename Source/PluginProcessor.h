@@ -55,7 +55,9 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-    float modIndex = 0.1;
+ //   double modIndex = 3.2;
+   // double op1Level = 0.0;
+    //double op2Level = 0.0;
 
     AudioProcessorValueTreeState apvt;
 

@@ -14,7 +14,7 @@
 //==============================================================================
 /**
 */
-class ThirdYearProjectAudioProcessorEditor : public juce::AudioProcessorEditor, public Slider::Listener
+class ThirdYearProjectAudioProcessorEditor : public AudioProcessorEditor, public Slider::Listener, public MidiKeyboardState, juce::MidiKeyboardStateListener
 {
 public:
     ThirdYearProjectAudioProcessorEditor (ThirdYearProjectAudioProcessor&);
@@ -25,7 +25,8 @@ public:
     void resized() override;
 
     void sliderValueChanged(Slider* slider) override;
-
+    void handleNoteOn(juce::MidiKeyboardState*, int midiChannel, int midiNoteNumber, float velocity) override;
+    void handleNoteOff(juce::MidiKeyboardState*, int midiChannel, int midiNoteNumber, float velocity) override;
 
 
 private:
@@ -33,10 +34,44 @@ private:
     // access the processor object that created it.
     ThirdYearProjectAudioProcessor& audioProcessor;
 
-    ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> modIndexSliderAttachment;
+	MidiKeyboardState keyboardState;
+	MidiKeyboardComponent keyboardComponent;
 
-    juce::Slider modIndexSlider;
-    juce::Label modIndexLabel;
+    bool isAddingFromMidiInput = false;
+
+    // Mod Index Sliders
+    juce::Slider op1ModIndexSlider;
+    juce::Label op1ModIndexLabel;
+    ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> op1ModIndexSliderAttachment;
+
+	juce::Slider op2ModIndexSlider;
+	juce::Label op2ModIndexLabel;
+	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> op2ModIndexSliderAttachment;
+
+	juce::Slider op3ModIndexSlider;
+	juce::Label op3ModIndexLabel;
+	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> op3ModIndexSliderAttachment;
+
+	juce::Slider op4ModIndexSlider;
+	juce::Label op4ModIndexLabel;
+	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> op4ModIndexSliderAttachment;
+
+    // OP Level Sliders
+	juce::Slider op1LevelSlider;
+	juce::Label op1LevelLabel;
+    ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> op1LevelSliderAttachment;
+
+	juce::Slider op2LevelSlider;
+	juce::Label op2LevelLabel;
+    ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> op2LevelSliderAttachment;
+
+	juce::Slider op3LevelSlider;
+	juce::Label op3LevelLabel;
+	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> op3LevelSliderAttachment;
+
+	juce::Slider op4LevelSlider;
+	juce::Label op4LevelLabel;
+	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> op4LevelSliderAttachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ThirdYearProjectAudioProcessorEditor)
 };

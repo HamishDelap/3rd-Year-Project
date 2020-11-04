@@ -12,6 +12,7 @@
 
 #include <../JuceLibraryCode/JuceHeader.h>
 #include "SynthSound.h"
+#include "TinySP.h"
 using namespace juce;
 
 class SynthVoice : public SynthesiserVoice
@@ -19,14 +20,23 @@ class SynthVoice : public SynthesiserVoice
 public:
 
     bool canPlaySound(SynthesiserSound* sound) {
-        // If the sound can be cast to the class SynthSound it will return true, otherwise it will return false.
+        // If the sound can be cast to the class SynthSound it will return true, otherwise it will return false. (Taken from a tutorial)
         return dynamic_cast<SynthSound*>(sound) != nullptr;
     }
 	//===============================================//
 
-    void getParam(float* modindex) {
+    void setMODINDEX(float* modindex) {
         modIndex = *modindex;
     }
+
+	void setOP1Level(float* level) {
+		fmTable[1][0] = *level;
+	}
+
+	void setOP2Level(float* level) {
+		fmTable[1][1] = *level;
+	}
+
 
     //===============================================//
 
@@ -35,10 +45,13 @@ public:
         frequency = MidiMessage::getMidiNoteInHertz(midiNoteNumber);
         DBG(midiNoteNumber);
 
-        osc1Angle = 0.0;
-        osc2Angle = 0.0;
+      //  fmTable[0][0] = 0.0;
+      //  fmTable[0][1] = 0.0;
         level = velocity * 0.15;
         tailOff = 0.0;
+
+       // fmTable[1][0] = level;
+       // fmTable[1][1] = level;
 
         auto cyclesPerSecond = frequency;
         auto cyclesPerSample = cyclesPerSecond / getSampleRate();
@@ -76,20 +89,19 @@ public:
                 // Check theres samples left.
                 while (--numSamples >= 0) {
                     // Calculate sample value.
-                    auto currentSample = (float)(std::sin(osc1Angle + (float)std::sin(osc2Angle) * level) * level * tailOff);
-
+                    auto currentSample = fmOSC(1, fmTable) * level * tailOff;
                     // Add sample to outputBuffer
                     for (auto i = outputBuffer.getNumChannels(); --i >= 0;) {
                         outputBuffer.addSample(i, startSample, currentSample);
                     }
 
                     // Move wave along.
-                    osc1Angle += angleDelta;
-                    osc2Angle += angleDelta;
+                    fmTable[0][0] += angleDelta;
+                    fmTable[0][1] = fmTable[0][0] * modIndex;
                     // Increment start sample;
                     ++startSample;
 
-                    tailOff *= 0.99;
+                    tailOff *= 0.9999;
 
                     if (tailOff <= 0.005) {
                         clearCurrentNote();
@@ -100,14 +112,16 @@ public:
             }
             else {
                 while (--numSamples >= 0) {
-                    auto currentSample = (float)(std::sin(osc1Angle + (float)std::sin(osc2Angle) * level) * level);
+
+                    auto currentSample = fmOSC(1,fmTable) * level; 
+                    //auto currentSample = (float)(std::sin(fmTable[0][0] + (float)std::sin(fmTable[0][1]) * fmTable[1][1]) * fmTable[1][0]);
 
                     for (auto i = outputBuffer.getNumChannels(); --i >= 0;) {
                         outputBuffer.addSample(i, startSample, currentSample);
                     }
 
-                    osc1Angle += angleDelta;
-                    osc2Angle = osc1Angle * modIndex;
+                    fmTable[0][0] += angleDelta;
+                    fmTable[0][1] = fmTable[0][0] * modIndex;
                     ++startSample;
                 }
             }
@@ -117,10 +131,9 @@ public:
 private:
     double frequency;
 
-    double modIndex = 0.0;
+    double modIndex = 3.2;
 
-    double osc1Angle = 0.0;
-    double osc2Angle = 0.0;
+    double fmTable[2][4];
 
     double angleDelta = 0.0;
     double level = 0.0;

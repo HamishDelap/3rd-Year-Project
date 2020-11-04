@@ -14,6 +14,8 @@
             file="Source/PluginEditor.cpp"/>
       <FILE id="YFjwHh" name="SynthSound.h" compile="0" resource="0" file="Source/SynthSound.h"/>
       <FILE id="Ylt10v" name="SynthVoice.h" compile="0" resource="0" file="Source/SynthVoice.h"/>
+      <FILE id="VDfrNS" name="TinySP.cpp" compile="1" resource="0" file="Source/TinySP.cpp"/>
+      <FILE id="CK28ql" name="TinySP.h" compile="0" resource="0" file="Source/TinySP.h"/>
       <FILE id="SySk6Z" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
     </GROUP>
   </MAINGROUP>

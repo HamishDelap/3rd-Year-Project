@@ -26,6 +26,12 @@ ThirdYearProjectAudioProcessor::ThirdYearProjectAudioProcessor()
     // Preparing the value tree state
     NormalisableRange<float> modIndexParam(0, 12);
     apvt.createAndAddParameter("MODINDEX", "ModIndex", "Mod Index", modIndexParam, 0.0f, nullptr, nullptr);
+    NormalisableRange<float> op1LevelRange(0, 0.5);
+    apvt.createAndAddParameter("OP1LEVEL", "OP1LEVEL", "OP1LEVEL", op1LevelRange, 0.0f, nullptr, nullptr);
+    NormalisableRange<float> op2LevelRange(0, 0.5);
+    apvt.createAndAddParameter("OP2LEVEL", "OP2LEVEL", "OP2LEVEL", op2LevelRange, 0.0f, nullptr, nullptr);
+
+
 
     apvt.state = ValueTree("apvt");
 
@@ -158,7 +164,9 @@ void ThirdYearProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buf
     for (int i = 0; i < mySynth.getNumVoices(); i++) {
         // Check that myVoice is a SynthVoice*
         if (myVoice = dynamic_cast<SynthVoice*>(mySynth.getVoice(i))) {
-            myVoice->getParam(apvt.getRawParameterValue("MODINDEX"));
+            myVoice->setMODINDEX(apvt.getRawParameterValue("MODINDEX"));
+            myVoice->setOP1Level(apvt.getRawParameterValue("OP1LEVEL"));
+            myVoice->setOP2Level(apvt.getRawParameterValue("OP2LEVEL"));
         }
     }
 
