@@ -9,6 +9,7 @@
 */
 
 #include <../JuceLibraryCode/JuceHeader.h>
+#include "SynthVoice.h"
 #pragma once
 
 #ifndef FUNCTIONS_H_INCLUDED
@@ -41,6 +42,6 @@ fmTable:
 */
 
 
-float fmOSC(int algo, double fmTable[2][4]);
+float fmOSC(int algo, double fmTable[][4], double angleDelta);
 
 #endif // FUNCTIONS_H_INCLUDED 

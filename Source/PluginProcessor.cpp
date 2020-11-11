@@ -5,7 +5,7 @@
 
   ==============================================================================
 */
-
+#include <JuceHeader.h>
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
@@ -23,15 +23,41 @@ ThirdYearProjectAudioProcessor::ThirdYearProjectAudioProcessor()
     apvt(*this, nullptr)
 #endif
 {
+    // OP Mod Indexes
     // Preparing the value tree state
-    NormalisableRange<float> modIndexParam(0, 12);
-    apvt.createAndAddParameter("MODINDEX", "ModIndex", "Mod Index", modIndexParam, 0.0f, nullptr, nullptr);
-    NormalisableRange<float> op1LevelRange(0, 0.5);
+    NormalisableRange<float> op1ModIndexRange(0, 12);
+    apvt.createAndAddParameter("OP1MODINDEX", "OP1MODINDEX", "OP1MODINDEX", op1ModIndexRange, 0.0f, nullptr, nullptr);
+	NormalisableRange<float> op2ModIndexRange(0, 12);
+	apvt.createAndAddParameter("OP2MODINDEX", "OP2MODINDEX", "OP2MODINDEX", op2ModIndexRange, 0.0f, nullptr, nullptr);
+	NormalisableRange<float> op3ModIndexRange(0, 12);
+	apvt.createAndAddParameter("OP3MODINDEX", "OP3MODINDEX", "OP3MODINDEX", op3ModIndexRange, 0.0f, nullptr, nullptr);
+	NormalisableRange<float> op4ModIndexRange(0, 12);
+	apvt.createAndAddParameter("OP4MODINDEX", "OP4MODINDEX", "OP4MODINDEX", op4ModIndexRange, 0.0f, nullptr, nullptr);
+
+    // OP Levels
+    NormalisableRange<float> op1LevelRange(0, 1);
     apvt.createAndAddParameter("OP1LEVEL", "OP1LEVEL", "OP1LEVEL", op1LevelRange, 0.0f, nullptr, nullptr);
-    NormalisableRange<float> op2LevelRange(0, 0.5);
+    NormalisableRange<float> op2LevelRange(0, 1);
     apvt.createAndAddParameter("OP2LEVEL", "OP2LEVEL", "OP2LEVEL", op2LevelRange, 0.0f, nullptr, nullptr);
+	NormalisableRange<float> op3LevelRange(0, 1);
+	apvt.createAndAddParameter("OP3LEVEL", "OP3LEVEL", "OP3LEVEL", op3LevelRange, 0.0f, nullptr, nullptr);
+	NormalisableRange<float> op4LevelRange(0, 1);
+	apvt.createAndAddParameter("OP4LEVEL", "OP4LEVEL", "OP4LEVEL", op4LevelRange, 0.0f, nullptr, nullptr);
 
-
+    //Envelope
+	NormalisableRange<float> ampAttackRange(0, 3);
+	apvt.createAndAddParameter("AMPATTACK", "AMPATTACK", "AMPATTACK", ampAttackRange, 0.0f, nullptr, nullptr);
+	NormalisableRange<float> ampDecayRange(0, 3);
+	apvt.createAndAddParameter("AMPDECAY", "AMPDECAY", "AMPDECAY", ampDecayRange, 0.0f, nullptr, nullptr);
+	NormalisableRange<float> ampSustainRange(0, 1);
+	apvt.createAndAddParameter("AMPSUSTAIN", "AMPSUSTAIN", "AMPSUSTAIN", ampSustainRange, 0.0f, nullptr, nullptr);
+	NormalisableRange<float> ampReleaseRange(0, 3);
+	apvt.createAndAddParameter("AMPRELEASE", "AMPRELEASE", "AMPRELEASE", ampReleaseRange, 0.0f, nullptr, nullptr);
+   
+    NormalisableRange<float> cutoffRange(0, 20000);
+	apvt.createAndAddParameter("CUTOFF", "CUTOFF", "CUTOFF", cutoffRange, 1.0f, nullptr, nullptr);
+	NormalisableRange<float> resonanceRange(0,100);
+	apvt.createAndAddParameter("RESONANCE", "RESONANCE", "RESONANCE", resonanceRange, 1.0f, nullptr, nullptr);
 
     apvt.state = ValueTree("apvt");
 
@@ -126,6 +152,21 @@ void ThirdYearProjectAudioProcessor::prepareToPlay (double sampleRate, int sampl
     mySynth.setCurrentPlaybackSampleRate(lastSampleRate);
 
     midiCollector.reset(sampleRate);
+
+	dsp::ProcessSpec spec;
+	spec.sampleRate = sampleRate;
+	spec.maximumBlockSize = samplesPerBlock;
+	spec.numChannels = getTotalNumOutputChannels();
+
+	lowPassFilter.prepare(spec);
+	lowPassFilter.reset();
+}
+
+void ThirdYearProjectAudioProcessor::updateFilter() {
+    float cutoff = *apvt.getRawParameterValue("CUTOFF");
+    float resonance = *apvt.getRawParameterValue("RESONANCE");
+
+    *lowPassFilter.state = *dsp::IIR::Coefficients<float>::makeLowPass(lastSampleRate, cutoff, resonance);
 }
 
 void ThirdYearProjectAudioProcessor::releaseResources()
@@ -164,9 +205,18 @@ void ThirdYearProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buf
     for (int i = 0; i < mySynth.getNumVoices(); i++) {
         // Check that myVoice is a SynthVoice*
         if (myVoice = dynamic_cast<SynthVoice*>(mySynth.getVoice(i))) {
-            myVoice->setMODINDEX(apvt.getRawParameterValue("MODINDEX"));
-            myVoice->setOP1Level(apvt.getRawParameterValue("OP1LEVEL"));
-            myVoice->setOP2Level(apvt.getRawParameterValue("OP2LEVEL"));
+            myVoice->setOP1MODINDEX((float*)apvt.getRawParameterValue("OP1MODINDEX"));
+            myVoice->setOP2MODINDEX((float*)apvt.getRawParameterValue("OP2MODINDEX"));
+            myVoice->setOP3MODINDEX((float*)apvt.getRawParameterValue("OP3MODINDEX"));
+            myVoice->setOP4MODINDEX((float*)apvt.getRawParameterValue("OP4MODINDEX"));
+
+            myVoice->setOP1LEVEL((float*)apvt.getRawParameterValue("OP1LEVEL"));
+            myVoice->setOP2LEVEL((float*)apvt.getRawParameterValue("OP2LEVEL"));
+            myVoice->setOP3LEVEL((float*)apvt.getRawParameterValue("OP3LEVEL"));
+            myVoice->setOP4LEVEL((float*)apvt.getRawParameterValue("OP4LEVEL"));
+
+            myVoice->setADSRSampleRate(lastSampleRate);
+			myVoice->setAmpADSR((float*) apvt.getRawParameterValue("AMPATTACK"), (float*) apvt.getRawParameterValue("AMPDECAY"), (float*)apvt.getRawParameterValue("AMPSUSTAIN"), (float*) apvt.getRawParameterValue("AMPRELEASE"));
         }
     }
 
@@ -191,6 +241,10 @@ void ThirdYearProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buf
     // interleaved by keeping the same state.
 
     mySynth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
+
+    dsp::AudioBlock<float> block(buffer);
+    updateFilter();
+    lowPassFilter.process(dsp::ProcessContextReplacing<float>(block));
 
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {

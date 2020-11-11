@@ -55,9 +55,7 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
- //   double modIndex = 3.2;
-   // double op1Level = 0.0;
-    //double op2Level = 0.0;
+    void updateFilter();
 
     AudioProcessorValueTreeState apvt;
 
@@ -68,6 +66,8 @@ private:
     MidiMessageCollector midiCollector;
 
     double lastSampleRate;
+
+    dsp::ProcessorDuplicator <dsp::IIR::Filter<float>, dsp::IIR::Coefficients<float>> lowPassFilter;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ThirdYearProjectAudioProcessor)

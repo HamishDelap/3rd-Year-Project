@@ -73,5 +73,31 @@ private:
 	juce::Label op4LevelLabel;
 	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> op4LevelSliderAttachment;
 
+    // Amp ADSR
+	juce::Slider ampAttackSlider;
+	juce::Label ampAttackLabel;
+	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> ampAttackSliderAttachment;
+
+	juce::Slider ampDecaySlider;
+	juce::Label ampDecayLabel;
+	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> ampDecaySliderAttachment;
+
+	juce::Slider ampSustainSlider;
+	juce::Label ampSustainLabel;
+	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> ampSustainSliderAttachment;
+
+	juce::Slider ampReleaseSlider;
+	juce::Label ampReleaseLabel;
+	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> ampReleaseSliderAttachment;
+
+	// Filter
+	juce::Slider cutoffSlider;
+	juce::Label cutoffLabel;
+	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> cutoffSliderAttachment;
+
+	juce::Slider resonanceSlider;
+	juce::Label resonanceLabel;
+	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> resonanceSliderAttachment;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ThirdYearProjectAudioProcessorEditor)
 };
