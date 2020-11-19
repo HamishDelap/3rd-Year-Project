@@ -73,22 +73,61 @@ private:
 	juce::Label op4LevelLabel;
 	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> op4LevelSliderAttachment;
 
-    // Amp ADSR
-	juce::Slider ampAttackSlider;
-	juce::Label ampAttackLabel;
-	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> ampAttackSliderAttachment;
+    // op1 ADSR
+	juce::Slider op1AttackSlider;
+	juce::Label op1AttackLabel;
+	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> op1AttackSliderAttachment;
+	juce::Slider op1DecaySlider;
+	juce::Label op1DecayLabel;
+	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> op1DecaySliderAttachment;
+	juce::Slider op1SustainSlider;
+	juce::Label op1SustainLabel;
+	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> op1SustainSliderAttachment;
+	juce::Slider op1ReleaseSlider;
+	juce::Label op1ReleaseLabel;
+	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> op1ReleaseSliderAttachment;
 
-	juce::Slider ampDecaySlider;
-	juce::Label ampDecayLabel;
-	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> ampDecaySliderAttachment;
+	// op2 ADSR
+	juce::Slider op2AttackSlider;
+	juce::Label op2AttackLabel;
+	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> op2AttackSliderAttachment;
+	juce::Slider op2DecaySlider;
+	juce::Label op2DecayLabel;
+	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> op2DecaySliderAttachment;
+	juce::Slider op2SustainSlider;
+	juce::Label op2SustainLabel;
+	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> op2SustainSliderAttachment;
+	juce::Slider op2ReleaseSlider;
+	juce::Label op2ReleaseLabel;
+	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> op2ReleaseSliderAttachment;
 
-	juce::Slider ampSustainSlider;
-	juce::Label ampSustainLabel;
-	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> ampSustainSliderAttachment;
+	// op1 ADSR
+	juce::Slider op3AttackSlider;
+	juce::Label op3AttackLabel;
+	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> op3AttackSliderAttachment;
+	juce::Slider op3DecaySlider;
+	juce::Label op3DecayLabel;
+	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> op3DecaySliderAttachment;
+	juce::Slider op3SustainSlider;
+	juce::Label op3SustainLabel;
+	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> op3SustainSliderAttachment;
+	juce::Slider op3ReleaseSlider;
+	juce::Label op3ReleaseLabel;
+	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> op3ReleaseSliderAttachment;
 
-	juce::Slider ampReleaseSlider;
-	juce::Label ampReleaseLabel;
-	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> ampReleaseSliderAttachment;
+	// op1 ADSR
+	juce::Slider op4AttackSlider;
+	juce::Label op4AttackLabel;
+	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> op4AttackSliderAttachment;
+	juce::Slider op4DecaySlider;
+	juce::Label op4DecayLabel;
+	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> op4DecaySliderAttachment;
+	juce::Slider op4SustainSlider;
+	juce::Label op4SustainLabel;
+	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> op4SustainSliderAttachment;
+	juce::Slider op4ReleaseSlider;
+	juce::Label op4ReleaseLabel;
+	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> op4ReleaseSliderAttachment;
 
 	// Filter
 	juce::Slider cutoffSlider;

@@ -42,6 +42,6 @@ fmTable:
 */
 
 
-float fmOSC(int algo, double fmTable[][4], double angleDelta);
+float fmOSC(int algo, double fmTable[][4], double angleDelta, ADSR* op1Env, ADSR* op2Env, ADSR* op3Env, ADSR* op4Env);
 
 #endif // FUNCTIONS_H_INCLUDED 

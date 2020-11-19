@@ -58,15 +58,39 @@ public:
 		fmTable[1][3] = *level;
 	}
 
-    void setAmpADSR(float* attack, float* decay, float* sustain, float* release) {
-        adsrParams.attack = *attack;
-        adsrParams.decay = *decay;
-        adsrParams.sustain = *sustain;
-        adsrParams.release = *release;
+    void setOp1Adsr(float* attack, float* decay, float* sustain, float* release) {
+        op1AdsrParams.attack = *attack;
+        op1AdsrParams.decay = *decay;
+        op1AdsrParams.sustain = *sustain;
+        op1AdsrParams.release = *release;
+    }
+
+    void setOp2Adsr(float* attack, float* decay, float* sustain, float* release) {
+        op2AdsrParams.attack = *attack;
+        op2AdsrParams.decay = *decay;
+        op2AdsrParams.sustain = *sustain;
+        op2AdsrParams.release = *release;
+    }
+
+    void setOp3Adsr(float* attack, float* decay, float* sustain, float* release) {
+        op3AdsrParams.attack = *attack;
+        op3AdsrParams.decay = *decay;
+        op3AdsrParams.sustain = *sustain;
+        op3AdsrParams.release = *release;
+    }
+
+    void setOp4Adsr(float* attack, float* decay, float* sustain, float* release) {
+        op4AdsrParams.attack = *attack;
+        op4AdsrParams.decay = *decay;
+        op4AdsrParams.sustain = *sustain;
+        op4AdsrParams.release = *release;
     }
 
     void setADSRSampleRate (double sampleRate) {
-        ampAdsr.setSampleRate(sampleRate);
+        op1Adsr.setSampleRate(sampleRate);
+        op2Adsr.setSampleRate(sampleRate);
+        op3Adsr.setSampleRate(sampleRate);
+        op4Adsr.setSampleRate(sampleRate);
     }
 
     //===============================================//
@@ -83,7 +107,10 @@ public:
 
         angleDelta = cyclesPerSample * 2.0 * MathConstants<double>::pi;
 
-        ampAdsr.noteOn();
+        op1Adsr.noteOn();
+        op2Adsr.noteOn();
+        op3Adsr.noteOn();
+        op4Adsr.noteOn();
     }
 
     //===============================================//
@@ -98,7 +125,10 @@ public:
             clearCurrentNote();
             angleDelta = 0.0;
         }
-        ampAdsr.noteOff();
+        op1Adsr.noteOff();
+        op2Adsr.noteOff();
+        op3Adsr.noteOff();
+        op4Adsr.noteOff();
     }
 
     void pitchWheelMoved(int newPitchWheelValue) {
@@ -110,7 +140,7 @@ public:
     }
 
     void renderNextBlock(AudioBuffer< float >& outputBuffer, int startSample, int numSamples) {
-        ampAdsr.setParameters(adsrParams);
+        op1Adsr.setParameters(op1AdsrParams);
         // Written using JUCE midi synthesizer tutorial.
         if (angleDelta != 0.0) {
             // Check if note should have ended.
@@ -118,7 +148,7 @@ public:
                 // Check theres samples left.
                 while (--numSamples >= 0) {
                     // Calculate sample value.
-                    auto currentSample = ampAdsr.getNextSample() * fmOSC(2, fmTable, angleDelta) * level * tailOff;
+                    auto currentSample = op1Adsr.getNextSample() * fmOSC(1, fmTable, angleDelta, &op1Adsr, &op2Adsr, &op3Adsr, &op4Adsr) * level * tailOff;
                     // Add sample to outputBuffer
                     for (auto i = outputBuffer.getNumChannels(); --i >= 0;) {
                         outputBuffer.addSample(i, startSample, currentSample);
@@ -142,7 +172,7 @@ public:
             else {
                 while (--numSamples >= 0) {
 
-                    auto currentSample = ampAdsr.getNextSample() * fmOSC(2, fmTable, angleDelta) * level;
+                    auto currentSample = op1Adsr.getNextSample() * fmOSC(1, fmTable, angleDelta, &op1Adsr, &op2Adsr, &op3Adsr, &op4Adsr) * level;
                     //auto currentSample = (float)(std::sin(fmTable[0][0] + (float)std::sin(fmTable[0][1]) * fmTable[1][1]) * fmTable[1][0]);
 
                     for (auto i = outputBuffer.getNumChannels(); --i >= 0;) {
@@ -168,6 +198,15 @@ private:
     double level = 0.0;
     double tailOff = 0.0;
 
-    ADSR ampAdsr;
-    ADSR::Parameters adsrParams;
+    ADSR op1Adsr;
+    ADSR::Parameters op1AdsrParams;
+
+    ADSR op2Adsr;
+    ADSR::Parameters op2AdsrParams;
+
+    ADSR op3Adsr;
+    ADSR::Parameters op3AdsrParams;
+
+    ADSR op4Adsr;
+    ADSR::Parameters op4AdsrParams;
 };

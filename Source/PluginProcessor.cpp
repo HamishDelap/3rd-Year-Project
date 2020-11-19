@@ -36,7 +36,7 @@ ThirdYearProjectAudioProcessor::ThirdYearProjectAudioProcessor()
 
     // OP Levels
     NormalisableRange<float> op1LevelRange(0, 1);
-    apvt.createAndAddParameter("OP1LEVEL", "OP1LEVEL", "OP1LEVEL", op1LevelRange, 0.0f, nullptr, nullptr);
+    apvt.createAndAddParameter("OP1LEVEL", "OP1LEVEL", "OP1LEVEL", op1LevelRange, 1.0f, nullptr, nullptr);
     NormalisableRange<float> op2LevelRange(0, 1);
     apvt.createAndAddParameter("OP2LEVEL", "OP2LEVEL", "OP2LEVEL", op2LevelRange, 0.0f, nullptr, nullptr);
 	NormalisableRange<float> op3LevelRange(0, 1);
@@ -44,19 +44,51 @@ ThirdYearProjectAudioProcessor::ThirdYearProjectAudioProcessor()
 	NormalisableRange<float> op4LevelRange(0, 1);
 	apvt.createAndAddParameter("OP4LEVEL", "OP4LEVEL", "OP4LEVEL", op4LevelRange, 0.0f, nullptr, nullptr);
 
-    //Envelope
-	NormalisableRange<float> ampAttackRange(0, 3);
-	apvt.createAndAddParameter("AMPATTACK", "AMPATTACK", "AMPATTACK", ampAttackRange, 0.0f, nullptr, nullptr);
-	NormalisableRange<float> ampDecayRange(0, 3);
-	apvt.createAndAddParameter("AMPDECAY", "AMPDECAY", "AMPDECAY", ampDecayRange, 0.0f, nullptr, nullptr);
-	NormalisableRange<float> ampSustainRange(0, 1);
-	apvt.createAndAddParameter("AMPSUSTAIN", "AMPSUSTAIN", "AMPSUSTAIN", ampSustainRange, 0.0f, nullptr, nullptr);
-	NormalisableRange<float> ampReleaseRange(0, 3);
-	apvt.createAndAddParameter("AMPRELEASE", "AMPRELEASE", "AMPRELEASE", ampReleaseRange, 0.0f, nullptr, nullptr);
+    // OP1 Envelope
+	NormalisableRange<float> op1AttackRange(0, 3);
+	apvt.createAndAddParameter("OP1ATTACK", "OP1ATTACK", "OP1ATTACK", op1AttackRange, 0.2f, nullptr, nullptr);
+	NormalisableRange<float> op1DecayRange(0, 3);
+	apvt.createAndAddParameter("OP1DECAY", "OP1DECAY", "OP1DECAY", op1DecayRange, 0.0f, nullptr, nullptr);
+	NormalisableRange<float> op1SustainRange(0, 1);
+	apvt.createAndAddParameter("OP1SUSTAIN", "OP1SUSTAIN", "OP1SUSTAIN", op1SustainRange, 1.0f, nullptr, nullptr);
+	NormalisableRange<float> op1ReleaseRange(0, 3);
+	apvt.createAndAddParameter("OP1RELEASE", "OP1RELEASE", "OP1RELEASE", op1ReleaseRange, 0.5f, nullptr, nullptr);
    
-    NormalisableRange<float> cutoffRange(0, 20000);
-	apvt.createAndAddParameter("CUTOFF", "CUTOFF", "CUTOFF", cutoffRange, 1.0f, nullptr, nullptr);
-	NormalisableRange<float> resonanceRange(0,100);
+    // OP2 Envelope
+    NormalisableRange<float> op2AttackRange(0, 3);
+    apvt.createAndAddParameter("OP2ATTACK", "OP2ATTACK", "OP2ATTACK", op2AttackRange, 0.0f, nullptr, nullptr);
+    NormalisableRange<float> op2DecayRange(0, 3);
+    apvt.createAndAddParameter("OP2DECAY", "OP2DECAY", "OP2DECAY", op2DecayRange, 0.0f, nullptr, nullptr);
+    NormalisableRange<float> op2SustainRange(0, 1);
+    apvt.createAndAddParameter("OP2SUSTAIN", "OP2SUSTAIN", "OP2SUSTAIN", op2SustainRange, 0.0f, nullptr, nullptr);
+    NormalisableRange<float> op2ReleaseRange(0, 3);
+    apvt.createAndAddParameter("OP2RELEASE", "OP2RELEASE", "OP2RELEASE", op2ReleaseRange, 0.0f, nullptr, nullptr);
+
+    // OP3 Envelope
+    NormalisableRange<float> op3AttackRange(0, 3);
+    apvt.createAndAddParameter("OP3ATTACK", "OP3ATTACK", "OP3ATTACK", op3AttackRange, 0.0f, nullptr, nullptr);
+    NormalisableRange<float> op3DecayRange(0, 3);
+    apvt.createAndAddParameter("OP3DECAY", "OP3DECAY", "OP3DECAY", op3DecayRange, 0.0f, nullptr, nullptr);
+    NormalisableRange<float> op3SustainRange(0, 1);
+    apvt.createAndAddParameter("OP3SUSTAIN", "OP3SUSTAIN", "OP3SUSTAIN", op3SustainRange, 0.0f, nullptr, nullptr);
+    NormalisableRange<float> op3ReleaseRange(0, 3);
+    apvt.createAndAddParameter("OP3RELEASE", "OP3RELEASE", "OP3RELEASE", op3ReleaseRange, 0.0f, nullptr, nullptr);
+
+    // OP4 Envelope
+    NormalisableRange<float> op4AttackRange(0, 3);
+    apvt.createAndAddParameter("OP4ATTACK", "OP4ATTACK", "OP4ATTACK", op4AttackRange, 0.0f, nullptr, nullptr);
+    NormalisableRange<float> op4DecayRange(0, 3);
+    apvt.createAndAddParameter("OP4DECAY", "OP4DECAY", "OP4DECAY", op4DecayRange, 0.0f, nullptr, nullptr);
+    NormalisableRange<float> op4SustainRange(0, 1);
+    apvt.createAndAddParameter("OP4SUSTAIN", "OP4SUSTAIN", "OP4SUSTAIN", op4SustainRange, 0.0f, nullptr, nullptr);
+    NormalisableRange<float> op4ReleaseRange(0, 3);
+    apvt.createAndAddParameter("OP4RELEASE", "OP4RELEASE", "OP4RELEASE", op4ReleaseRange, 0.0f, nullptr, nullptr);
+    
+    
+    // Filter
+    NormalisableRange<float> cutoffRange(0.1, 20000);
+	apvt.createAndAddParameter("CUTOFF", "CUTOFF", "CUTOFF", cutoffRange, 20000.0f, nullptr, nullptr);
+	NormalisableRange<float> resonanceRange(0.1,100);
 	apvt.createAndAddParameter("RESONANCE", "RESONANCE", "RESONANCE", resonanceRange, 1.0f, nullptr, nullptr);
 
     apvt.state = ValueTree("apvt");
@@ -216,7 +248,10 @@ void ThirdYearProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buf
             myVoice->setOP4LEVEL((float*)apvt.getRawParameterValue("OP4LEVEL"));
 
             myVoice->setADSRSampleRate(lastSampleRate);
-			myVoice->setAmpADSR((float*) apvt.getRawParameterValue("AMPATTACK"), (float*) apvt.getRawParameterValue("AMPDECAY"), (float*)apvt.getRawParameterValue("AMPSUSTAIN"), (float*) apvt.getRawParameterValue("AMPRELEASE"));
+			myVoice->setOp1Adsr((float*)apvt.getRawParameterValue("OP1ATTACK"), (float*)apvt.getRawParameterValue("OP1DECAY"), (float*)apvt.getRawParameterValue("OP1SUSTAIN"), (float*)apvt.getRawParameterValue("OP1RELEASE"));
+            myVoice->setOp2Adsr((float*)apvt.getRawParameterValue("OP2ATTACK"), (float*)apvt.getRawParameterValue("OP2DECAY"), (float*)apvt.getRawParameterValue("OP2SUSTAIN"), (float*)apvt.getRawParameterValue("OP2RELEASE"));
+            myVoice->setOp3Adsr((float*)apvt.getRawParameterValue("OP3ATTACK"), (float*)apvt.getRawParameterValue("OP3DECAY"), (float*)apvt.getRawParameterValue("OP3SUSTAIN"), (float*)apvt.getRawParameterValue("OP3RELEASE"));
+            myVoice->setOp4Adsr((float*)apvt.getRawParameterValue("OP4ATTACK"), (float*)apvt.getRawParameterValue("OP4DECAY"), (float*)apvt.getRawParameterValue("OP4SUSTAIN"), (float*)apvt.getRawParameterValue("OP4RELEASE"));
         }
     }
 

@@ -34,11 +34,11 @@ float wave(int wave, double angle, double level) {
 	}
 }
 
-float op(double angle, double level) {
-	return (float)(std::sin(angle) * level);
+float op(double angle, double level, ADSR* env) {
+	return (float) (env->getNextSample() * std::sin(angle) * level);
 }
 
-float fmOSC(int algo, double fmTable[][4], double angleDelta) {
+float fmOSC(int algo, double fmTable[][4], double angleDelta, ADSR* op1Env, ADSR* op2Env, ADSR* op3Env, ADSR* op4Env) {
 	float output = 0;
 	switch (algo) {
 	case 1:
@@ -47,7 +47,7 @@ float fmOSC(int algo, double fmTable[][4], double angleDelta) {
 		fmTable[0][2] = fmTable[0][1] * fmTable[2][2];
 		fmTable[0][3] = fmTable[0][2] * fmTable[2][3];
 
-		output = op((fmTable[0][0] + op((fmTable[0][1] + op((fmTable[0][2] + op(fmTable[0][3], fmTable[1][3])), fmTable[1][2])), fmTable[1][1])), fmTable[1][0]);
+		output = op((fmTable[0][0] + op((fmTable[0][1] + op((fmTable[0][2] + op(fmTable[0][3], fmTable[1][3], op4Env)), fmTable[1][2], op3Env)), fmTable[1][1], op2Env)), fmTable[1][0], op1Env);
 		break;
 	case 2:
 		fmTable[0][0] += angleDelta;
@@ -55,7 +55,7 @@ float fmOSC(int algo, double fmTable[][4], double angleDelta) {
 		fmTable[0][2] = fmTable[0][1] * fmTable[2][2];
 		fmTable[0][3] = fmTable[0][1] * fmTable[2][3];
 
-		output = op((fmTable[0][0] + op((fmTable[0][1] + op(fmTable[0][2], fmTable[1][2]) + op(fmTable[0][3], fmTable[1][3])), fmTable[1][1])), fmTable[1][0]);
+		output = op((fmTable[0][0] + op((fmTable[0][1] + op(fmTable[0][2], fmTable[1][2], op3Env) + op(fmTable[0][3], fmTable[1][3], op4Env)), fmTable[1][1], op2Env)), fmTable[1][0], op1Env);
 		break;
 	case 3:
 		fmTable[0][0] += angleDelta;
@@ -63,7 +63,7 @@ float fmOSC(int algo, double fmTable[][4], double angleDelta) {
 		fmTable[0][2] = fmTable[0][0] * fmTable[2][2];
 		fmTable[0][3] = fmTable[0][0] * fmTable[2][3];
 
-		output = op((fmTable[0][0] + op((fmTable[0][1] + op((fmTable[0][2] + op(fmTable[0][3], fmTable[1][3])), fmTable[1][2])), fmTable[1][1])), fmTable[1][0]);
+		output = op((fmTable[0][0] + op((fmTable[0][1] + op((fmTable[0][2] + op(fmTable[0][3], fmTable[1][3], op4Env)), fmTable[1][2], op3Env)), fmTable[1][1], op2Env)), fmTable[1][0], op1Env);
 		break;
 	case 4:
 		fmTable[0][0] += angleDelta;
@@ -71,7 +71,7 @@ float fmOSC(int algo, double fmTable[][4], double angleDelta) {
 		fmTable[0][2] = fmTable[0][1] * fmTable[2][2];
 		fmTable[0][3] = fmTable[0][2] * fmTable[2][3];
 
-		output = op((fmTable[0][0] + op((fmTable[0][1] + op((fmTable[0][2] + op(fmTable[0][3], fmTable[1][3])), fmTable[1][2])), fmTable[1][1])), fmTable[1][0]);
+		output = op((fmTable[0][0] + op((fmTable[0][1] + op((fmTable[0][2] + op(fmTable[0][3], fmTable[1][3], op4Env)), fmTable[1][2], op3Env)), fmTable[1][1], op2Env)), fmTable[1][0], op1Env);
 		break;
 	}
 	return output;

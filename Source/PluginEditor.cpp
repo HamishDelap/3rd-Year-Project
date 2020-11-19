@@ -15,7 +15,7 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
-    setSize (800, 600);
+    setSize (1600, 800);
 
 	// Mod Index Sliders
 
@@ -112,53 +112,179 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	// Keyboard
 	addAndMakeVisible(keyboardComponent);
     keyboardState.addListener(this);
-	keyboardComponent.setAvailableRange(21, 108);
+	keyboardComponent.setAvailableRange(0, 127);
 
-	// Amp ADSR
-	
+	// op1 ADSR
 	// Adding slider
-	addAndMakeVisible(ampAttackSlider);
-	ampAttackSlider.setRange(0, 12);
-	ampAttackSlider.setTextValueSuffix("s");
-	ampAttackSlider.addListener(this);
+	addAndMakeVisible(op1AttackSlider);
+	op1AttackSlider.setRange(0, 12);
+	op1AttackSlider.setTextValueSuffix("s");
+	op1AttackSlider.addListener(this);
 	// Adding label
-	addAndMakeVisible(ampAttackLabel);
-	ampAttackLabel.setText("Attack", juce::dontSendNotification);
-	ampAttackLabel.attachToComponent(&ampAttackSlider, true);
-	ampAttackSliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.apvt, "AMPATTACK", ampAttackSlider);
+	addAndMakeVisible(op1AttackLabel);
+	op1AttackLabel.setText("Op1 Attack", juce::dontSendNotification);
+	op1AttackLabel.attachToComponent(&op1AttackSlider, true);
+	op1AttackSliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.apvt, "OP1ATTACK", op1AttackSlider);
+	// Adding slider
+	addAndMakeVisible(op1DecaySlider);
+	op1DecaySlider.setRange(0, 12);
+	op1DecaySlider.setTextValueSuffix("s");
+	op1DecaySlider.addListener(this);
+	// Adding label
+	addAndMakeVisible(op1DecayLabel);
+	op1DecayLabel.setText("Op1 Decay", juce::dontSendNotification);
+	op1DecayLabel.attachToComponent(&op1DecaySlider, true);
+	op1DecaySliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.apvt, "OP1DECAY", op1DecaySlider);
+	// Adding slider
+	addAndMakeVisible(op1SustainSlider);
+	op1SustainSlider.setRange(0, 12);
+	op1SustainSlider.setTextValueSuffix("dB");
+	op1SustainSlider.addListener(this);
+	// Adding label
+	addAndMakeVisible(op1SustainLabel);
+	op1SustainLabel.setText("Op1 Sustain", juce::dontSendNotification);
+	op1SustainLabel.attachToComponent(&op1SustainSlider, true);
+	op1SustainSliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.apvt, "OP1SUSTAIN", op1SustainSlider);
+	// Adding slider
+	addAndMakeVisible(op1ReleaseSlider);
+	op1ReleaseSlider.setRange(0, 12);
+	op1ReleaseSlider.setTextValueSuffix("s");
+	op1ReleaseSlider.addListener(this);
+	// Adding label
+	addAndMakeVisible(op1ReleaseLabel);
+	op1ReleaseLabel.setText("Op1 Release", juce::dontSendNotification);
+	op1ReleaseLabel.attachToComponent(&op1ReleaseSlider, true);
+	op1ReleaseSliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.apvt, "OP1RELEASE", op1ReleaseSlider);
 
+	// op2 ADSR
 	// Adding slider
-	addAndMakeVisible(ampDecaySlider);
-	ampDecaySlider.setRange(0, 12);
-	ampDecaySlider.setTextValueSuffix("s");
-	ampDecaySlider.addListener(this);
+	addAndMakeVisible(op2AttackSlider);
+	op2AttackSlider.setRange(0, 12);
+	op2AttackSlider.setTextValueSuffix("s");
+	op2AttackSlider.addListener(this);
 	// Adding label
-	addAndMakeVisible(ampDecayLabel);
-	ampDecayLabel.setText("Decay", juce::dontSendNotification);
-	ampDecayLabel.attachToComponent(&ampDecaySlider, true);
-	ampDecaySliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.apvt, "AMPDECAY", ampDecaySlider);
+	addAndMakeVisible(op2AttackLabel);
+	op2AttackLabel.setText("Op2 Attack", juce::dontSendNotification);
+	op2AttackLabel.attachToComponent(&op2AttackSlider, true);
+	op2AttackSliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.apvt, "OP2ATTACK", op2AttackSlider);
+	// Adding slider
+	addAndMakeVisible(op2DecaySlider);
+	op2DecaySlider.setRange(0, 12);
+	op2DecaySlider.setTextValueSuffix("s");
+	op2DecaySlider.addListener(this);
+	// Adding label
+	addAndMakeVisible(op2DecayLabel);
+	op2DecayLabel.setText("Op2 Decay", juce::dontSendNotification);
+	op2DecayLabel.attachToComponent(&op2DecaySlider, true);
+	op2DecaySliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.apvt, "OP2DECAY", op2DecaySlider);
+	// Adding slider
+	addAndMakeVisible(op2SustainSlider);
+	op2SustainSlider.setRange(0, 12);
+	op2SustainSlider.setTextValueSuffix("dB");
+	op2SustainSlider.addListener(this);
+	// Adding label
+	addAndMakeVisible(op2SustainLabel);
+	op2SustainLabel.setText("Op2 Sustain", juce::dontSendNotification);
+	op2SustainLabel.attachToComponent(&op2SustainSlider, true);
+	op2SustainSliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.apvt, "OP2SUSTAIN", op2SustainSlider);
+	// Adding slider
+	addAndMakeVisible(op2ReleaseSlider);
+	op2ReleaseSlider.setRange(0, 12);
+	op2ReleaseSlider.setTextValueSuffix("s");
+	op2ReleaseSlider.addListener(this);
+	// Adding label
+	addAndMakeVisible(op2ReleaseLabel);
+	op2ReleaseLabel.setText("Op2 Release", juce::dontSendNotification);
+	op2ReleaseLabel.attachToComponent(&op2ReleaseSlider, true);
+	op2ReleaseSliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.apvt, "OP2RELEASE", op2ReleaseSlider);
 
-	// Adding slider
-	addAndMakeVisible(ampSustainSlider);
-	ampSustainSlider.setRange(0, 12);
-	ampSustainSlider.setTextValueSuffix("dB");
-	ampSustainSlider.addListener(this);
+	// op3 ADSR
+// Adding slider
+	addAndMakeVisible(op3AttackSlider);
+	op3AttackSlider.setRange(0, 12);
+	op3AttackSlider.setTextValueSuffix("s");
+	op3AttackSlider.addListener(this);
 	// Adding label
-	addAndMakeVisible(ampSustainLabel);
-	ampSustainLabel.setText("Sustain", juce::dontSendNotification);
-	ampSustainLabel.attachToComponent(&ampSustainSlider, true);
-	ampSustainSliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.apvt, "AMPSUSTAIN", ampSustainSlider);
+	addAndMakeVisible(op3AttackLabel);
+	op3AttackLabel.setText("Op3 Attack", juce::dontSendNotification);
+	op3AttackLabel.attachToComponent(&op3AttackSlider, true);
+	op3AttackSliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.apvt, "OP3ATTACK", op3AttackSlider);
+	// Adding slider
+	addAndMakeVisible(op3DecaySlider);
+	op3DecaySlider.setRange(0, 12);
+	op3DecaySlider.setTextValueSuffix("s");
+	op3DecaySlider.addListener(this);
+	// Adding label
+	addAndMakeVisible(op3DecayLabel);
+	op3DecayLabel.setText("Op3 Decay", juce::dontSendNotification);
+	op3DecayLabel.attachToComponent(&op3DecaySlider, true);
+	op3DecaySliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.apvt, "OP3DECAY", op3DecaySlider);
+	// Adding slider
+	addAndMakeVisible(op3SustainSlider);
+	op3SustainSlider.setRange(0, 12);
+	op3SustainSlider.setTextValueSuffix("dB");
+	op3SustainSlider.addListener(this);
+	// Adding label
+	addAndMakeVisible(op3SustainLabel);
+	op3SustainLabel.setText("Op3 Sustain", juce::dontSendNotification);
+	op3SustainLabel.attachToComponent(&op3SustainSlider, true);
+	op3SustainSliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.apvt, "OP3SUSTAIN", op3SustainSlider);
+	// Adding slider
+	addAndMakeVisible(op3ReleaseSlider);
+	op3ReleaseSlider.setRange(0, 12);
+	op3ReleaseSlider.setTextValueSuffix("s");
+	op3ReleaseSlider.addListener(this);
+	// Adding label
+	addAndMakeVisible(op3ReleaseLabel);
+	op3ReleaseLabel.setText("Op3 Release", juce::dontSendNotification);
+	op3ReleaseLabel.attachToComponent(&op3ReleaseSlider, true);
+	op3ReleaseSliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.apvt, "OP3RELEASE", op3ReleaseSlider);
 
-	// Adding slider
-	addAndMakeVisible(ampReleaseSlider);
-	ampReleaseSlider.setRange(0, 12);
-	ampReleaseSlider.setTextValueSuffix("s");
-	ampReleaseSlider.addListener(this);
+	// op4 ADSR
+// Adding slider
+	addAndMakeVisible(op4AttackSlider);
+	op4AttackSlider.setRange(0, 12);
+	op4AttackSlider.setTextValueSuffix("s");
+	op4AttackSlider.addListener(this);
 	// Adding label
-	addAndMakeVisible(ampReleaseLabel);
-	ampReleaseLabel.setText("Release", juce::dontSendNotification);
-	ampReleaseLabel.attachToComponent(&ampReleaseSlider, true);
-	ampReleaseSliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.apvt, "AMPRELEASE", ampReleaseSlider);
+	addAndMakeVisible(op4AttackLabel);
+	op4AttackLabel.setText("Op4 Attack", juce::dontSendNotification);
+	op4AttackLabel.attachToComponent(&op4AttackSlider, true);
+	op4AttackSliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.apvt, "OP4ATTACK", op4AttackSlider);
+	// Adding slider
+	addAndMakeVisible(op4DecaySlider);
+	op4DecaySlider.setRange(0, 12);
+	op4DecaySlider.setTextValueSuffix("s");
+	op4DecaySlider.addListener(this);
+	// Adding label
+	addAndMakeVisible(op4DecayLabel);
+	op4DecayLabel.setText("Op4 Decay", juce::dontSendNotification);
+	op4DecayLabel.attachToComponent(&op4DecaySlider, true);
+	op4DecaySliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.apvt, "OP4DECAY", op4DecaySlider);
+	// Adding slider
+	addAndMakeVisible(op4SustainSlider);
+	op4SustainSlider.setRange(0, 12);
+	op4SustainSlider.setTextValueSuffix("dB");
+	op4SustainSlider.addListener(this);
+	// Adding label
+	addAndMakeVisible(op4SustainLabel);
+	op4SustainLabel.setText("Op4 Sustain", juce::dontSendNotification);
+	op4SustainLabel.attachToComponent(&op4SustainSlider, true);
+	op4SustainSliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.apvt, "OP4SUSTAIN", op4SustainSlider);
+	// Adding slider
+	addAndMakeVisible(op4ReleaseSlider);
+	op4ReleaseSlider.setRange(0, 12);
+	op4ReleaseSlider.setTextValueSuffix("s");
+	op4ReleaseSlider.addListener(this);
+	// Adding label
+	addAndMakeVisible(op4ReleaseLabel);
+	op4ReleaseLabel.setText("Op4 Release", juce::dontSendNotification);
+	op4ReleaseLabel.attachToComponent(&op4ReleaseSlider, true);
+	op4ReleaseSliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.apvt, "OP4RELEASE", op4ReleaseSlider);
+
+
+
+
 
 	// Filter
 	// Adding slider
@@ -166,6 +292,7 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	cutoffSlider.setRange(0, 12);
 	cutoffSlider.setTextValueSuffix("s");
 	cutoffSlider.addListener(this);
+	cutoffSlider.setSliderStyle(juce::Slider::Rotary);
 	// Adding label
 	addAndMakeVisible(cutoffLabel);
 	cutoffLabel.setText("Cutoff", juce::dontSendNotification);
@@ -177,6 +304,7 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	resonanceSlider.setRange(0, 12);
 	resonanceSlider.setTextValueSuffix("s");
 	resonanceSlider.addListener(this);
+	resonanceSlider.setSliderStyle(juce::Slider::Rotary);
 	// Adding label
 	addAndMakeVisible(resonanceLabel);
 	resonanceLabel.setText("Resonance", juce::dontSendNotification);
@@ -196,7 +324,6 @@ void ThirdYearProjectAudioProcessorEditor::paint (juce::Graphics& g)
 
     g.setColour (juce::Colours::white);
     g.setFont (15.0f);
-    g.drawFittedText ("Hello World!", getLocalBounds(), juce::Justification::centred, 1);
 }
 
 void ThirdYearProjectAudioProcessorEditor::resized()
@@ -215,17 +342,35 @@ void ThirdYearProjectAudioProcessorEditor::resized()
 	op3LevelSlider.setBounds(sliderLeft, 140, getWidth() - sliderLeft - 10, 20);
 	op4LevelSlider.setBounds(sliderLeft, 160, getWidth() - sliderLeft - 10, 20);
 
-	ampAttackSlider.setBounds(sliderLeft, 180, getWidth() - sliderLeft - 10, 20);
-	ampDecaySlider.setBounds(sliderLeft, 200, getWidth() - sliderLeft - 10, 20);
-	ampSustainSlider.setBounds(sliderLeft, 220, getWidth() - sliderLeft - 10, 20);
-	ampReleaseSlider.setBounds(sliderLeft, 240, getWidth() - sliderLeft - 10, 20);
+	op1AttackSlider.setBounds(sliderLeft, 180, getWidth() - sliderLeft - 10, 20);
+	op1DecaySlider.setBounds(sliderLeft, 200, getWidth() - sliderLeft - 10, 20);
+	op1SustainSlider.setBounds(sliderLeft, 220, getWidth() - sliderLeft - 10, 20);
+	op1ReleaseSlider.setBounds(sliderLeft, 240, getWidth() - sliderLeft - 10, 20);
 
-	cutoffSlider.setBounds(sliderLeft, 260, getWidth() - sliderLeft - 10, 20);
-	resonanceSlider.setBounds(sliderLeft, 280, getWidth() - sliderLeft - 10, 20);
+	op2AttackSlider.setBounds(sliderLeft, 260, getWidth() - sliderLeft - 10, 20);
+	op2DecaySlider.setBounds(sliderLeft, 280, getWidth() - sliderLeft - 10, 20);
+	op2SustainSlider.setBounds(sliderLeft, 300, getWidth() - sliderLeft - 10, 20);
+	op2ReleaseSlider.setBounds(sliderLeft, 320, getWidth() - sliderLeft - 10, 20);
 
-	int w = (int)keyboardComponent.getKeyWidth() * (7 * 7 + 3), h = 50;
+	op3AttackSlider.setBounds(sliderLeft, 340, getWidth() - sliderLeft - 10, 20);
+	op3DecaySlider.setBounds(sliderLeft, 360, getWidth() - sliderLeft - 10, 20);
+	op3SustainSlider.setBounds(sliderLeft, 380, getWidth() - sliderLeft - 10, 20);
+	op3ReleaseSlider.setBounds(sliderLeft, 400, getWidth() - sliderLeft - 10, 20);
+
+	op4AttackSlider.setBounds(sliderLeft, 420, getWidth() - sliderLeft - 10, 20);
+	op4DecaySlider.setBounds(sliderLeft, 440, getWidth() - sliderLeft - 10, 20);
+	op4SustainSlider.setBounds(sliderLeft, 460, getWidth() - sliderLeft - 10, 20);
+	op4ReleaseSlider.setBounds(sliderLeft, 480, getWidth() - sliderLeft - 10, 20);
+
+
+
+	cutoffSlider.setBounds(sliderLeft, 520, 130, 130);
+//	cutoffSlider.setBounds(sliderLeft, 260, 20, 20);
+	resonanceSlider.setBounds(sliderLeft, 600, 20, 20);
+
+	int w = (int)keyboardComponent.getKeyWidth() * (7 * 10 + 5), h = 80;
 	keyboardComponent.setSize(w, h);
-	keyboardComponent.setCentrePosition(getWidth() / 2, 3 * getHeight() / 4);
+	keyboardComponent.setCentrePosition(getWidth() / 2, getHeight() - 40);
 }
 
 void ThirdYearProjectAudioProcessorEditor::sliderValueChanged(Slider* slider) {
