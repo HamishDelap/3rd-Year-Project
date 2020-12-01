@@ -12,7 +12,7 @@
 
 #include <../JuceLibraryCode/JuceHeader.h>
 #include "SynthSound.h"
-#include "TinySP.h"
+#include "Oscillator.h"
 
 using namespace juce;
 
@@ -141,6 +141,9 @@ public:
 
     void renderNextBlock(AudioBuffer< float >& outputBuffer, int startSample, int numSamples) {
         op1Adsr.setParameters(op1AdsrParams);
+        op2Adsr.setParameters(op2AdsrParams);
+        op3Adsr.setParameters(op3AdsrParams);
+        op4Adsr.setParameters(op4AdsrParams);
         // Written using JUCE midi synthesizer tutorial.
         if (angleDelta != 0.0) {
             // Check if note should have ended.
@@ -148,7 +151,7 @@ public:
                 // Check theres samples left.
                 while (--numSamples >= 0) {
                     // Calculate sample value.
-                    auto currentSample = op1Adsr.getNextSample() * fmOSC(1, fmTable, angleDelta, &op1Adsr, &op2Adsr, &op3Adsr, &op4Adsr) * level * tailOff;
+                    auto currentSample = op1Adsr.getNextSample() * fmOSC(1, fmTable, angleDelta, &op1Adsr, &op2Adsr, &op3Adsr, &op4Adsr) * level;
                     // Add sample to outputBuffer
                     for (auto i = outputBuffer.getNumChannels(); --i >= 0;) {
                         outputBuffer.addSample(i, startSample, currentSample);

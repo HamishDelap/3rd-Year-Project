@@ -14,7 +14,7 @@
 //==============================================================================
 /**
 */
-class ThirdYearProjectAudioProcessorEditor : public AudioProcessorEditor, public Slider::Listener, public MidiKeyboardState, juce::MidiKeyboardStateListener
+class ThirdYearProjectAudioProcessorEditor : public AudioProcessorEditor, public Slider::Listener, public MidiKeyboardState, juce::MidiKeyboardStateListener, public Timer
 {
 public:
     ThirdYearProjectAudioProcessorEditor (ThirdYearProjectAudioProcessor&);
@@ -28,6 +28,9 @@ public:
     void handleNoteOn(juce::MidiKeyboardState*, int midiChannel, int midiNoteNumber, float velocity) override;
     void handleNoteOff(juce::MidiKeyboardState*, int midiChannel, int midiNoteNumber, float velocity) override;
 
+	void timerCallback() override;
+
+	void drawSpecFrame(juce::Graphics& g);
 
 private:
     // This reference is provided as a quick way for your editor to

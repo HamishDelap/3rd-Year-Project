@@ -14,9 +14,10 @@
             file="Source/PluginEditor.cpp"/>
       <FILE id="YFjwHh" name="SynthSound.h" compile="0" resource="0" file="Source/SynthSound.h"/>
       <FILE id="Ylt10v" name="SynthVoice.h" compile="0" resource="0" file="Source/SynthVoice.h"/>
-      <FILE id="VDfrNS" name="TinySP.cpp" compile="1" resource="0" file="Source/TinySP.cpp"/>
-      <FILE id="CK28ql" name="TinySP.h" compile="0" resource="0" file="Source/TinySP.h"/>
+      <FILE id="VDfrNS" name="Oscillator.cpp" compile="1" resource="0" file="Source/Oscillator.cpp"/>
+      <FILE id="CK28ql" name="Oscillator.h" compile="0" resource="0" file="Source/Oscillator.h"/>
       <FILE id="SySk6Z" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+      <FILE id="P73PfK" name="Spectrum.h" compile="0" resource="0" file="Source/Spectrum.h"/>
     </GROUP>
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>

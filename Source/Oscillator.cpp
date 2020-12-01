@@ -8,7 +8,7 @@
   ==============================================================================
 */
 
-#include "TinySP.h"
+#include "Oscillator.h"
 #include "SynthVoice.h"
 #include <../JuceLibraryCode/JuceHeader.h>
 
@@ -21,21 +21,23 @@
 
 float wave(int wave, double angle, double level) {
 	switch (wave) {
-		// Sin
+	// Sin
 	case 1:
 		return (float)(std::sin(angle) * level);
 		break;
-		// Triangle
+	// Triangle
 	case 2:
 		break;
-		// Square
+	// Square
 	case 3:
 		break;
 	}
 }
 
 float op(double angle, double level, ADSR* env) {
+	float nextEnvSample = env->getNextSample();
 	return (float) (env->getNextSample() * std::sin(angle) * level);
+	
 }
 
 float fmOSC(int algo, double fmTable[][4], double angleDelta, ADSR* op1Env, ADSR* op2Env, ADSR* op3Env, ADSR* op4Env) {

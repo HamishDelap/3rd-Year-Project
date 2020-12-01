@@ -12,15 +12,15 @@
 //==============================================================================
 ThirdYearProjectAudioProcessor::ThirdYearProjectAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
-     : AudioProcessor (BusesProperties()
-                     #if ! JucePlugin_IsMidiEffect
-                      #if ! JucePlugin_IsSynth
-                       .withInput  ("Input",  juce::AudioChannelSet::stereo(), true)
-                      #endif
-                       .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
-                     #endif
-                       ),
-    apvt(*this, nullptr)
+    : AudioProcessor(BusesProperties()
+#if ! JucePlugin_IsMidiEffect
+#if ! JucePlugin_IsSynth
+        .withInput("Input", juce::AudioChannelSet::stereo(), true)
+#endif
+        .withOutput("Output", juce::AudioChannelSet::stereo(), true)
+#endif
+    ),
+    apvt(*this, nullptr), fft(fftOrder), windowFunction(fftSize, juce::dsp::WindowingFunction<float>::hann)
 #endif
 {
     // OP Mod Indexes
@@ -231,6 +231,48 @@ bool ThirdYearProjectAudioProcessor::isBusesLayoutSupported (const BusesLayout& 
 }
 #endif
 
+void ThirdYearProjectAudioProcessor::pushNextSampleIntoFifo(float sample) noexcept
+{
+    if (fifoIndex == fftSize)
+    {
+        if (!nextFFTBlockReady)
+        {
+            juce::zeromem(fftData, sizeof(fftData));
+            memcpy(fftData, fifo, sizeof(fifo));
+            nextFFTBlockReady = true;
+        }
+
+        fifoIndex = 0;
+    }
+
+    fifo[fifoIndex++] = sample;
+}
+
+// Taken from the JUCE Spectrum Analyser tutorial
+// Function to calculate next frame of spectrum (will be called by the editor)
+void ThirdYearProjectAudioProcessor::drawNextFrameOfSpectrum()
+{
+    // Apply the windowing funtion
+    windowFunction.multiplyWithWindowingTable(fftData, fftSize);
+
+    // Apply the forwardFFT
+    fft.performFrequencyOnlyForwardTransform(fftData);
+
+    auto minLevel = -100.0f;
+    auto maxLevel = 0.0f;
+
+    for (int i = 0; i < scopeSize; i++)
+    {
+        auto skewedXAxis = 1.0f - std::exp(std::log(1.0f - (float) i / (float) scopeSize) * 0.2f);
+        auto fftDataIndex = jlimit(0, fftSize / 2, (int) (skewedXAxis * (float) fftSize * 0.5f));
+        auto currentLevel = jmap(jlimit(minLevel, maxLevel, Decibels::gainToDecibels(fftData[fftDataIndex]) - 
+                                                            Decibels::gainToDecibels((float) fftSize)), minLevel, maxLevel, 0.0f, 1.0f);
+        scopeData[i] = currentLevel;
+    }
+
+
+}
+
 void ThirdYearProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
 
@@ -285,6 +327,8 @@ void ThirdYearProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buf
     {
         auto* channelData = buffer.getWritePointer (channel);
 
+        for (auto i = 0; i < buffer.getNumSamples(); ++i)
+            pushNextSampleIntoFifo(channelData[i]);
         // ..do something to the data...
     }
 }

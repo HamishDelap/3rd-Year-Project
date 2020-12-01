@@ -57,7 +57,21 @@ public:
 
     void updateFilter();
 
+
+    void pushNextSampleIntoFifo(float sample) noexcept;
+
+    void drawNextFrameOfSpectrum();
+
     AudioProcessorValueTreeState apvt;
+
+    enum
+    {
+        fftOrder = 11,
+        fftSize = 1 << fftOrder,
+        scopeSize = 512
+    };
+    bool nextFFTBlockReady = false;
+    float scopeData[scopeSize];
 
 private:
     Synthesiser mySynth;
@@ -68,6 +82,15 @@ private:
     double lastSampleRate;
 
     dsp::ProcessorDuplicator <dsp::IIR::Filter<float>, dsp::IIR::Coefficients<float>> lowPassFilter;
+
+    // Spectrum Analyzer Vars
+    juce::dsp::FFT fft;
+    juce::dsp::WindowingFunction<float> windowFunction;
+
+    float fifo[fftSize];
+    float fftData[2 * fftSize];
+    int fifoIndex = 0;
+
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ThirdYearProjectAudioProcessor)

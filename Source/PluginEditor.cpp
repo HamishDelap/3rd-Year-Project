@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-    This file contains the basic framework code for a JUCE plugin editor.
+	This file contains the basic framework code for a JUCE plugin editor.
 
   ==============================================================================
 */
@@ -11,24 +11,25 @@
 
 //==============================================================================
 ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (ThirdYearProjectAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p), keyboardComponent(keyboardState, MidiKeyboardComponent::horizontalKeyboard)
+	: AudioProcessorEditor (&p), audioProcessor (p), keyboardComponent(keyboardState, MidiKeyboardComponent::horizontalKeyboard)
 {
-    // Make sure that before the constructor has finished, you've set the
-    // editor's size to whatever you need it to be.
-    setSize (1600, 800);
+	// Make sure that before the constructor has finished, you've set the
+	// editor's size to whatever you need it to be.
+	setSize (1600, 800);
 
 	// Mod Index Sliders
 
-    // Adding slider
-    addAndMakeVisible(op1ModIndexSlider);
-    op1ModIndexSlider.setRange(0, 12);
-    op1ModIndexSlider.setTextValueSuffix("x");
-    op1ModIndexSlider.addListener(this);
-    // Adding label
-    addAndMakeVisible(op1ModIndexLabel);
-    op1ModIndexLabel.setText("Op1 Mod Index", juce::dontSendNotification);
-    op1ModIndexLabel.attachToComponent(&op1ModIndexSlider, true);
-    op1ModIndexSliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.apvt, "OP1MODINDEX", op1ModIndexSlider);
+	// Adding slider
+	addAndMakeVisible(op1ModIndexSlider);
+	op1ModIndexSlider.setRange(0, 12);
+	op1ModIndexSlider.setTextValueSuffix("x");
+	op1ModIndexSlider.addListener(this);
+	//op1ModIndexSlider.setSliderStyle(juce::Slider::LinearBarVertical);
+	// Adding label
+	addAndMakeVisible(op1ModIndexLabel);
+	op1ModIndexLabel.setText("Op1 Mod Index", juce::dontSendNotification);
+	op1ModIndexLabel.attachToComponent(&op1ModIndexSlider, true);
+	op1ModIndexSliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.apvt, "OP1MODINDEX", op1ModIndexSlider);
 
 	// Adding slider
 	addAndMakeVisible(op2ModIndexSlider);
@@ -78,13 +79,13 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 
 	// Adding slider
 	addAndMakeVisible(op2LevelSlider);
-    op2LevelSlider.setRange(0, 12);
-    op2LevelSlider.setTextValueSuffix("x");
-    op2LevelSlider.addListener(this);
+	op2LevelSlider.setRange(0, 12);
+	op2LevelSlider.setTextValueSuffix("x");
+	op2LevelSlider.addListener(this);
 	// Adding label
 	addAndMakeVisible(op2LevelLabel);
-    op2LevelLabel.setText("OP2 Level", juce::dontSendNotification);
-    op2LevelLabel.attachToComponent(&op2LevelSlider, true);
+	op2LevelLabel.setText("OP2 Level", juce::dontSendNotification);
+	op2LevelLabel.attachToComponent(&op2LevelSlider, true);
 	op2LevelSliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.apvt, "OP2LEVEL", op2LevelSlider);
 
 	// Adding slider
@@ -111,7 +112,7 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 
 	// Keyboard
 	addAndMakeVisible(keyboardComponent);
-    keyboardState.addListener(this);
+	keyboardState.addListener(this);
 	keyboardComponent.setAvailableRange(0, 127);
 
 	// op1 ADSR
@@ -319,54 +320,61 @@ ThirdYearProjectAudioProcessorEditor::~ThirdYearProjectAudioProcessorEditor()
 //==============================================================================
 void ThirdYearProjectAudioProcessorEditor::paint (juce::Graphics& g)
 {
-    // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
+	// (Our component is opaque, so we must completely fill the background with a solid colour)
+	g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
 
-    g.setColour (juce::Colours::white);
-    g.setFont (15.0f);
+	g.setColour (juce::Colours::white);
+	g.setFont (15.0f);
+
+	drawSpecFrame(g);
 }
 
 void ThirdYearProjectAudioProcessorEditor::resized()
 {
-    // This is generally where you'll want to lay out the positions of any
-    // subcomponents in your editor..
+	// This is generally where you'll want to lay out the positions of any
+	// subcomponents in your editor..
 
 	auto sliderLeft = 120;
-	op1ModIndexSlider.setBounds(sliderLeft, 20, getWidth() - sliderLeft - 10, 20);
-	op2ModIndexSlider.setBounds(sliderLeft, 40, getWidth() - sliderLeft - 10, 20);
-	op3ModIndexSlider.setBounds(sliderLeft, 60, getWidth() - sliderLeft - 10, 20);
-	op4ModIndexSlider.setBounds(sliderLeft, 80, getWidth() - sliderLeft - 10, 20);
+	op1LevelSlider.setBounds(sliderLeft, 20, getWidth() / 4, 20);
+	op1ModIndexSlider.setBounds(sliderLeft, 40, getWidth() / 4, 20);
 
-    op1LevelSlider.setBounds(sliderLeft, 100, getWidth() - sliderLeft - 10, 20);
-    op2LevelSlider.setBounds(sliderLeft, 120, getWidth() - sliderLeft - 10, 20);
-	op3LevelSlider.setBounds(sliderLeft, 140, getWidth() - sliderLeft - 10, 20);
-	op4LevelSlider.setBounds(sliderLeft, 160, getWidth() - sliderLeft - 10, 20);
-
-	op1AttackSlider.setBounds(sliderLeft, 180, getWidth() - sliderLeft - 10, 20);
-	op1DecaySlider.setBounds(sliderLeft, 200, getWidth() - sliderLeft - 10, 20);
-	op1SustainSlider.setBounds(sliderLeft, 220, getWidth() - sliderLeft - 10, 20);
-	op1ReleaseSlider.setBounds(sliderLeft, 240, getWidth() - sliderLeft - 10, 20);
-
-	op2AttackSlider.setBounds(sliderLeft, 260, getWidth() - sliderLeft - 10, 20);
-	op2DecaySlider.setBounds(sliderLeft, 280, getWidth() - sliderLeft - 10, 20);
-	op2SustainSlider.setBounds(sliderLeft, 300, getWidth() - sliderLeft - 10, 20);
-	op2ReleaseSlider.setBounds(sliderLeft, 320, getWidth() - sliderLeft - 10, 20);
-
-	op3AttackSlider.setBounds(sliderLeft, 340, getWidth() - sliderLeft - 10, 20);
-	op3DecaySlider.setBounds(sliderLeft, 360, getWidth() - sliderLeft - 10, 20);
-	op3SustainSlider.setBounds(sliderLeft, 380, getWidth() - sliderLeft - 10, 20);
-	op3ReleaseSlider.setBounds(sliderLeft, 400, getWidth() - sliderLeft - 10, 20);
-
-	op4AttackSlider.setBounds(sliderLeft, 420, getWidth() - sliderLeft - 10, 20);
-	op4DecaySlider.setBounds(sliderLeft, 440, getWidth() - sliderLeft - 10, 20);
-	op4SustainSlider.setBounds(sliderLeft, 460, getWidth() - sliderLeft - 10, 20);
-	op4ReleaseSlider.setBounds(sliderLeft, 480, getWidth() - sliderLeft - 10, 20);
+	op1AttackSlider.setBounds(sliderLeft, 60, getWidth() / 4, 20);
+	op1DecaySlider.setBounds(sliderLeft, 80, getWidth() / 4, 20);
+	op1SustainSlider.setBounds(sliderLeft, 100, getWidth() / 4, 20);
+	op1ReleaseSlider.setBounds(sliderLeft, 120, getWidth() / 4, 20);
 
 
+	op2LevelSlider.setBounds(getWidth() / 2 + sliderLeft, 20, getWidth() / 4, 20);
+	op2ModIndexSlider.setBounds(getWidth() / 2 + sliderLeft, 40, getWidth() / 4, 20);
 
-	cutoffSlider.setBounds(sliderLeft, 520, 130, 130);
+	op2AttackSlider.setBounds(getWidth() / 2 + sliderLeft, 60, getWidth() / 4, 20);
+	op2DecaySlider.setBounds(getWidth() / 2 + sliderLeft, 80, getWidth() / 4, 20);
+	op2SustainSlider.setBounds(getWidth() / 2 + sliderLeft, 100, getWidth() / 4, 20);
+	op2ReleaseSlider.setBounds(getWidth() / 2 + sliderLeft, 120, getWidth() / 4, 20);
+
+
+	op3LevelSlider.setBounds(sliderLeft, 180, getWidth() / 4, 20);
+	op3ModIndexSlider.setBounds(sliderLeft, 200, getWidth() / 4, 20);
+
+	op3AttackSlider.setBounds(sliderLeft, 220, getWidth() / 4, 20);
+	op3DecaySlider.setBounds(sliderLeft, 240, getWidth() / 4, 20);
+	op3SustainSlider.setBounds(sliderLeft, 260, getWidth() / 4, 20);
+	op3ReleaseSlider.setBounds(sliderLeft, 280, getWidth() / 4, 20);
+
+	
+	op4LevelSlider.setBounds(getWidth() / 2 + sliderLeft, 180, getWidth() / 4, 20);
+	op4ModIndexSlider.setBounds(getWidth() / 2 + sliderLeft, 200, getWidth() / 4, 20);
+
+	op4AttackSlider.setBounds(getWidth() / 2 + sliderLeft, 220, getWidth() / 4, 20);
+	op4DecaySlider.setBounds(getWidth() / 2 + sliderLeft, 240, getWidth() / 4, 20);
+	op4SustainSlider.setBounds(getWidth() / 2 + sliderLeft, 260, getWidth() / 4, 20);
+	op4ReleaseSlider.setBounds(getWidth() / 2 + sliderLeft, 280, getWidth() / 4, 20);
+
+
+
+	cutoffSlider.setBounds(sliderLeft, 510, 130, 130);
 //	cutoffSlider.setBounds(sliderLeft, 260, 20, 20);
-	resonanceSlider.setBounds(sliderLeft, 600, 20, 20);
+	resonanceSlider.setBounds(sliderLeft, 550, 130, 130);
 
 	int w = (int)keyboardComponent.getKeyWidth() * (7 * 10 + 5), h = 80;
 	keyboardComponent.setSize(w, h);
@@ -374,7 +382,7 @@ void ThirdYearProjectAudioProcessorEditor::resized()
 }
 
 void ThirdYearProjectAudioProcessorEditor::sliderValueChanged(Slider* slider) {
-    //if (slider == &modIndexSlider) {
+	//if (slider == &modIndexSlider) {
    //     audioProcessor.modIndex = modIndexSlider.getValue();
  //   }
 //	if (slider == &op1LevelSlider) {
@@ -386,13 +394,36 @@ void ThirdYearProjectAudioProcessorEditor::sliderValueChanged(Slider* slider) {
 
 } 
 
+void ThirdYearProjectAudioProcessorEditor::drawSpecFrame(Graphics& g)
+{
+	for (int i = 1; i < audioProcessor.scopeSize; ++i)
+	{
+		auto width = getLocalBounds().getWidth();
+		auto height = getLocalBounds().getHeight() / 2;
+
+		g.drawLine({ (float) jmap(i - 1, 0, audioProcessor.scopeSize - 1, 0, width),
+					  jmap(audioProcessor.scopeData[i - 1], 0.0f, 1.0f, (float)height, 0.0f),
+			  (float) jmap(i,     0, audioProcessor.scopeSize - 1, 0, width),
+					  jmap(audioProcessor.scopeData[i],     0.0f, 1.0f, (float)height, 0.0f) });
+	}
+}
+
 void ThirdYearProjectAudioProcessorEditor::handleNoteOn(juce::MidiKeyboardState*, int midiChannel, int midiNoteNumber, float velocity)
 {
-    midiChannel = 1;
+	midiChannel = 1;
 	juce::MidiMessage::noteOn(midiChannel, midiNoteNumber, velocity);
 }
 
 void ThirdYearProjectAudioProcessorEditor::handleNoteOff(juce::MidiKeyboardState*, int midiChannel, int midiNoteNumber, float /*velocity*/)
 {
 	juce::MidiMessage::noteOff(midiChannel, midiNoteNumber);
+}
+
+void ThirdYearProjectAudioProcessorEditor::timerCallback()
+{
+	if (audioProcessor.nextFFTBlockReady) {
+		audioProcessor.drawNextFrameOfSpectrum();
+		audioProcessor.nextFFTBlockReady = false;
+		repaint();
+	}
 }
