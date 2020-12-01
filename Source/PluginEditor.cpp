@@ -17,6 +17,8 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	// editor's size to whatever you need it to be.
 	setSize (1600, 800);
 
+	startTimerHz(30);
+
 	// Mod Index Sliders
 
 	// Adding slider
@@ -294,10 +296,12 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	cutoffSlider.setTextValueSuffix("s");
 	cutoffSlider.addListener(this);
 	cutoffSlider.setSliderStyle(juce::Slider::Rotary);
+	juce::Slider::TextEntryBoxPosition noDisplay = juce::Slider::TextEntryBoxPosition::NoTextBox;
+	cutoffSlider.setTextBoxStyle(noDisplay, false, 1, 1);
 	// Adding label
 	addAndMakeVisible(cutoffLabel);
 	cutoffLabel.setText("Cutoff", juce::dontSendNotification);
-	cutoffLabel.attachToComponent(&cutoffSlider, true);
+	//cutoffLabel.attachToComponent(&cutoffSlider, false);
 	cutoffSliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.apvt, "CUTOFF", cutoffSlider);
 
 	// Adding slider
@@ -306,10 +310,12 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	resonanceSlider.setTextValueSuffix("s");
 	resonanceSlider.addListener(this);
 	resonanceSlider.setSliderStyle(juce::Slider::Rotary);
+	resonanceSlider.hideTextBox(true);
+	resonanceSlider.setTextBoxStyle(noDisplay, false, 1, 1);
 	// Adding label
 	addAndMakeVisible(resonanceLabel);
 	resonanceLabel.setText("Resonance", juce::dontSendNotification);
-	resonanceLabel.attachToComponent(&resonanceSlider, true);
+	//resonanceLabel.attachToComponent(&resonanceSlider, false);
 	resonanceSliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.apvt, "RESONANCE", resonanceSlider);
 }
 
@@ -344,13 +350,13 @@ void ThirdYearProjectAudioProcessorEditor::resized()
 	op1ReleaseSlider.setBounds(sliderLeft, 120, getWidth() / 4, 20);
 
 
-	op2LevelSlider.setBounds(getWidth() / 2 + sliderLeft, 20, getWidth() / 4, 20);
-	op2ModIndexSlider.setBounds(getWidth() / 2 + sliderLeft, 40, getWidth() / 4, 20);
+	op2LevelSlider.setBounds(getWidth() / 2 - sliderLeft, 20, getWidth() / 4, 20);
+	op2ModIndexSlider.setBounds(getWidth() / 2 - sliderLeft, 40, getWidth() / 4, 20);
 
-	op2AttackSlider.setBounds(getWidth() / 2 + sliderLeft, 60, getWidth() / 4, 20);
-	op2DecaySlider.setBounds(getWidth() / 2 + sliderLeft, 80, getWidth() / 4, 20);
-	op2SustainSlider.setBounds(getWidth() / 2 + sliderLeft, 100, getWidth() / 4, 20);
-	op2ReleaseSlider.setBounds(getWidth() / 2 + sliderLeft, 120, getWidth() / 4, 20);
+	op2AttackSlider.setBounds(getWidth() / 2 - sliderLeft, 60, getWidth() / 4, 20);
+	op2DecaySlider.setBounds(getWidth() / 2 - sliderLeft, 80, getWidth() / 4, 20);
+	op2SustainSlider.setBounds(getWidth() / 2 - sliderLeft, 100, getWidth() / 4, 20);
+	op2ReleaseSlider.setBounds(getWidth() / 2 - sliderLeft, 120, getWidth() / 4, 20);
 
 
 	op3LevelSlider.setBounds(sliderLeft, 180, getWidth() / 4, 20);
@@ -362,19 +368,21 @@ void ThirdYearProjectAudioProcessorEditor::resized()
 	op3ReleaseSlider.setBounds(sliderLeft, 280, getWidth() / 4, 20);
 
 	
-	op4LevelSlider.setBounds(getWidth() / 2 + sliderLeft, 180, getWidth() / 4, 20);
-	op4ModIndexSlider.setBounds(getWidth() / 2 + sliderLeft, 200, getWidth() / 4, 20);
+	op4LevelSlider.setBounds(getWidth() / 2 - sliderLeft, 180, getWidth() / 4, 20);
+	op4ModIndexSlider.setBounds(getWidth() / 2 - sliderLeft, 200, getWidth() / 4, 20);
 
-	op4AttackSlider.setBounds(getWidth() / 2 + sliderLeft, 220, getWidth() / 4, 20);
-	op4DecaySlider.setBounds(getWidth() / 2 + sliderLeft, 240, getWidth() / 4, 20);
-	op4SustainSlider.setBounds(getWidth() / 2 + sliderLeft, 260, getWidth() / 4, 20);
-	op4ReleaseSlider.setBounds(getWidth() / 2 + sliderLeft, 280, getWidth() / 4, 20);
+	op4AttackSlider.setBounds(getWidth() / 2 - sliderLeft, 220, getWidth() / 4, 20);
+	op4DecaySlider.setBounds(getWidth() / 2 - sliderLeft, 240, getWidth() / 4, 20);
+	op4SustainSlider.setBounds(getWidth() / 2 - sliderLeft, 260, getWidth() / 4, 20);
+	op4ReleaseSlider.setBounds(getWidth() / 2 - sliderLeft, 280, getWidth() / 4, 20);
 
 
-
-	cutoffSlider.setBounds(sliderLeft, 510, 130, 130);
+	cutoffLabel.setBounds((getWidth() / 4) * 3 + 1, 0, 80, 55);
+	cutoffSlider.setBounds((getWidth() / 4) * 3, 30, 55, 55);
+	
 //	cutoffSlider.setBounds(sliderLeft, 260, 20, 20);
-	resonanceSlider.setBounds(sliderLeft, 550, 130, 130);
+	resonanceLabel.setBounds((getWidth() / 4) * 3 + 80 - 10, 0, 80, 55);
+	resonanceSlider.setBounds((getWidth() / 4) * 3 + 80, 30, 55, 55);
 
 	int w = (int)keyboardComponent.getKeyWidth() * (7 * 10 + 5), h = 80;
 	keyboardComponent.setSize(w, h);
@@ -399,12 +407,17 @@ void ThirdYearProjectAudioProcessorEditor::drawSpecFrame(Graphics& g)
 	for (int i = 1; i < audioProcessor.scopeSize; ++i)
 	{
 		auto width = getLocalBounds().getWidth();
-		auto height = getLocalBounds().getHeight() / 2;
+		auto height = getLocalBounds().getHeight() / 4;
 
-		g.drawLine({ (float) jmap(i - 1, 0, audioProcessor.scopeSize - 1, 0, width),
-					  jmap(audioProcessor.scopeData[i - 1], 0.0f, 1.0f, (float)height, 0.0f),
-			  (float) jmap(i,     0, audioProcessor.scopeSize - 1, 0, width),
-					  jmap(audioProcessor.scopeData[i],     0.0f, 1.0f, (float)height, 0.0f) });
+		Line<float> *line = new Line<float>((float)jmap(i - 1, 0, audioProcessor.scopeSize - 1, 0, width),
+												  jmap(audioProcessor.scopeData[i - 1], 0.0f, 1.0f, (float)height, 0.0f),
+										   (float)jmap(i, 0, audioProcessor.scopeSize - 1, 0, width),
+												  jmap(audioProcessor.scopeData[i], 0.0f, 1.0f, (float)height, 0.0f));
+
+		AffineTransform transform = AffineTransform::translation((float)0, (float)height * 2 + 100);
+		line->applyTransform(transform);
+		g.drawLine(*line);
+
 	}
 }
 

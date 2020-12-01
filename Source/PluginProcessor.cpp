@@ -322,15 +322,17 @@ void ThirdYearProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buf
     dsp::AudioBlock<float> block(buffer);
     updateFilter();
     lowPassFilter.process(dsp::ProcessContextReplacing<float>(block));
-
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
+    
+    for (int channel = 0; channel < totalNumOutputChannels; ++channel)
     {
-        auto* channelData = buffer.getWritePointer (channel);
+        auto* channelData = buffer.getReadPointer (channel);
 
-        for (auto i = 0; i < buffer.getNumSamples(); ++i)
+        for (auto i = 0; i < buffer.getNumSamples(); ++i) {
             pushNextSampleIntoFifo(channelData[i]);
+        }
         // ..do something to the data...
     }
+
 }
 
 //==============================================================================
