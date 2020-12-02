@@ -13,19 +13,46 @@
 ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (ThirdYearProjectAudioProcessor& p)
 	: AudioProcessorEditor (&p), audioProcessor (p), keyboardComponent(keyboardState, MidiKeyboardComponent::horizontalKeyboard)
 {
+
 	// Make sure that before the constructor has finished, you've set the
 	// editor's size to whatever you need it to be.
 	setSize (1600, 800);
 
-	startTimerHz(30);
+	myImage = ImageFileFormat::loadFrom(File("C:/Users/hamis/Documents/3rd Year Project/3rd-Year-Project/Assets/BG-01.png"));
+
+	startTimerHz(15);
+
+	// Keyboard
+	addAndMakeVisible(keyboardComponent);
+	keyboardState.addListener(this);
+	keyboardComponent.setAvailableRange(0, 127);
+
+	specWidth = getLocalBounds().getWidth();
+	specHeight = getLocalBounds().getHeight() / 4;
+
+	addAndMakeVisible(algoLabel);
+	algoLabel.setFont(algoFont);
+
+	// add items to the combo-box
+	addAndMakeVisible(algoMenu);
+	algoMenu.addItem("op1(op2(op3(op4)))", 1);
+	algoMenu.addItem("op1(op2(op3 + op4))", 2);
+	algoMenu.addItem("op1(op2 + op3 + op4)", 3);
+	algoMenu.addItem("op1 + op2 + op3 + op4", 4);
+
+	algoLabel.attachToComponent(&algoMenu, false);
+	algoMenu.setSelectedId(1);
+
+	algoMenuAttachment = new AudioProcessorValueTreeState::ComboBoxAttachment(audioProcessor.apvt, "ALGO", algoMenu);
+
 
 	// Mod Index Sliders
-
 	// Adding slider
 	addAndMakeVisible(op1ModIndexSlider);
 	op1ModIndexSlider.setRange(0, 12);
 	op1ModIndexSlider.setTextValueSuffix("x");
 	op1ModIndexSlider.addListener(this);
+	op1ModIndexSlider.setColour(Slider::ColourIds::backgroundColourId, Colour(0, 74, 97));
 	//op1ModIndexSlider.setSliderStyle(juce::Slider::LinearBarVertical);
 	// Adding label
 	addAndMakeVisible(op1ModIndexLabel);
@@ -38,6 +65,7 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	op2ModIndexSlider.setRange(0, 12);
 	op2ModIndexSlider.setTextValueSuffix("x");
 	op2ModIndexSlider.addListener(this);
+	op2ModIndexSlider.setColour(Slider::ColourIds::backgroundColourId, Colour(0, 74, 97));
 	// Adding label
 	addAndMakeVisible(op2ModIndexLabel);
 	op2ModIndexLabel.setText("Op2 Mod Index", juce::dontSendNotification);
@@ -49,6 +77,7 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	op3ModIndexSlider.setRange(0, 12);
 	op3ModIndexSlider.setTextValueSuffix("x");
 	op3ModIndexSlider.addListener(this);
+	op3ModIndexSlider.setColour(Slider::ColourIds::backgroundColourId, Colour(0, 74, 97));
 	// Adding label
 	addAndMakeVisible(op3ModIndexLabel);
 	op3ModIndexLabel.setText("Op3 Mod Index", juce::dontSendNotification);
@@ -60,6 +89,7 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	op4ModIndexSlider.setRange(0, 12);
 	op4ModIndexSlider.setTextValueSuffix("x");
 	op4ModIndexSlider.addListener(this);
+	op4ModIndexSlider.setColour(Slider::ColourIds::backgroundColourId, Colour(0, 74, 97));
 	// Adding label
 	addAndMakeVisible(op4ModIndexLabel);
 	op4ModIndexLabel.setText("Op4 Mod Index", juce::dontSendNotification);
@@ -73,6 +103,7 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	op1LevelSlider.setRange(0, 12);
 	op1LevelSlider.setTextValueSuffix("x");
 	op1LevelSlider.addListener(this);
+	op1LevelSlider.setColour(Slider::ColourIds::backgroundColourId, Colour(0, 74, 97));
 	// Adding label
 	addAndMakeVisible(op1LevelLabel);
 	op1LevelLabel.setText("OP1 Level", juce::dontSendNotification);
@@ -84,6 +115,7 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	op2LevelSlider.setRange(0, 12);
 	op2LevelSlider.setTextValueSuffix("x");
 	op2LevelSlider.addListener(this);
+	op2LevelSlider.setColour(Slider::ColourIds::backgroundColourId, Colour(0, 74, 97));
 	// Adding label
 	addAndMakeVisible(op2LevelLabel);
 	op2LevelLabel.setText("OP2 Level", juce::dontSendNotification);
@@ -95,6 +127,7 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	op3LevelSlider.setRange(0, 12);
 	op3LevelSlider.setTextValueSuffix("x");
 	op3LevelSlider.addListener(this);
+	op3LevelSlider.setColour(Slider::ColourIds::backgroundColourId, Colour(0, 74, 97));
 	// Adding label
 	addAndMakeVisible(op3LevelLabel);
 	op3LevelLabel.setText("OP3 Level", juce::dontSendNotification);
@@ -106,16 +139,12 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	op4LevelSlider.setRange(0, 12);
 	op4LevelSlider.setTextValueSuffix("x");
 	op4LevelSlider.addListener(this);
+	op4LevelSlider.setColour(Slider::ColourIds::backgroundColourId, Colour(0, 74, 97));
 	// Adding label
 	addAndMakeVisible(op4LevelLabel);
 	op4LevelLabel.setText("OP4 Level", juce::dontSendNotification);
 	op4LevelLabel.attachToComponent(&op4LevelSlider, true);
 	op4LevelSliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.apvt, "OP4LEVEL", op4LevelSlider);
-
-	// Keyboard
-	addAndMakeVisible(keyboardComponent);
-	keyboardState.addListener(this);
-	keyboardComponent.setAvailableRange(0, 127);
 
 	// op1 ADSR
 	// Adding slider
@@ -123,6 +152,7 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	op1AttackSlider.setRange(0, 12);
 	op1AttackSlider.setTextValueSuffix("s");
 	op1AttackSlider.addListener(this);
+	op1AttackSlider.setColour(Slider::ColourIds::backgroundColourId, Colour(0, 74, 97));
 	// Adding label
 	addAndMakeVisible(op1AttackLabel);
 	op1AttackLabel.setText("Op1 Attack", juce::dontSendNotification);
@@ -133,6 +163,7 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	op1DecaySlider.setRange(0, 12);
 	op1DecaySlider.setTextValueSuffix("s");
 	op1DecaySlider.addListener(this);
+	op1DecaySlider.setColour(Slider::ColourIds::backgroundColourId, Colour(0, 74, 97));
 	// Adding label
 	addAndMakeVisible(op1DecayLabel);
 	op1DecayLabel.setText("Op1 Decay", juce::dontSendNotification);
@@ -143,6 +174,7 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	op1SustainSlider.setRange(0, 12);
 	op1SustainSlider.setTextValueSuffix("dB");
 	op1SustainSlider.addListener(this);
+	op1SustainSlider.setColour(Slider::ColourIds::backgroundColourId, Colour(0, 74, 97));
 	// Adding label
 	addAndMakeVisible(op1SustainLabel);
 	op1SustainLabel.setText("Op1 Sustain", juce::dontSendNotification);
@@ -153,6 +185,7 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	op1ReleaseSlider.setRange(0, 12);
 	op1ReleaseSlider.setTextValueSuffix("s");
 	op1ReleaseSlider.addListener(this);
+	op1ReleaseSlider.setColour(Slider::ColourIds::backgroundColourId, Colour(0, 74, 97));
 	// Adding label
 	addAndMakeVisible(op1ReleaseLabel);
 	op1ReleaseLabel.setText("Op1 Release", juce::dontSendNotification);
@@ -165,6 +198,7 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	op2AttackSlider.setRange(0, 12);
 	op2AttackSlider.setTextValueSuffix("s");
 	op2AttackSlider.addListener(this);
+	op2AttackSlider.setColour(Slider::ColourIds::backgroundColourId, Colour(0, 74, 97));
 	// Adding label
 	addAndMakeVisible(op2AttackLabel);
 	op2AttackLabel.setText("Op2 Attack", juce::dontSendNotification);
@@ -175,6 +209,7 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	op2DecaySlider.setRange(0, 12);
 	op2DecaySlider.setTextValueSuffix("s");
 	op2DecaySlider.addListener(this);
+	op2DecaySlider.setColour(Slider::ColourIds::backgroundColourId, Colour(0, 74, 97));
 	// Adding label
 	addAndMakeVisible(op2DecayLabel);
 	op2DecayLabel.setText("Op2 Decay", juce::dontSendNotification);
@@ -185,6 +220,7 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	op2SustainSlider.setRange(0, 12);
 	op2SustainSlider.setTextValueSuffix("dB");
 	op2SustainSlider.addListener(this);
+	op2SustainSlider.setColour(Slider::ColourIds::backgroundColourId, Colour(0, 74, 97));
 	// Adding label
 	addAndMakeVisible(op2SustainLabel);
 	op2SustainLabel.setText("Op2 Sustain", juce::dontSendNotification);
@@ -195,6 +231,7 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	op2ReleaseSlider.setRange(0, 12);
 	op2ReleaseSlider.setTextValueSuffix("s");
 	op2ReleaseSlider.addListener(this);
+	op2ReleaseSlider.setColour(Slider::ColourIds::backgroundColourId, Colour(0, 74, 97));
 	// Adding label
 	addAndMakeVisible(op2ReleaseLabel);
 	op2ReleaseLabel.setText("Op2 Release", juce::dontSendNotification);
@@ -207,6 +244,7 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	op3AttackSlider.setRange(0, 12);
 	op3AttackSlider.setTextValueSuffix("s");
 	op3AttackSlider.addListener(this);
+	op3AttackSlider.setColour(Slider::ColourIds::backgroundColourId, Colour(0, 74, 97));
 	// Adding label
 	addAndMakeVisible(op3AttackLabel);
 	op3AttackLabel.setText("Op3 Attack", juce::dontSendNotification);
@@ -217,6 +255,7 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	op3DecaySlider.setRange(0, 12);
 	op3DecaySlider.setTextValueSuffix("s");
 	op3DecaySlider.addListener(this);
+	op3DecaySlider.setColour(Slider::ColourIds::backgroundColourId, Colour(0, 74, 97));
 	// Adding label
 	addAndMakeVisible(op3DecayLabel);
 	op3DecayLabel.setText("Op3 Decay", juce::dontSendNotification);
@@ -227,6 +266,7 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	op3SustainSlider.setRange(0, 12);
 	op3SustainSlider.setTextValueSuffix("dB");
 	op3SustainSlider.addListener(this);
+	op3SustainSlider.setColour(Slider::ColourIds::backgroundColourId, Colour(0, 74, 97));
 	// Adding label
 	addAndMakeVisible(op3SustainLabel);
 	op3SustainLabel.setText("Op3 Sustain", juce::dontSendNotification);
@@ -237,6 +277,7 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	op3ReleaseSlider.setRange(0, 12);
 	op3ReleaseSlider.setTextValueSuffix("s");
 	op3ReleaseSlider.addListener(this);
+	op3ReleaseSlider.setColour(Slider::ColourIds::backgroundColourId, Colour(0, 74, 97));
 	// Adding label
 	addAndMakeVisible(op3ReleaseLabel);
 	op3ReleaseLabel.setText("Op3 Release", juce::dontSendNotification);
@@ -249,6 +290,7 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	op4AttackSlider.setRange(0, 12);
 	op4AttackSlider.setTextValueSuffix("s");
 	op4AttackSlider.addListener(this);
+	op4AttackSlider.setColour(Slider::ColourIds::backgroundColourId, Colour(0, 74, 97));
 	// Adding label
 	addAndMakeVisible(op4AttackLabel);
 	op4AttackLabel.setText("Op4 Attack", juce::dontSendNotification);
@@ -259,6 +301,7 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	op4DecaySlider.setRange(0, 12);
 	op4DecaySlider.setTextValueSuffix("s");
 	op4DecaySlider.addListener(this);
+	op4DecaySlider.setColour(Slider::ColourIds::backgroundColourId, Colour(0, 74, 97));
 	// Adding label
 	addAndMakeVisible(op4DecayLabel);
 	op4DecayLabel.setText("Op4 Decay", juce::dontSendNotification);
@@ -269,6 +312,7 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	op4SustainSlider.setRange(0, 12);
 	op4SustainSlider.setTextValueSuffix("dB");
 	op4SustainSlider.addListener(this);
+	op4SustainSlider.setColour(Slider::ColourIds::backgroundColourId, Colour(0, 74, 97));
 	// Adding label
 	addAndMakeVisible(op4SustainLabel);
 	op4SustainLabel.setText("Op4 Sustain", juce::dontSendNotification);
@@ -279,14 +323,12 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	op4ReleaseSlider.setRange(0, 12);
 	op4ReleaseSlider.setTextValueSuffix("s");
 	op4ReleaseSlider.addListener(this);
+	op4ReleaseSlider.setColour(Slider::ColourIds::backgroundColourId, Colour(0, 74, 97));
 	// Adding label
 	addAndMakeVisible(op4ReleaseLabel);
 	op4ReleaseLabel.setText("Op4 Release", juce::dontSendNotification);
 	op4ReleaseLabel.attachToComponent(&op4ReleaseSlider, true);
 	op4ReleaseSliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.apvt, "OP4RELEASE", op4ReleaseSlider);
-
-
-
 
 
 	// Filter
@@ -327,7 +369,9 @@ ThirdYearProjectAudioProcessorEditor::~ThirdYearProjectAudioProcessorEditor()
 void ThirdYearProjectAudioProcessorEditor::paint (juce::Graphics& g)
 {
 	// (Our component is opaque, so we must completely fill the background with a solid colour)
-	g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
+	g.fillAll ();
+
+	g.drawImageAt(myImage, 0, 0);
 
 	g.setColour (juce::Colours::white);
 	g.setFont (15.0f);
@@ -339,8 +383,10 @@ void ThirdYearProjectAudioProcessorEditor::resized()
 {
 	// This is generally where you'll want to lay out the positions of any
 	// subcomponents in your editor..
-
 	auto sliderLeft = 120;
+
+	algoMenu.setBounds(sliderLeft, 340, getWidth() / 8, 20);
+	
 	op1LevelSlider.setBounds(sliderLeft, 20, getWidth() / 4, 20);
 	op1ModIndexSlider.setBounds(sliderLeft, 40, getWidth() / 4, 20);
 
@@ -384,41 +430,29 @@ void ThirdYearProjectAudioProcessorEditor::resized()
 	resonanceLabel.setBounds((getWidth() / 4) * 3 + 80 - 10, 0, 80, 55);
 	resonanceSlider.setBounds((getWidth() / 4) * 3 + 80, 30, 55, 55);
 
-	int w = (int)keyboardComponent.getKeyWidth() * (7 * 10 + 5), h = 80;
+	int w = (int)keyboardComponent.getKeyWidth() * (7 * 10 + 5), h = 120;
 	keyboardComponent.setSize(w, h);
-	keyboardComponent.setCentrePosition(getWidth() / 2, getHeight() - 40);
+	keyboardComponent.setCentrePosition(getWidth() / 2, getHeight() - 60);
 }
-
-void ThirdYearProjectAudioProcessorEditor::sliderValueChanged(Slider* slider) {
-	//if (slider == &modIndexSlider) {
-   //     audioProcessor.modIndex = modIndexSlider.getValue();
- //   }
-//	if (slider == &op1LevelSlider) {
-//		audioProcessor.op1Level = op1LevelSlider.getValue();
-//	}
-//	if (slider == &op2LevelSlider) {
-//		audioProcessor.op2Level = op2LevelSlider.getValue();
-//	}
-
-} 
 
 void ThirdYearProjectAudioProcessorEditor::drawSpecFrame(Graphics& g)
 {
+
+	AffineTransform transform = AffineTransform::translation((float)0, (float)specHeight + 150);
 	for (int i = 1; i < audioProcessor.scopeSize; ++i)
 	{
-		auto width = getLocalBounds().getWidth();
-		auto height = getLocalBounds().getHeight() / 4;
+		Line<float> line ((float)jmap(i - 1, 0, audioProcessor.scopeSize - 1, 0, specWidth),
+												  jmap(audioProcessor.scopeData[i - 1], 0.0f, 1.0f, (float)(specHeight * 1.5), 0.0f),
+										   (float)jmap(i, 0, audioProcessor.scopeSize - 1, 0, specWidth),
+												  jmap(audioProcessor.scopeData[i], 0.0f, 1.0f, (float)(specHeight * 1.5), 0.0f));
 
-		Line<float> *line = new Line<float>((float)jmap(i - 1, 0, audioProcessor.scopeSize - 1, 0, width),
-												  jmap(audioProcessor.scopeData[i - 1], 0.0f, 1.0f, (float)height, 0.0f),
-										   (float)jmap(i, 0, audioProcessor.scopeSize - 1, 0, width),
-												  jmap(audioProcessor.scopeData[i], 0.0f, 1.0f, (float)height, 0.0f));
-
-		AffineTransform transform = AffineTransform::translation((float)0, (float)height * 2 + 100);
-		line->applyTransform(transform);
-		g.drawLine(*line);
-
+		line.applyTransform(transform);
+		g.drawLine(line);
 	}
+}
+
+void ThirdYearProjectAudioProcessorEditor::sliderValueChanged(Slider* slider) {
+
 }
 
 void ThirdYearProjectAudioProcessorEditor::handleNoteOn(juce::MidiKeyboardState*, int midiChannel, int midiNoteNumber, float velocity)

@@ -88,14 +88,17 @@ ThirdYearProjectAudioProcessor::ThirdYearProjectAudioProcessor()
     // Filter
     NormalisableRange<float> cutoffRange(0.1, 20000);
 	apvt.createAndAddParameter("CUTOFF", "CUTOFF", "CUTOFF", cutoffRange, 20000.0f, nullptr, nullptr);
-	NormalisableRange<float> resonanceRange(0.1,100);
+	NormalisableRange<float> resonanceRange(0.1,1);
 	apvt.createAndAddParameter("RESONANCE", "RESONANCE", "RESONANCE", resonanceRange, 1.0f, nullptr, nullptr);
+
+    NormalisableRange<float> algoRange(1, 4);
+    apvt.createAndAddParameter("ALGO", "ALGO", "ALGO", algoRange, 1.0f, nullptr, nullptr);
 
     apvt.state = ValueTree("apvt");
 
     mySynth.clearVoices();
     // Create 5 voices.
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 10; i++) {
         mySynth.addVoice(new SynthVoice());
     }
     // Tidy up unwanted sounds.
@@ -270,7 +273,6 @@ void ThirdYearProjectAudioProcessor::drawNextFrameOfSpectrum()
         scopeData[i] = currentLevel;
     }
 
-
 }
 
 void ThirdYearProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
@@ -294,6 +296,8 @@ void ThirdYearProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buf
             myVoice->setOp2Adsr((float*)apvt.getRawParameterValue("OP2ATTACK"), (float*)apvt.getRawParameterValue("OP2DECAY"), (float*)apvt.getRawParameterValue("OP2SUSTAIN"), (float*)apvt.getRawParameterValue("OP2RELEASE"));
             myVoice->setOp3Adsr((float*)apvt.getRawParameterValue("OP3ATTACK"), (float*)apvt.getRawParameterValue("OP3DECAY"), (float*)apvt.getRawParameterValue("OP3SUSTAIN"), (float*)apvt.getRawParameterValue("OP3RELEASE"));
             myVoice->setOp4Adsr((float*)apvt.getRawParameterValue("OP4ATTACK"), (float*)apvt.getRawParameterValue("OP4DECAY"), (float*)apvt.getRawParameterValue("OP4SUSTAIN"), (float*)apvt.getRawParameterValue("OP4RELEASE"));
+            
+            myVoice->setAlgo((float*)apvt.getRawParameterValue("ALGO"));
         }
     }
 
@@ -328,6 +332,7 @@ void ThirdYearProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buf
         auto* channelData = buffer.getReadPointer (channel);
 
         for (auto i = 0; i < buffer.getNumSamples(); ++i) {
+
             pushNextSampleIntoFifo(channelData[i]);
         }
         // ..do something to the data...

@@ -93,6 +93,10 @@ public:
         op4Adsr.setSampleRate(sampleRate);
     }
 
+    void setAlgo(float* algo) {
+        algorithm = (int) *algo;
+    }
+
     //===============================================//
 
     void startNote(int midiNoteNumber, float velocity, SynthesiserSound* sound, int currentPitchWheelPosition) {
@@ -151,7 +155,7 @@ public:
                 // Check theres samples left.
                 while (--numSamples >= 0) {
                     // Calculate sample value.
-                    auto currentSample = op1Adsr.getNextSample() * fmOSC(1, fmTable, angleDelta, &op1Adsr, &op2Adsr, &op3Adsr, &op4Adsr) * level;
+                    auto currentSample = op1Adsr.getNextSample() * fmOSC(algorithm, fmTable, angleDelta, &op1Adsr, &op2Adsr, &op3Adsr, &op4Adsr) * level;
                     // Add sample to outputBuffer
                     for (auto i = outputBuffer.getNumChannels(); --i >= 0;) {
                         outputBuffer.addSample(i, startSample, currentSample);
@@ -175,7 +179,7 @@ public:
             else {
                 while (--numSamples >= 0) {
 
-                    auto currentSample = op1Adsr.getNextSample() * fmOSC(1, fmTable, angleDelta, &op1Adsr, &op2Adsr, &op3Adsr, &op4Adsr) * level;
+                    auto currentSample = op1Adsr.getNextSample() * fmOSC(algorithm, fmTable, angleDelta, &op1Adsr, &op2Adsr, &op3Adsr, &op4Adsr) * level;
                     //auto currentSample = (float)(std::sin(fmTable[0][0] + (float)std::sin(fmTable[0][1]) * fmTable[1][1]) * fmTable[1][0]);
 
                     for (auto i = outputBuffer.getNumChannels(); --i >= 0;) {
@@ -191,6 +195,8 @@ public:
     }
     
 private:
+    int algorithm;
+
     double frequency;
 
     double modIndex = 3.2;

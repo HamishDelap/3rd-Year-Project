@@ -42,6 +42,16 @@ private:
 
     bool isAddingFromMidiInput = false;
 
+	int specWidth;
+	int specHeight;
+
+	juce::Image myImage;
+
+	juce::Label algoLabel{ {}, "Algorithm" };
+	juce::Font algoFont{ 12.0f };
+	juce::ComboBox algoMenu;
+	ScopedPointer<AudioProcessorValueTreeState::ComboBoxAttachment> algoMenuAttachment;
+
     // Mod Index Sliders
     juce::Slider op1ModIndexSlider;
     juce::Label op1ModIndexLabel;
