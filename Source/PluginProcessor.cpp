@@ -8,6 +8,7 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "Oscillator.h"
 
 //==============================================================================
 ThirdYearProjectAudioProcessor::ThirdYearProjectAudioProcessor()
@@ -95,6 +96,8 @@ ThirdYearProjectAudioProcessor::ThirdYearProjectAudioProcessor()
     apvt.createAndAddParameter("ALGO", "ALGO", "ALGO", algoRange, 1.0f, nullptr, nullptr);
 
     apvt.state = ValueTree("apvt");
+
+    lfo = new Oscillator(lastSampleRate, 1);
 
     mySynth.clearVoices();
     // Create 5 voices.
@@ -326,6 +329,8 @@ void ThirdYearProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buf
     dsp::AudioBlock<float> block(buffer);
     updateFilter();
     lowPassFilter.process(dsp::ProcessContextReplacing<float>(block));
+
+    //block.multiplyBy(lfo->oscCycle((double) 2.0, (double) 10 ));
     
     for (int channel = 0; channel < totalNumOutputChannels; ++channel)
     {

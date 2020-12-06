@@ -91,6 +91,7 @@ private:
     float fftData[2 * fftSize];
     int fifoIndex = 0;
 
+    Oscillator *lfo;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ThirdYearProjectAudioProcessor)

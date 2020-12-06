@@ -12,6 +12,7 @@
 
 #include <../JuceLibraryCode/JuceHeader.h>
 #include "SynthSound.h"
+#include "FMOscillator.h"
 #include "Oscillator.h"
 
 using namespace juce;
