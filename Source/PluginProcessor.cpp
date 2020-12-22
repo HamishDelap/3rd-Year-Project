@@ -46,7 +46,7 @@ ThirdYearProjectAudioProcessor::ThirdYearProjectAudioProcessor()
 	apvt.createAndAddParameter("OP4LEVEL", "OP4LEVEL", "OP4LEVEL", op4LevelRange, 0.0f, nullptr, nullptr);
 
     // OP1 Envelope
-	NormalisableRange<float> op1AttackRange(0, 3);
+	NormalisableRange<float> op1AttackRange(0, 6);
 	apvt.createAndAddParameter("OP1ATTACK", "OP1ATTACK", "OP1ATTACK", op1AttackRange, 0.2f, nullptr, nullptr);
 	NormalisableRange<float> op1DecayRange(0, 3);
 	apvt.createAndAddParameter("OP1DECAY", "OP1DECAY", "OP1DECAY", op1DecayRange, 0.0f, nullptr, nullptr);
@@ -56,7 +56,7 @@ ThirdYearProjectAudioProcessor::ThirdYearProjectAudioProcessor()
 	apvt.createAndAddParameter("OP1RELEASE", "OP1RELEASE", "OP1RELEASE", op1ReleaseRange, 0.5f, nullptr, nullptr);
    
     // OP2 Envelope
-    NormalisableRange<float> op2AttackRange(0, 3);
+    NormalisableRange<float> op2AttackRange(0, 6);
     apvt.createAndAddParameter("OP2ATTACK", "OP2ATTACK", "OP2ATTACK", op2AttackRange, 0.0f, nullptr, nullptr);
     NormalisableRange<float> op2DecayRange(0, 3);
     apvt.createAndAddParameter("OP2DECAY", "OP2DECAY", "OP2DECAY", op2DecayRange, 0.0f, nullptr, nullptr);
@@ -66,7 +66,7 @@ ThirdYearProjectAudioProcessor::ThirdYearProjectAudioProcessor()
     apvt.createAndAddParameter("OP2RELEASE", "OP2RELEASE", "OP2RELEASE", op2ReleaseRange, 0.0f, nullptr, nullptr);
 
     // OP3 Envelope
-    NormalisableRange<float> op3AttackRange(0, 3);
+    NormalisableRange<float> op3AttackRange(0, 6);
     apvt.createAndAddParameter("OP3ATTACK", "OP3ATTACK", "OP3ATTACK", op3AttackRange, 0.0f, nullptr, nullptr);
     NormalisableRange<float> op3DecayRange(0, 3);
     apvt.createAndAddParameter("OP3DECAY", "OP3DECAY", "OP3DECAY", op3DecayRange, 0.0f, nullptr, nullptr);
@@ -76,7 +76,7 @@ ThirdYearProjectAudioProcessor::ThirdYearProjectAudioProcessor()
     apvt.createAndAddParameter("OP3RELEASE", "OP3RELEASE", "OP3RELEASE", op3ReleaseRange, 0.0f, nullptr, nullptr);
 
     // OP4 Envelope
-    NormalisableRange<float> op4AttackRange(0, 3);
+    NormalisableRange<float> op4AttackRange(0, 6);
     apvt.createAndAddParameter("OP4ATTACK", "OP4ATTACK", "OP4ATTACK", op4AttackRange, 0.0f, nullptr, nullptr);
     NormalisableRange<float> op4DecayRange(0, 3);
     apvt.createAndAddParameter("OP4DECAY", "OP4DECAY", "OP4DECAY", op4DecayRange, 0.0f, nullptr, nullptr);
@@ -193,7 +193,6 @@ void ThirdYearProjectAudioProcessor::prepareToPlay (double sampleRate, int sampl
     ignoreUnused(samplesPerBlock);
 
     lastSampleRate = sampleRate;
-    lfo = new Oscillator(lastSampleRate, 1);
 
     mySynth.setCurrentPlaybackSampleRate(lastSampleRate);
 
@@ -340,11 +339,6 @@ void ThirdYearProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buf
     dsp::AudioBlock<float> block(buffer);
     updateFilter();
     lowPassFilter.process(dsp::ProcessContextReplacing<float>(block));
-
-    //block.multiplyBy(lfo->oscCycle((double) 2.0, (double) 10 ));
-    float val = lfo->oscCycle((double)2.0, (double)100);
-    
-    DBG(val);
     
     for (int channel = 0; channel < totalNumOutputChannels; ++channel)
     {

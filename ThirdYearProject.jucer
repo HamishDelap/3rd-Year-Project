@@ -15,10 +15,9 @@
       <FILE id="SySk6Z" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
       <FILE id="YFjwHh" name="SynthSound.h" compile="0" resource="0" file="Source/SynthSound.h"/>
       <FILE id="Ylt10v" name="SynthVoice.h" compile="0" resource="0" file="Source/SynthVoice.h"/>
-      <FILE id="VDfrNS" name="FMOscillator.cpp" compile="1" resource="0"
-            file="Source/FMOscillator.cpp"/>
       <FILE id="CK28ql" name="FMOscillator.h" compile="0" resource="0" file="Source/FMOscillator.h"/>
       <FILE id="I2orDb" name="Oscillator.cpp" compile="1" resource="0" file="Source/Oscillator.cpp"/>
+      <FILE id="Cx5tSw" name="Operator.h" compile="0" resource="0" file="Source/Operator.h"/>
       <FILE id="wUxiyE" name="Oscillator.h" compile="0" resource="0" file="Source/Oscillator.h"/>
     </GROUP>
   </MAINGROUP>

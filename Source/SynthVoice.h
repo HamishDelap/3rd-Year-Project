@@ -95,10 +95,10 @@ public:
     }
 
     void setADSRSampleRate (double sampleRate) {
-        op1Adsr.setSampleRate(sampleRate);
-        op2Adsr.setSampleRate(sampleRate);
-        op3Adsr.setSampleRate(sampleRate);
-        op4Adsr.setSampleRate(sampleRate);
+        op1Adsr->setSampleRate(sampleRate);
+        op2Adsr->setSampleRate(sampleRate);
+        op3Adsr->setSampleRate(sampleRate);
+        op4Adsr->setSampleRate(sampleRate);
     }
 
     void setAlgo(float* algo) {
@@ -108,6 +108,9 @@ public:
     //===============================================//
 
     void startNote(int midiNoteNumber, float velocity, SynthesiserSound* sound, int currentPitchWheelPosition) {
+        // Create FM Oscillator for the voice.
+        fmosc.reset(new FMOscillator(algorithm, op1Adsr, op2Adsr, op3Adsr, op4Adsr, 1, 1, 1, 1, getSampleRate()));
+
         // Calculate frequency of the note in Hz.
         frequency = MidiMessage::getMidiNoteInHertz(midiNoteNumber);
         DBG("midiNoteNumber");
@@ -119,11 +122,11 @@ public:
 
         angleDelta = cyclesPerSample * 2.0 * MathConstants<double>::pi;
 
-        op1Adsr.noteOn();
-        op2Adsr.noteOn();
-        op3Adsr.noteOn();
-        op4Adsr.noteOn();
-        modAdsr.noteOn();
+        op1Adsr->noteOn();
+        op2Adsr->noteOn();
+        op3Adsr->noteOn();
+        op4Adsr->noteOn();
+        modAdsr->noteOn();
     }
 
     //===============================================//
@@ -138,11 +141,11 @@ public:
             clearCurrentNote();
             angleDelta = 0.0;
         }
-        op1Adsr.noteOff();
-        op2Adsr.noteOff();
-        op3Adsr.noteOff();
-        op4Adsr.noteOff();
-        modAdsr.noteOff();
+        op1Adsr->noteOff();
+        op2Adsr->noteOff();
+        op3Adsr->noteOff();
+        op4Adsr->noteOff();
+        modAdsr->noteOff();
     }
 
     void pitchWheelMoved(int newPitchWheelValue) {
@@ -154,11 +157,11 @@ public:
     }
 
     void renderNextBlock(AudioBuffer< float >& outputBuffer, int startSample, int numSamples) {
-        op1Adsr.setParameters(op1AdsrParams);
-        op2Adsr.setParameters(op2AdsrParams);
-        op3Adsr.setParameters(op3AdsrParams);
-        op4Adsr.setParameters(op4AdsrParams);
-        modAdsr.setParameters(modAdsrParams);
+        op1Adsr->setParameters(op1AdsrParams);
+        op2Adsr->setParameters(op2AdsrParams);
+        op3Adsr->setParameters(op3AdsrParams);
+        op4Adsr->setParameters(op4AdsrParams);
+        modAdsr->setParameters(modAdsrParams);
         
         // Written using JUCE midi synthesizer tutorial.
         if (angleDelta != 0.0) {
@@ -167,7 +170,7 @@ public:
                 // Check theres samples left.
                 while (--numSamples >= 0) {
                     // Calculate sample value.
-                    auto currentSample = fmOSC(algorithm, fmTable, angleDelta, &op1Adsr, &op2Adsr, &op3Adsr, &op4Adsr) * level;
+                    auto currentSample = fmosc->oscStep(fmTable, angleDelta) * level;
                     // Add sample to outputBuffer
                     for (auto i = outputBuffer.getNumChannels(); --i >= 0;) {
                         outputBuffer.addSample(i, startSample, currentSample);
@@ -179,7 +182,7 @@ public:
                     // Increment start sample;
                     ++startSample;
 
-                    tailOff *= 0.9999;
+                    tailOff *= 0.99999;
 
                     if (tailOff <= 0.005) {
                         clearCurrentNote();
@@ -191,7 +194,7 @@ public:
             else {
                 while (--numSamples >= 0) {
 
-                    auto currentSample = op1Adsr.getNextSample() * fmOSC(algorithm, fmTable, angleDelta, &op1Adsr, &op2Adsr, &op3Adsr, &op4Adsr) * level;
+                    auto currentSample = fmosc->oscStep(fmTable, angleDelta) * level;
                     //auto currentSample = (float)(std::sin(fmTable[0][0] + (float)std::sin(fmTable[0][1]) * fmTable[1][1]) * fmTable[1][0]);
 
                     for (auto i = outputBuffer.getNumChannels(); --i >= 0;) {
@@ -207,6 +210,8 @@ public:
     }
     
 private:
+    std::unique_ptr <FMOscillator> fmosc;
+
     int algorithm;
 
     double frequency;
@@ -219,18 +224,18 @@ private:
     double level = 0.0;
     double tailOff = 0.0;
 
-    ADSR op1Adsr;
+    std::shared_ptr<ADSR> op1Adsr = std::shared_ptr<ADSR>(new ADSR());
     ADSR::Parameters op1AdsrParams;
 
-    ADSR op2Adsr;
+    std::shared_ptr<ADSR> op2Adsr = std::shared_ptr<ADSR>(new ADSR());
     ADSR::Parameters op2AdsrParams;
 
-    ADSR op3Adsr;
+    std::shared_ptr<ADSR> op3Adsr = std::shared_ptr<ADSR>(new ADSR());
     ADSR::Parameters op3AdsrParams;
 
-    ADSR op4Adsr;
+    std::shared_ptr<ADSR> op4Adsr = std::shared_ptr<ADSR>(new ADSR());
     ADSR::Parameters op4AdsrParams;
 
-    ADSR modAdsr;
+    std::shared_ptr<ADSR> modAdsr = std::shared_ptr<ADSR>(new ADSR());
     ADSR::Parameters modAdsrParams;
 };
