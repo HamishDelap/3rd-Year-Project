@@ -73,6 +73,8 @@ public:
     bool nextFFTBlockReady = false;
     float scopeData[scopeSize];
 
+    MidiKeyboardState keyboardState;
+
 private:
     Synthesiser mySynth;
     SynthVoice* myVoice;

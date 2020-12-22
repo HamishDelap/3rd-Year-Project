@@ -12,7 +12,7 @@
 
 //==============================================================================
 ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (ThirdYearProjectAudioProcessor& p)
-	: AudioProcessorEditor (&p), audioProcessor (p), keyboardComponent(keyboardState, MidiKeyboardComponent::horizontalKeyboard)
+	: AudioProcessorEditor (&p), audioProcessor (p), keyboardComponent(audioProcessor.keyboardState, MidiKeyboardComponent::horizontalKeyboard)
 {
 
 	// Make sure that before the constructor has finished, you've set the
@@ -25,7 +25,7 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 
 	// Keyboard
 	addAndMakeVisible(keyboardComponent);
-	keyboardState.addListener(this);
+	audioProcessor.keyboardState.addListener(this);
 	keyboardComponent.setAvailableRange(0, 127);
 
 	specWidth = getLocalBounds().getWidth();
@@ -283,6 +283,43 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	op4ReleaseSlider.setTextBoxStyle(noDisplay, false, 1, 1);
 	op4ReleaseSliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.apvt, "OP4RELEASE", op4ReleaseSlider);
 
+	// mod ADSR
+// Adding slider
+	addAndMakeVisible(modAttackSlider);
+	modAttackSlider.setRange(0, 12);
+	modAttackSlider.setTextValueSuffix("s");
+	modAttackSlider.addListener(this);
+	modAttackSlider.setColour(Slider::ColourIds::backgroundColourId, Colour(0, 74, 97));
+	modAttackSlider.setSliderStyle(Slider::SliderStyle::LinearVertical);
+	modAttackSlider.setTextBoxStyle(noDisplay, false, 1, 1);
+	modAttackSliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.apvt, "MODATTACK", modAttackSlider);
+	// Adding slider
+	addAndMakeVisible(modDecaySlider);
+	modDecaySlider.setRange(0, 12);
+	modDecaySlider.setTextValueSuffix("s");
+	modDecaySlider.addListener(this);
+	modDecaySlider.setColour(Slider::ColourIds::backgroundColourId, Colour(0, 74, 97));
+	modDecaySlider.setSliderStyle(Slider::SliderStyle::LinearVertical);
+	modDecaySlider.setTextBoxStyle(noDisplay, false, 1, 1);
+	modDecaySliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.apvt, "MODDECAY", modDecaySlider);
+	// Adding slider
+	addAndMakeVisible(modSustainSlider);
+	modSustainSlider.setRange(0, 12);
+	modSustainSlider.setTextValueSuffix("dB");
+	modSustainSlider.addListener(this);
+	modSustainSlider.setColour(Slider::ColourIds::backgroundColourId, Colour(0, 74, 97));
+	modSustainSlider.setSliderStyle(Slider::SliderStyle::LinearVertical);
+	modSustainSlider.setTextBoxStyle(noDisplay, false, 1, 1);
+	modSustainSliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.apvt, "MODSUSTAIN", modSustainSlider);
+	// Adding slider
+	addAndMakeVisible(modReleaseSlider);
+	modReleaseSlider.setRange(0, 12);
+	modReleaseSlider.setTextValueSuffix("s");
+	modReleaseSlider.addListener(this);
+	modReleaseSlider.setColour(Slider::ColourIds::backgroundColourId, Colour(0, 74, 97));
+	modReleaseSlider.setSliderStyle(Slider::SliderStyle::LinearVertical);
+	modReleaseSlider.setTextBoxStyle(noDisplay, false, 1, 1);
+	modReleaseSliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.apvt, "MODRELEASE", modReleaseSlider);
 
 	// Filter
 	// Adding slider
@@ -360,7 +397,7 @@ void ThirdYearProjectAudioProcessorEditor::resized()
 	op3ReleaseSlider.setBounds(137, secondRow + 140, 20, 95);
 
 	
-	op4LevelSlider.setBounds(secondColumn + 60, secondRow + 140, 20, 95);
+	op4LevelSlider.setBounds(secondColumn + 190, secondRow + 140, 20, 95);
 	op4ModIndexSlider.setBounds(secondColumn + sliderLeft + 142, secondRow + 128, 60, 60);
 
 	op4AttackSlider.setBounds(secondColumn + 60, secondRow + 140, 20, 95);
@@ -368,19 +405,27 @@ void ThirdYearProjectAudioProcessorEditor::resized()
 	op4SustainSlider.setBounds(secondColumn + 111, secondRow + 140, 20, 95);
 	op4ReleaseSlider.setBounds(secondColumn + 137, secondRow + 140, 20, 95);
 
+
+	modAttackSlider.setBounds((getWidth() / 4) * 3 + 10, 230, 20, 95);
+	modDecaySlider.setBounds((getWidth() / 4) * 3 + 25, 230, 20, 95);
+	modSustainSlider.setBounds((getWidth() / 4) * 3 + 40, 230, 20, 95);
+	modReleaseSlider.setBounds((getWidth() / 4) * 3 + 55, 230, 20, 95);
+
+
 	cutoffSlider.setBounds((getWidth() / 4) * 3 + 11, 180, 60, 60);
 
 	resonanceSlider.setBounds((getWidth() / 4) * 3 + 117, 180, 60, 60);
 
-	int w = (int)keyboardComponent.getKeyWidth() * (7 * 10 + 5), h = 80;
+	int w = (int)keyboardComponent.getKeyWidth() * (7 * 10 + 5), h = 100;
 	keyboardComponent.setSize(w, h);
-	keyboardComponent.setCentrePosition(getWidth() / 2, getHeight() - 60);
+	keyboardComponent.setCentrePosition(getWidth() / 2, getHeight() - 50);
 }
 
 void ThirdYearProjectAudioProcessorEditor::drawSpecFrame(Graphics& g)
 {
 
 	AffineTransform transform = AffineTransform::translation((float)0, (float)specHeight + 340);
+
 	for (int i = 1; i < audioProcessor.scopeSize; ++i)
 	{
 		Line<float> line ((float)jmap(i - 1, 0, audioProcessor.scopeSize - 1, 0, specWidth),
@@ -401,6 +446,7 @@ void ThirdYearProjectAudioProcessorEditor::handleNoteOn(juce::MidiKeyboardState*
 {
 	midiChannel = 1;
 	juce::MidiMessage::noteOn(midiChannel, midiNoteNumber, velocity);
+
 }
 
 void ThirdYearProjectAudioProcessorEditor::handleNoteOff(juce::MidiKeyboardState*, int midiChannel, int midiNoteNumber, float /*velocity*/)

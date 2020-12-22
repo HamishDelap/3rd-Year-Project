@@ -87,6 +87,13 @@ public:
         op4AdsrParams.release = *release;
     }
 
+    void setModAdsr(float* attack, float* decay, float* sustain, float* release) {
+        modAdsrParams.attack = *attack;
+        modAdsrParams.decay = *decay;
+        modAdsrParams.sustain = *sustain;
+        modAdsrParams.release = *release;
+    }
+
     void setADSRSampleRate (double sampleRate) {
         op1Adsr.setSampleRate(sampleRate);
         op2Adsr.setSampleRate(sampleRate);
@@ -116,6 +123,7 @@ public:
         op2Adsr.noteOn();
         op3Adsr.noteOn();
         op4Adsr.noteOn();
+        modAdsr.noteOn();
     }
 
     //===============================================//
@@ -134,6 +142,7 @@ public:
         op2Adsr.noteOff();
         op3Adsr.noteOff();
         op4Adsr.noteOff();
+        modAdsr.noteOff();
     }
 
     void pitchWheelMoved(int newPitchWheelValue) {
@@ -149,6 +158,8 @@ public:
         op2Adsr.setParameters(op2AdsrParams);
         op3Adsr.setParameters(op3AdsrParams);
         op4Adsr.setParameters(op4AdsrParams);
+        modAdsr.setParameters(modAdsrParams);
+        
         // Written using JUCE midi synthesizer tutorial.
         if (angleDelta != 0.0) {
             // Check if note should have ended.
@@ -156,7 +167,7 @@ public:
                 // Check theres samples left.
                 while (--numSamples >= 0) {
                     // Calculate sample value.
-                    auto currentSample = op1Adsr.getNextSample() * fmOSC(algorithm, fmTable, angleDelta, &op1Adsr, &op2Adsr, &op3Adsr, &op4Adsr) * level;
+                    auto currentSample = fmOSC(algorithm, fmTable, angleDelta, &op1Adsr, &op2Adsr, &op3Adsr, &op4Adsr) * level;
                     // Add sample to outputBuffer
                     for (auto i = outputBuffer.getNumChannels(); --i >= 0;) {
                         outputBuffer.addSample(i, startSample, currentSample);
@@ -219,4 +230,7 @@ private:
 
     ADSR op4Adsr;
     ADSR::Parameters op4AdsrParams;
+
+    ADSR modAdsr;
+    ADSR::Parameters modAdsrParams;
 };

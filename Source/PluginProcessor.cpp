@@ -85,6 +85,15 @@ ThirdYearProjectAudioProcessor::ThirdYearProjectAudioProcessor()
     NormalisableRange<float> op4ReleaseRange(0, 3);
     apvt.createAndAddParameter("OP4RELEASE", "OP4RELEASE", "OP4RELEASE", op4ReleaseRange, 0.0f, nullptr, nullptr);
     
+    // MOD Envelope
+    NormalisableRange<float> modAttackRange(0, 3);
+    apvt.createAndAddParameter("MODATTACK", "MODATTACK", "MODATTACK", modAttackRange, 0.0f, nullptr, nullptr);
+    NormalisableRange<float> modDecayRange(0, 3);
+    apvt.createAndAddParameter("MODDECAY", "MODDECAY", "MODDECAY", modDecayRange, 0.0f, nullptr, nullptr);
+    NormalisableRange<float> modSustainRange(0, 1);
+    apvt.createAndAddParameter("MODSUSTAIN", "MODSUSTAIN", "MODSUSTAIN", modSustainRange, 0.0f, nullptr, nullptr);
+    NormalisableRange<float> modReleaseRange(0, 3);
+    apvt.createAndAddParameter("MODRELEASE", "MODRELEASE", "MODRELEASE", modReleaseRange, 0.0f, nullptr, nullptr);
     
     // Filter
     NormalisableRange<float> cutoffRange(0.1, 20000);
@@ -96,8 +105,6 @@ ThirdYearProjectAudioProcessor::ThirdYearProjectAudioProcessor()
     apvt.createAndAddParameter("ALGO", "ALGO", "ALGO", algoRange, 1.0f, nullptr, nullptr);
 
     apvt.state = ValueTree("apvt");
-
-    lfo = new Oscillator(lastSampleRate, 1);
 
     mySynth.clearVoices();
     // Create 5 voices.
@@ -183,10 +190,11 @@ void ThirdYearProjectAudioProcessor::prepareToPlay (double sampleRate, int sampl
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
 
-
     ignoreUnused(samplesPerBlock);
 
     lastSampleRate = sampleRate;
+    lfo = new Oscillator(lastSampleRate, 1);
+
     mySynth.setCurrentPlaybackSampleRate(lastSampleRate);
 
     midiCollector.reset(sampleRate);
@@ -280,6 +288,7 @@ void ThirdYearProjectAudioProcessor::drawNextFrameOfSpectrum()
 
 void ThirdYearProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
+    keyboardState.processNextMidiBuffer(midiMessages, 0, buffer.getNumSamples(), true);
 
     for (int i = 0; i < mySynth.getNumVoices(); i++) {
         // Check that myVoice is a SynthVoice*
@@ -301,6 +310,8 @@ void ThirdYearProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buf
             myVoice->setOp4Adsr((float*)apvt.getRawParameterValue("OP4ATTACK"), (float*)apvt.getRawParameterValue("OP4DECAY"), (float*)apvt.getRawParameterValue("OP4SUSTAIN"), (float*)apvt.getRawParameterValue("OP4RELEASE"));
             
             myVoice->setAlgo((float*)apvt.getRawParameterValue("ALGO"));
+
+            myVoice->setModAdsr((float*)apvt.getRawParameterValue("MODATTACK"), (float*)apvt.getRawParameterValue("MODDECAY"), (float*)apvt.getRawParameterValue("MODSUSTAIN"), (float*)apvt.getRawParameterValue("MODRELEASE"));
         }
     }
 
@@ -331,6 +342,9 @@ void ThirdYearProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buf
     lowPassFilter.process(dsp::ProcessContextReplacing<float>(block));
 
     //block.multiplyBy(lfo->oscCycle((double) 2.0, (double) 10 ));
+    float val = lfo->oscCycle((double)2.0, (double)100);
+    
+    DBG(val);
     
     for (int channel = 0; channel < totalNumOutputChannels; ++channel)
     {

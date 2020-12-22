@@ -98,7 +98,7 @@ private:
 	juce::Slider op2ReleaseSlider;
 	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> op2ReleaseSliderAttachment;
 
-	// op1 ADSR
+	// op3 ADSR
 	juce::Slider op3AttackSlider;
 	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> op3AttackSliderAttachment;
 	juce::Slider op3DecaySlider;
@@ -108,7 +108,7 @@ private:
 	juce::Slider op3ReleaseSlider;
 	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> op3ReleaseSliderAttachment;
 
-	// op1 ADSR
+	// op4 ADSR
 	juce::Slider op4AttackSlider;
 	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> op4AttackSliderAttachment;
 	juce::Slider op4DecaySlider;
@@ -117,6 +117,16 @@ private:
 	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> op4SustainSliderAttachment;
 	juce::Slider op4ReleaseSlider;
 	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> op4ReleaseSliderAttachment;
+
+	// mod ADSR
+	juce::Slider modAttackSlider;
+	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> modAttackSliderAttachment;
+	juce::Slider modDecaySlider;
+	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> modDecaySliderAttachment;
+	juce::Slider modSustainSlider;
+	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> modSustainSliderAttachment;
+	juce::Slider modReleaseSlider;
+	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> modReleaseSliderAttachment;
 
 	// Filter
 	juce::Slider cutoffSlider;

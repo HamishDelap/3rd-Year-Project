@@ -24,30 +24,36 @@ public:
 
 	float oscCycle( double frequency, double level) {
 		auto cyclesPerSecond = frequency;
+		DBG("cycles per second: " + String(cyclesPerSecond));
 		auto cyclesPerSample = cyclesPerSecond / localSampleRate;
+		DBG("cycles per sample: " + String(localSampleRate));
 
 		angleDelta = cyclesPerSample * 2.0 * MathConstants<double>::pi;
+		DBG("angle delta: " + String(angleDelta));
+
+		currentAngle += angleDelta;
 
 		switch (waveform) {
 		// Sin
 		case 1:
 		{
-			float value = level * sin(angleDelta);
+			value = level * sin(currentAngle);
 			break;
 		}
-			// Triangle
+		// Triangle
 		case 2:
 			break;
 		// Square
 		case 3:
 			break;
 		}
+
 		return value;
 	}
 private:
-	float time;
+	float currentAngle = 1;
 	float angleDelta;
 	double localSampleRate;
 	int waveform;
-	float value = 0;
+	float value = 1;
 };
