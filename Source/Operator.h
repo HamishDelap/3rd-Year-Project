@@ -27,6 +27,10 @@ public:
         float output = envelope->getNextSample() * oscOutput;
         return output;
     }
+
+    void updateWaveform(int waveform) {
+        oscillator->setWaveform(waveform);
+    }
 private:
     std::shared_ptr<ADSR> envelope;
     std::unique_ptr<Oscillator> oscillator;

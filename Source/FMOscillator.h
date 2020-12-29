@@ -51,7 +51,7 @@ class FMOscillator
 {
 public:
 	FMOscillator(int algorithm, std::shared_ptr<ADSR> op1Adsr, std::shared_ptr<ADSR> op2Adsr, std::shared_ptr<ADSR> op3Adsr, std::shared_ptr<ADSR> op4Adsr,
-				 int op1waveform, int op2waveform, int op3waveform, int op4waveform, double samplerate) {
+				 int waveforms[],  double samplerate) {
 
 		algo = algorithm;
 
@@ -60,15 +60,22 @@ public:
 		op3Env = std::shared_ptr<ADSR>(op3Adsr);
 		op4Env = std::shared_ptr<ADSR>(op4Adsr);
 
-		operator1.reset(new Operator(samplerate, op1waveform, op1Env));
-		operator2.reset(new Operator(samplerate, op2waveform, op2Env));
-		operator3.reset(new Operator(samplerate, op3waveform, op3Env));
-		operator4.reset(new Operator(samplerate, op4waveform, op4Env));
+		operator1.reset(new Operator(samplerate, waveforms[0], op1Env));
+		operator2.reset(new Operator(samplerate, waveforms[1], op2Env));
+		operator3.reset(new Operator(samplerate, waveforms[2], op3Env));
+		operator4.reset(new Operator(samplerate, waveforms[3], op4Env));
 	}
 
 	float op(double angle, double level, ADSR* env) {
 		float nextEnvSample = env->getNextSample();
 		return (float)(env->getNextSample() * std::sin(angle) * level);
+	}
+
+	void updateWaveforms(int waveforms[]) {
+		operator1->updateWaveform(waveforms[0]);
+		operator2->updateWaveform(waveforms[1]);
+		operator3->updateWaveform(waveforms[2]);
+		operator4->updateWaveform(waveforms[3]);
 	}
 
 	float oscStep(double fmTable[][4], double angleDelta) {

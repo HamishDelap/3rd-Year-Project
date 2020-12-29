@@ -19,7 +19,7 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	// editor's size to whatever you need it to be.
 	setSize (1600, 800);
 
-	myImage = ImageFileFormat::loadFrom(File("C:/Users/hamis/Documents/3rd Year Project/3rd-Year-Project/Assets/BG-01.png"));
+	myImage = ImageFileFormat::loadFrom(File("C:/Users/hamis/Documents/3rd Year Project/3rd-Year-Project/Assets/BG-03.png"));
 
 	startTimerHz(15);
 
@@ -45,6 +45,56 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	algoMenu.setSelectedId(1);
 
 	algoMenuAttachment = new AudioProcessorValueTreeState::ComboBoxAttachment(audioProcessor.apvt, "ALGO", algoMenu);
+
+
+	// Op1 Waveform Dropdown
+	addAndMakeVisible(op1WaveformLabel);
+	op1WaveformLabel.setFont(op1WaveformFont);
+	// add items to the combo-box
+	addAndMakeVisible(op1WaveformMenu);
+	op1WaveformMenu.addItem("Sine", 1);
+	op1WaveformMenu.addItem("Triangle", 2);
+	op1WaveformMenu.addItem("Square", 3);
+	op1WaveformLabel.attachToComponent(&op1WaveformMenu, false);
+	op1WaveformMenu.setSelectedId(1);
+	op1WaveformMenuAttachment = new AudioProcessorValueTreeState::ComboBoxAttachment(audioProcessor.apvt, "OP1WAVEFORM", op1WaveformMenu);
+
+	// Op2 Waveform Dropdown
+	addAndMakeVisible(op2WaveformLabel);
+	op2WaveformLabel.setFont(op2WaveformFont);
+	// add items to the combo-box
+	addAndMakeVisible(op2WaveformMenu);
+	op2WaveformMenu.addItem("Sine", 1);
+	op2WaveformMenu.addItem("Triangle", 2);
+	op2WaveformMenu.addItem("Square", 3);
+	op2WaveformLabel.attachToComponent(&op2WaveformMenu, false);
+	op2WaveformMenu.setSelectedId(1);
+	op2WaveformMenuAttachment = new AudioProcessorValueTreeState::ComboBoxAttachment(audioProcessor.apvt, "OP2WAVEFORM", op2WaveformMenu);
+
+	// Op3 Waveform Dropdown
+	addAndMakeVisible(op3WaveformLabel);
+	op3WaveformLabel.setFont(op3WaveformFont);
+	// add items to the combo-box
+	addAndMakeVisible(op3WaveformMenu);
+	op3WaveformMenu.addItem("Triangle", 2);
+	op3WaveformMenu.addItem("Square", 3);
+	op3WaveformMenu.addItem("Sine", 1);
+	op3WaveformLabel.attachToComponent(&op3WaveformMenu, false);
+	op3WaveformMenu.setSelectedId(1);
+	op3WaveformMenuAttachment = new AudioProcessorValueTreeState::ComboBoxAttachment(audioProcessor.apvt, "OP3WAVEFORM", op3WaveformMenu);
+
+	// Op4 Waveform Dropdown
+	addAndMakeVisible(op4WaveformLabel);
+	op4WaveformLabel.setFont(op4WaveformFont);
+	// add items to the combo-box
+	addAndMakeVisible(op4WaveformMenu);
+	op4WaveformMenu.addItem("Sine", 1);
+	op4WaveformMenu.addItem("Triangle", 2);
+	op4WaveformMenu.addItem("Square", 3);
+	op4WaveformLabel.attachToComponent(&op4WaveformMenu, false);
+	op4WaveformMenu.setSelectedId(1);
+	op4WaveformMenuAttachment = new AudioProcessorValueTreeState::ComboBoxAttachment(audioProcessor.apvt, "OP4WAVEFORM", op4WaveformMenu);
+
 
 	juce::Slider::TextEntryBoxPosition noDisplay = juce::Slider::TextEntryBoxPosition::NoTextBox;
 
@@ -367,7 +417,9 @@ void ThirdYearProjectAudioProcessorEditor::resized()
 	auto sliderLeft = 120;
 
 	algoMenu.setBounds(sliderLeft + 800, 140, getWidth() / 8, 20);
-	
+
+
+	op1WaveformMenu.setBounds(60, 95, getWidth() / 10, 20);
 	op1LevelSlider.setBounds(190, 140, 20, 95);
 	op1ModIndexSlider.setBounds(sliderLeft + 142, 128, 60, 60);
 
@@ -378,6 +430,7 @@ void ThirdYearProjectAudioProcessorEditor::resized()
 
 	auto secondColumn = 425;
 
+	op2WaveformMenu.setBounds(secondColumn + 60, 95, getWidth() / 10, 20);
 	op2LevelSlider.setBounds(secondColumn + 190, 140, 20, 95);
 	op2ModIndexSlider.setBounds(secondColumn + sliderLeft + 142, 128, 60, 60);
 
@@ -388,6 +441,7 @@ void ThirdYearProjectAudioProcessorEditor::resized()
 
 	auto secondRow = 223;
 
+	op3WaveformMenu.setBounds(60, secondRow + 95, getWidth() / 10, 20);
 	op3LevelSlider.setBounds(190, secondRow + 140, 20, 95);
 	op3ModIndexSlider.setBounds(sliderLeft + 142, secondRow + 128, 60, 60);
 
@@ -396,7 +450,7 @@ void ThirdYearProjectAudioProcessorEditor::resized()
 	op3SustainSlider.setBounds(111, secondRow + 140, 20, 95);
 	op3ReleaseSlider.setBounds(137, secondRow + 140, 20, 95);
 
-	
+	op4WaveformMenu.setBounds(secondColumn + 60, secondRow + 95, getWidth() / 10, 20);
 	op4LevelSlider.setBounds(secondColumn + 190, secondRow + 140, 20, 95);
 	op4ModIndexSlider.setBounds(secondColumn + sliderLeft + 142, secondRow + 128, 60, 60);
 

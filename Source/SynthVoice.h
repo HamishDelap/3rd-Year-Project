@@ -105,11 +105,28 @@ public:
         algorithm = (int) *algo;
     }
 
+    void setOP1WAVEFORM(float* waveform) {
+        waveforms[0] = (int)*waveform;
+    }
+
+    void setOP2WAVEFORM(float* waveform) {
+        waveforms[1] = (int)*waveform;
+    }
+
+    void setOP3WAVEFORM(float* waveform) {
+        waveforms[2] = (int)*waveform;
+    }
+
+    void setOP4WAVEFORM(float* waveform) {
+        waveforms[3] = (int)*waveform;
+    }
+
     //===============================================//
 
     void startNote(int midiNoteNumber, float velocity, SynthesiserSound* sound, int currentPitchWheelPosition) {
         // Create FM Oscillator for the voice.
-        fmosc.reset(new FMOscillator(algorithm, op1Adsr, op2Adsr, op3Adsr, op4Adsr, 1, 1, 1, 1, getSampleRate()));
+        fmosc.reset(new FMOscillator(algorithm, op1Adsr, op2Adsr, op3Adsr, op4Adsr, waveforms, getSampleRate()));
+        fmosc->updateWaveforms(waveforms);
 
         // Calculate frequency of the note in Hz.
         frequency = MidiMessage::getMidiNoteInHertz(midiNoteNumber);
@@ -170,6 +187,7 @@ public:
                 // Check theres samples left.
                 while (--numSamples >= 0) {
                     // Calculate sample value.
+                    fmosc->updateWaveforms(waveforms);
                     auto currentSample = fmosc->oscStep(fmTable, angleDelta) * level;
                     // Add sample to outputBuffer
                     for (auto i = outputBuffer.getNumChannels(); --i >= 0;) {
@@ -193,7 +211,7 @@ public:
             }
             else {
                 while (--numSamples >= 0) {
-
+                    fmosc->updateWaveforms(waveforms);
                     auto currentSample = fmosc->oscStep(fmTable, angleDelta) * level;
                     //auto currentSample = (float)(std::sin(fmTable[0][0] + (float)std::sin(fmTable[0][1]) * fmTable[1][1]) * fmTable[1][0]);
 
@@ -213,6 +231,8 @@ private:
     std::unique_ptr <FMOscillator> fmosc;
 
     int algorithm;
+
+    int waveforms[4];
 
     double frequency;
 

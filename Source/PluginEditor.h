@@ -47,10 +47,33 @@ private:
 
 	juce::Image myImage;
 
+	// Algorithm Dropdown
 	juce::Label algoLabel{ {}, "Algorithm" };
 	juce::Font algoFont{ 12.0f };
 	juce::ComboBox algoMenu;
 	ScopedPointer<AudioProcessorValueTreeState::ComboBoxAttachment> algoMenuAttachment;
+
+
+	//Waveform Dropdowns
+	juce::Label op1WaveformLabel{ {}, "Waveform" };
+	juce::Font op1WaveformFont{ 12.0f };
+	juce::ComboBox op1WaveformMenu;
+	ScopedPointer<AudioProcessorValueTreeState::ComboBoxAttachment> op1WaveformMenuAttachment;
+
+	juce::Label op2WaveformLabel{ {}, "Waveform" };
+	juce::Font op2WaveformFont{ 12.0f };
+	juce::ComboBox op2WaveformMenu;
+	ScopedPointer<AudioProcessorValueTreeState::ComboBoxAttachment> op2WaveformMenuAttachment;
+
+	juce::Label op3WaveformLabel{ {}, "Waveform" };
+	juce::Font op3WaveformFont{ 12.0f };
+	juce::ComboBox op3WaveformMenu;
+	ScopedPointer<AudioProcessorValueTreeState::ComboBoxAttachment> op3WaveformMenuAttachment;
+
+	juce::Label op4WaveformLabel{ {}, "Waveform" };
+	juce::Font op4WaveformFont{ 12.0f };
+	juce::ComboBox op4WaveformMenu;
+	ScopedPointer<AudioProcessorValueTreeState::ComboBoxAttachment> op4WaveformMenuAttachment;
 
     // Mod Index Sliders
     juce::Slider op1ModIndexSlider;

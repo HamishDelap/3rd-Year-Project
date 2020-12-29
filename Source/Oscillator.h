@@ -28,6 +28,8 @@ public:
 
 		angleDelta = cyclesPerSample * 2.0 * MathConstants<double>::pi;
 
+		float triangleDelta = 0.1;
+
 		currentAngle += angleDelta;
 
 		switch (waveform) {
@@ -39,6 +41,9 @@ public:
 		}
 		// Triangle
 		case 2:
+			sineValue = sin(currentAngle);
+
+			value += (sineValue >= 0) ? triangleDelta : -triangleDelta;
 			break;
 		// Square
 		case 3:
@@ -49,6 +54,7 @@ public:
 	}
 
 	float oscCycleWithAngle(double currentAngle, double level) {
+		
 		switch (waveform) {
 		// Sin
 		case 1:
@@ -58,13 +64,24 @@ public:
 		}
 		// Triangle
 		case 2:
+			sineValue = sin(currentAngle);
+
+			value += (sineValue >= 0) ? triangleDelta : -triangleDelta;
+			value = level * value;
 			break;
 		// Square
 		case 3:
+			sineValue = sin(currentAngle);
+
+			value = (sineValue >= 0) ? 1 : -1;
 			break;
 		}
 
 		return value;
+	}
+
+	void setWaveform(int waveshape) {
+		waveform = waveshape;
 	}
 private:
 	float currentAngle = 1;
@@ -72,4 +89,7 @@ private:
 	double localSampleRate;
 	int waveform;
 	float value = 1;
+
+	float sineValue = 0;
+	float triangleDelta = 0.1;
 };

@@ -104,6 +104,15 @@ ThirdYearProjectAudioProcessor::ThirdYearProjectAudioProcessor()
     NormalisableRange<float> algoRange(1, 4);
     apvt.createAndAddParameter("ALGO", "ALGO", "ALGO", algoRange, 1.0f, nullptr, nullptr);
 
+    NormalisableRange<float> op1WaveformRange(1, 3);
+    apvt.createAndAddParameter("OP1WAVEFORM", "OP1WAVEFORM", "OP1WAVEFORM", op1WaveformRange, 1.0f, nullptr, nullptr);
+    NormalisableRange<float> op2WaveformRange(1, 3);
+    apvt.createAndAddParameter("OP2WAVEFORM", "OP2WAVEFORM", "OP2WAVEFORM", op2WaveformRange, 1.0f, nullptr, nullptr);
+    NormalisableRange<float> op3WaveformRange(1, 3);
+    apvt.createAndAddParameter("OP3WAVEFORM", "OP3WAVEFORM", "OP3WAVEFORM", op3WaveformRange, 1.0f, nullptr, nullptr);
+    NormalisableRange<float> op4WaveformRange(1, 3);
+    apvt.createAndAddParameter("OP4WAVEFORM", "OP4WAVEFORM", "OP4WAVEFORM", op4WaveformRange, 1.0f, nullptr, nullptr);
+
     apvt.state = ValueTree("apvt");
 
     mySynth.clearVoices();
@@ -309,6 +318,11 @@ void ThirdYearProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buf
             myVoice->setOp4Adsr((float*)apvt.getRawParameterValue("OP4ATTACK"), (float*)apvt.getRawParameterValue("OP4DECAY"), (float*)apvt.getRawParameterValue("OP4SUSTAIN"), (float*)apvt.getRawParameterValue("OP4RELEASE"));
             
             myVoice->setAlgo((float*)apvt.getRawParameterValue("ALGO"));
+
+            myVoice->setOP1WAVEFORM((float*)apvt.getRawParameterValue("OP1WAVEFORM"));
+            myVoice->setOP2WAVEFORM((float*)apvt.getRawParameterValue("OP2WAVEFORM"));
+            myVoice->setOP3WAVEFORM((float*)apvt.getRawParameterValue("OP3WAVEFORM"));
+            myVoice->setOP4WAVEFORM((float*)apvt.getRawParameterValue("OP4WAVEFORM"));
 
             myVoice->setModAdsr((float*)apvt.getRawParameterValue("MODATTACK"), (float*)apvt.getRawParameterValue("MODDECAY"), (float*)apvt.getRawParameterValue("MODSUSTAIN"), (float*)apvt.getRawParameterValue("MODRELEASE"));
         }
