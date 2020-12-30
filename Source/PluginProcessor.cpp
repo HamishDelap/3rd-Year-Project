@@ -86,15 +86,23 @@ ThirdYearProjectAudioProcessor::ThirdYearProjectAudioProcessor()
     apvt.createAndAddParameter("OP4RELEASE", "OP4RELEASE", "OP4RELEASE", op4ReleaseRange, 0.0f, nullptr, nullptr);
     
     // MOD Envelope
-    NormalisableRange<float> modAttackRange(0, 3);
-    apvt.createAndAddParameter("MODATTACK", "MODATTACK", "MODATTACK", modAttackRange, 0.0f, nullptr, nullptr);
-    NormalisableRange<float> modDecayRange(0, 3);
-    apvt.createAndAddParameter("MODDECAY", "MODDECAY", "MODDECAY", modDecayRange, 0.0f, nullptr, nullptr);
-    NormalisableRange<float> modSustainRange(0, 1);
-    apvt.createAndAddParameter("MODSUSTAIN", "MODSUSTAIN", "MODSUSTAIN", modSustainRange, 0.0f, nullptr, nullptr);
-    NormalisableRange<float> modReleaseRange(0, 3);
-    apvt.createAndAddParameter("MODRELEASE", "MODRELEASE", "MODRELEASE", modReleaseRange, 0.0f, nullptr, nullptr);
+    NormalisableRange<float> modEnvAttackRange(0, 3);
+    apvt.createAndAddParameter("MODENVATTACK", "MODENVATTACK", "MODENVATTACK", modEnvAttackRange, 0.5f, nullptr, nullptr);
+    NormalisableRange<float> modEnvDecayRange(0, 1);
+    apvt.createAndAddParameter("MODENVDECAY", "MODENVDECAY", "MODENVDECAY", modEnvDecayRange, 0.5f, nullptr, nullptr);
+    NormalisableRange<float> modEnvSustainRange(0, 1);
+    apvt.createAndAddParameter("MODENVSUSTAIN", "MODENVSUSTAIN", "MODENVSUSTAIN", modEnvSustainRange, 0.5f, nullptr, nullptr);
+    NormalisableRange<float> modEnvReleaseRange(0, 2);
+    apvt.createAndAddParameter("MODENVRELEASE", "MODENVRELEASE", "MODENVRELEASE", modEnvReleaseRange, 0.5f, nullptr, nullptr);
+    NormalisableRange<float> modEnvAmountRange(0, 1);
+    apvt.createAndAddParameter("MODENVAMOUNT", "MODENVAMOUNT", "MODENVAMOUNT", modEnvAmountRange, 1.0f, nullptr, nullptr);
     
+    // LFO
+    NormalisableRange<float> lfoAmountRange(0, 100);
+    apvt.createAndAddParameter("LFOAMOUNT", "LFOAMOUNT", "LFOAMOUNT", lfoAmountRange, 1.0f, nullptr, nullptr);
+    NormalisableRange<float> lfoFreqRange(0.1, 30);
+    apvt.createAndAddParameter("LFOFREQ", "LFOFREQ", "LFOFREQ", lfoFreqRange, 1.0f, nullptr, nullptr);
+
     // Filter
     NormalisableRange<float> cutoffRange(0.1, 20000);
 	apvt.createAndAddParameter("CUTOFF", "CUTOFF", "CUTOFF", cutoffRange, 20000.0f, nullptr, nullptr);
@@ -113,7 +121,15 @@ ThirdYearProjectAudioProcessor::ThirdYearProjectAudioProcessor()
     NormalisableRange<float> op4WaveformRange(1, 3);
     apvt.createAndAddParameter("OP4WAVEFORM", "OP4WAVEFORM", "OP4WAVEFORM", op4WaveformRange, 1.0f, nullptr, nullptr);
 
+    NormalisableRange<float> lfoPitchRange(0, 1);
+    apvt.createAndAddParameter("LFOPITCH", "LFOPITCH", "LFOPITCH", lfoPitchRange, 0.0f, nullptr, nullptr);
+
+    NormalisableRange<float> modEnvPitchRange(0, 1);
+    apvt.createAndAddParameter("MODENVPITCH", "MODENVPITCH", "MODENVPITCH", modEnvPitchRange, 0.0f, nullptr, nullptr);
+
     apvt.state = ValueTree("apvt");
+
+
 
     mySynth.clearVoices();
     // Create 5 voices.
@@ -214,11 +230,28 @@ void ThirdYearProjectAudioProcessor::prepareToPlay (double sampleRate, int sampl
 
 	lowPassFilter.prepare(spec);
 	lowPassFilter.reset();
+
+    modEnvelope = std::shared_ptr<ModEnvelope>(new ModEnvelope(0, 0, 0, 0, 0));
+    modEnvelope->setSampleRate(lastSampleRate);
+    modLfo = std::shared_ptr<Lfo>(new Lfo(lastSampleRate, 1, 1, 1));
+    for (int i = 0; i < mySynth.getNumVoices(); i++) {
+        // Check that myVoice is a SynthVoice*
+        if (myVoice = dynamic_cast<SynthVoice*>(mySynth.getVoice(i))) {
+            myVoice->setModAdsr(modEnvelope);
+            myVoice->setModLfo(modLfo);
+        }
+    }
+
 }
 
 void ThirdYearProjectAudioProcessor::updateFilter() {
     float cutoff = *apvt.getRawParameterValue("CUTOFF");
     float resonance = *apvt.getRawParameterValue("RESONANCE");
+
+    if (modEnvelope->isOn()) {
+        cutoff = cutoff * modEnvelope->getOutput(2);
+        DBG(cutoff);
+    }
 
     *lowPassFilter.state = *dsp::IIR::Coefficients<float>::makeLowPass(lastSampleRate, cutoff, resonance);
 }
@@ -297,6 +330,17 @@ void ThirdYearProjectAudioProcessor::drawNextFrameOfSpectrum()
 void ThirdYearProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     keyboardState.processNextMidiBuffer(midiMessages, 0, buffer.getNumSamples(), true);
+    modLfo->setFrequency((float*)apvt.getRawParameterValue("LFOFREQ"));
+    modLfo->setLevel((float*)apvt.getRawParameterValue("LFOAMOUNT"));
+    modLfo->toggleDest((float*)apvt.getRawParameterValue("LFOPITCH"), 1);
+
+    modEnvelope->setAttack((float*)apvt.getRawParameterValue("MODENVATTACK"));
+    modEnvelope->setDecay((float*)apvt.getRawParameterValue("MODENVDECAY"));
+    modEnvelope->setSustain((float*)apvt.getRawParameterValue("MODENVSUSTAIN"));
+    modEnvelope->setRelease((float*)apvt.getRawParameterValue("MODENVRELEASE"));
+    modEnvelope->setAmount((float*)apvt.getRawParameterValue("MODENVAMOUNT"));
+    modEnvelope->toggleDest((float*)apvt.getRawParameterValue("MODENVPITCH"), 1);
+
 
     for (int i = 0; i < mySynth.getNumVoices(); i++) {
         // Check that myVoice is a SynthVoice*
@@ -324,7 +368,7 @@ void ThirdYearProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buf
             myVoice->setOP3WAVEFORM((float*)apvt.getRawParameterValue("OP3WAVEFORM"));
             myVoice->setOP4WAVEFORM((float*)apvt.getRawParameterValue("OP4WAVEFORM"));
 
-            myVoice->setModAdsr((float*)apvt.getRawParameterValue("MODATTACK"), (float*)apvt.getRawParameterValue("MODDECAY"), (float*)apvt.getRawParameterValue("MODSUSTAIN"), (float*)apvt.getRawParameterValue("MODRELEASE"));
+           // myVoice->setModAdsrParams((float*)apvt.getRawParameterValue("MODATTACK"), (float*)apvt.getRawParameterValue("MODDECAY"), (float*)apvt.getRawParameterValue("MODSUSTAIN"), (float*)apvt.getRawParameterValue("MODRELEASE"));
         }
     }
 
@@ -348,6 +392,11 @@ void ThirdYearProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buf
     // Alternatively, you can process the samples with the channels
     // interleaved by keeping the same state.
 
+
+    for (auto i = 0; i < buffer.getNumSamples(); ++i) {
+        modLfo->lfoStep();
+    }
+
     mySynth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
 
     dsp::AudioBlock<float> block(buffer);
@@ -359,7 +408,6 @@ void ThirdYearProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buf
         auto* channelData = buffer.getReadPointer (channel);
 
         for (auto i = 0; i < buffer.getNumSamples(); ++i) {
-
             pushNextSampleIntoFifo(channelData[i]);
         }
         // ..do something to the data...

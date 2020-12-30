@@ -11,6 +11,8 @@
 #include <JuceHeader.h>
 #include "SynthSound.h"
 #include "SynthVoice.h"
+#include "LFO.h"
+#include "ModEnvelope.h"
 
 //==============================================================================
 /**
@@ -92,6 +94,11 @@ private:
     float fifo[fftSize];
     float fftData[2 * fftSize];
     int fifoIndex = 0;
+
+    std::shared_ptr<ModEnvelope> modEnvelope;
+    std::shared_ptr<Lfo> modLfo;
+
+
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ThirdYearProjectAudioProcessor)

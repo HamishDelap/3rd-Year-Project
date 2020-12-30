@@ -19,6 +19,7 @@
       <FILE id="Eq2MU1" name="LFO.h" compile="0" resource="0" file="Source/LFO.h"/>
       <FILE id="Cx5tSw" name="Operator.h" compile="0" resource="0" file="Source/Operator.h"/>
       <FILE id="wUxiyE" name="Oscillator.h" compile="0" resource="0" file="Source/Oscillator.h"/>
+      <FILE id="e60RW2" name="ModEnvelope.h" compile="0" resource="0" file="Source/ModEnvelope.h"/>
     </GROUP>
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>

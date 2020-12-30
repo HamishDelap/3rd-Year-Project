@@ -32,6 +32,12 @@ public:
 
 	void drawSpecFrame(juce::Graphics& g);
 
+	// Taken from https://www.geeksforgeeks.org/rounding-floating-point-number-two-decimal-places-c-c/
+	float round(float var) {
+		float value = (int)(var * 100 + .5);
+		return (float)value / 100;
+	}
+
 private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
@@ -55,22 +61,18 @@ private:
 
 
 	//Waveform Dropdowns
-	juce::Label op1WaveformLabel{ {}, "Waveform" };
 	juce::Font op1WaveformFont{ 12.0f };
 	juce::ComboBox op1WaveformMenu;
 	ScopedPointer<AudioProcessorValueTreeState::ComboBoxAttachment> op1WaveformMenuAttachment;
 
-	juce::Label op2WaveformLabel{ {}, "Waveform" };
 	juce::Font op2WaveformFont{ 12.0f };
 	juce::ComboBox op2WaveformMenu;
 	ScopedPointer<AudioProcessorValueTreeState::ComboBoxAttachment> op2WaveformMenuAttachment;
 
-	juce::Label op3WaveformLabel{ {}, "Waveform" };
 	juce::Font op3WaveformFont{ 12.0f };
 	juce::ComboBox op3WaveformMenu;
 	ScopedPointer<AudioProcessorValueTreeState::ComboBoxAttachment> op3WaveformMenuAttachment;
 
-	juce::Label op4WaveformLabel{ {}, "Waveform" };
 	juce::Font op4WaveformFont{ 12.0f };
 	juce::ComboBox op4WaveformMenu;
 	ScopedPointer<AudioProcessorValueTreeState::ComboBoxAttachment> op4WaveformMenuAttachment;
@@ -150,6 +152,40 @@ private:
 	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> modSustainSliderAttachment;
 	juce::Slider modReleaseSlider;
 	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> modReleaseSliderAttachment;
+	juce::Slider modAmountSlider;
+	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> modAmountSliderAttachment;
+
+	// LFO
+	juce::Slider lfoAmountSlider;
+	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> lfoAmountSliderAttachment;
+
+	juce::Slider lfoFreqSlider;
+	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> lfoFreqSliderAttachment;
+
+	// Mod Buttons
+	juce::ToggleButton lfoPitchButton;
+	ScopedPointer<AudioProcessorValueTreeState::ButtonAttachment> lfoPitchButtonAttachment;
+
+	juce::ToggleButton lfoCutoffButton;
+	ScopedPointer<AudioProcessorValueTreeState::ButtonAttachment> lfoCutoffButtonAttachment;
+
+	juce::ToggleButton lfoLevelButton;
+	ScopedPointer<AudioProcessorValueTreeState::ButtonAttachment> lfoLevelButtonAttachment;
+
+	juce::ToggleButton lfoModIndexButton;
+	ScopedPointer<AudioProcessorValueTreeState::ButtonAttachment> lfoModIndexButtonAttachment;
+
+	juce::ToggleButton envPitchButton;
+	ScopedPointer<AudioProcessorValueTreeState::ButtonAttachment> envPitchButtonAttachment;
+
+	juce::ToggleButton envCutoffButton;
+	ScopedPointer<AudioProcessorValueTreeState::ButtonAttachment> envCutoffButtonAttachment;
+
+	juce::ToggleButton envLevelButton;
+	ScopedPointer<AudioProcessorValueTreeState::ButtonAttachment> envLevelButtonAttachment;
+
+	juce::ToggleButton envModIndexButton;
+	ScopedPointer<AudioProcessorValueTreeState::ButtonAttachment> envModIndexButtonAttachment;
 
 	// Filter
 	juce::Slider cutoffSlider;
@@ -158,5 +194,11 @@ private:
 	juce::Slider resonanceSlider;
 	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> resonanceSliderAttachment;
 
+	juce::Label op1ModIndexLabel;
+	juce::Label op2ModIndexLabel;
+	juce::Label op3ModIndexLabel;
+	juce::Label op4ModIndexLabel;
+
+	//==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ThirdYearProjectAudioProcessorEditor)
 };

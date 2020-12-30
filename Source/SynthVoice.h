@@ -14,6 +14,8 @@
 #include "SynthSound.h"
 #include "FMOscillator.h"
 #include "Oscillator.h"
+#include "ModEnvelope.h"
+#include "LFO.h"
 
 using namespace juce;
 
@@ -87,18 +89,27 @@ public:
         op4AdsrParams.release = *release;
     }
 
-    void setModAdsr(float* attack, float* decay, float* sustain, float* release) {
-        modAdsrParams.attack = *attack;
-        modAdsrParams.decay = *decay;
-        modAdsrParams.sustain = *sustain;
-        modAdsrParams.release = *release;
+    void setModAdsr(std::shared_ptr<ModEnvelope> env) {
+        modAdsr = env;
     }
+
+    void setModLfo(std::shared_ptr<Lfo> lfo) {
+        modLfo = lfo;
+    }
+
+ //   void setModAdsrParams(float* attack, float* decay, float* sustain, float* release) {
+ //       modAdsr->setAttack(*attack);
+ //       modAdsr->setDecay(*decay);
+ //       modAdsr->setSustain(*sustain);
+ //       modAdsr->setRelease(*release);
+ //   }
 
     void setADSRSampleRate (double sampleRate) {
         op1Adsr->setSampleRate(sampleRate);
         op2Adsr->setSampleRate(sampleRate);
         op3Adsr->setSampleRate(sampleRate);
         op4Adsr->setSampleRate(sampleRate);
+        modAdsr->setSampleRate(sampleRate);
     }
 
     void setAlgo(float* algo) {
@@ -133,11 +144,6 @@ public:
         DBG("midiNoteNumber");
         level = velocity * 0.15;
         tailOff = 0.0;
-
-        auto cyclesPerSecond = frequency;
-        auto cyclesPerSample = cyclesPerSecond / getSampleRate();
-
-        angleDelta = cyclesPerSample * 2.0 * MathConstants<double>::pi;
 
         op1Adsr->noteOn();
         op2Adsr->noteOn();
@@ -178,17 +184,19 @@ public:
         op2Adsr->setParameters(op2AdsrParams);
         op3Adsr->setParameters(op3AdsrParams);
         op4Adsr->setParameters(op4AdsrParams);
-        modAdsr->setParameters(modAdsrParams);
-        
-        // Written using JUCE midi synthesizer tutorial.
-        if (angleDelta != 0.0) {
+       // if (modAdsr->isOn()) {
+       //     modAdsr->envelopeStep();
+       // }
+            // Written using JUCE midi synthesizer tutorial.
+        if (fmosc != NULL) {
             // Check if note should have ended.
             if (tailOff > 0.0) {
                 // Check theres samples left.
                 while (--numSamples >= 0) {
                     // Calculate sample value.
+                    modAdsr->envelopeStep();
                     fmosc->updateWaveforms(waveforms);
-                    auto currentSample = fmosc->oscStep(fmTable, angleDelta) * level;
+                    auto currentSample = fmosc->oscStep(fmTable, frequency, modAdsr, modLfo) * level;
                     // Add sample to outputBuffer
                     for (auto i = outputBuffer.getNumChannels(); --i >= 0;) {
                         outputBuffer.addSample(i, startSample, currentSample);
@@ -211,8 +219,9 @@ public:
             }
             else {
                 while (--numSamples >= 0) {
+                    modAdsr->envelopeStep();
                     fmosc->updateWaveforms(waveforms);
-                    auto currentSample = fmosc->oscStep(fmTable, angleDelta) * level;
+                    auto currentSample = fmosc->oscStep(fmTable, frequency, modAdsr, modLfo) * level;
                     //auto currentSample = (float)(std::sin(fmTable[0][0] + (float)std::sin(fmTable[0][1]) * fmTable[1][1]) * fmTable[1][0]);
 
                     for (auto i = outputBuffer.getNumChannels(); --i >= 0;) {
@@ -256,6 +265,6 @@ private:
     std::shared_ptr<ADSR> op4Adsr = std::shared_ptr<ADSR>(new ADSR());
     ADSR::Parameters op4AdsrParams;
 
-    std::shared_ptr<ADSR> modAdsr = std::shared_ptr<ADSR>(new ADSR());
-    ADSR::Parameters modAdsrParams;
+    std::shared_ptr<ModEnvelope> modAdsr = std::shared_ptr<ModEnvelope>(new ModEnvelope(10000, 0, 0, 0, 0));
+    std::shared_ptr<Lfo> modLfo = std::shared_ptr<Lfo>(new Lfo(0, 1, 1, 1));
 };

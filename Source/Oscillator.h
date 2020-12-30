@@ -32,6 +32,7 @@ public:
 
 		currentAngle += angleDelta;
 
+
 		switch (waveform) {
 		// Sin
 		case 1:

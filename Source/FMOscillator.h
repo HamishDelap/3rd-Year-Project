@@ -12,6 +12,8 @@
 #include "SynthVoice.h"
 #include "Oscillator.h"
 #include "Operator.h"
+#include "ModEnvelope.h"
+#include "LFO.h"
 #include <memory>
 
 #pragma once
@@ -51,10 +53,10 @@ class FMOscillator
 {
 public:
 	FMOscillator(int algorithm, std::shared_ptr<ADSR> op1Adsr, std::shared_ptr<ADSR> op2Adsr, std::shared_ptr<ADSR> op3Adsr, std::shared_ptr<ADSR> op4Adsr,
-				 int waveforms[],  double samplerate) {
+				 int waveforms[],  double sampleRate) {
 
 		algo = algorithm;
-
+		samplerate = sampleRate;
 		op1Env = std::shared_ptr<ADSR>(op1Adsr);
 		op2Env = std::shared_ptr<ADSR>(op2Adsr);
 		op3Env = std::shared_ptr<ADSR>(op3Adsr);
@@ -78,7 +80,16 @@ public:
 		operator4->updateWaveform(waveforms[3]);
 	}
 
-	float oscStep(double fmTable[][4], double angleDelta) {
+	float oscStep(double fmTable[][4], double frequency, std::shared_ptr<ModEnvelope> modAdsr, std::shared_ptr<Lfo> modLfo) {
+
+		auto cyclesPerSecond = (frequency + modLfo->getOutput(1) / 10);
+		if (modAdsr->isOn()) {
+			cyclesPerSecond *= modAdsr->getOutput(1);
+		}
+		auto cyclesPerSample = cyclesPerSecond / samplerate;
+
+		float angleDelta = cyclesPerSample * 2.0 * MathConstants<double>::pi;
+
 		float output = 0;
 		switch (algo) {
 		case 1:
@@ -130,6 +141,7 @@ public:
 	}
 private:
 	int algo;
+	double samplerate;
 	std::shared_ptr<ADSR> op2Env;
 	std::shared_ptr<ADSR> op1Env;
 	std::shared_ptr<ADSR> op3Env;
