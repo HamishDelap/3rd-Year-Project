@@ -26,13 +26,13 @@ ThirdYearProjectAudioProcessor::ThirdYearProjectAudioProcessor()
 {
     // OP Mod Indexes
     // Preparing the value tree state
-    NormalisableRange<float> op1ModIndexRange(0, 12);
+    NormalisableRange<float> op1ModIndexRange(0, 12, 0.5);
     apvt.createAndAddParameter("OP1MODINDEX", "OP1MODINDEX", "OP1MODINDEX", op1ModIndexRange, 0.0f, nullptr, nullptr);
-	NormalisableRange<float> op2ModIndexRange(0, 12);
+	NormalisableRange<float> op2ModIndexRange(0, 12, 0.5);
 	apvt.createAndAddParameter("OP2MODINDEX", "OP2MODINDEX", "OP2MODINDEX", op2ModIndexRange, 0.0f, nullptr, nullptr);
-	NormalisableRange<float> op3ModIndexRange(0, 12);
+	NormalisableRange<float> op3ModIndexRange(0, 12, 0.5);
 	apvt.createAndAddParameter("OP3MODINDEX", "OP3MODINDEX", "OP3MODINDEX", op3ModIndexRange, 0.0f, nullptr, nullptr);
-	NormalisableRange<float> op4ModIndexRange(0, 12);
+	NormalisableRange<float> op4ModIndexRange(0, 12, 0.5);
 	apvt.createAndAddParameter("OP4MODINDEX", "OP4MODINDEX", "OP4MODINDEX", op4ModIndexRange, 0.0f, nullptr, nullptr);
 
     // OP Levels
@@ -123,9 +123,15 @@ ThirdYearProjectAudioProcessor::ThirdYearProjectAudioProcessor()
 
     NormalisableRange<float> lfoPitchRange(0, 1);
     apvt.createAndAddParameter("LFOPITCH", "LFOPITCH", "LFOPITCH", lfoPitchRange, 0.0f, nullptr, nullptr);
-
     NormalisableRange<float> modEnvPitchRange(0, 1);
     apvt.createAndAddParameter("MODENVPITCH", "MODENVPITCH", "MODENVPITCH", modEnvPitchRange, 0.0f, nullptr, nullptr);
+    NormalisableRange<float> lfoFilterRange(0, 1);
+    apvt.createAndAddParameter("LFOFILTER", "LFOFILTER", "LFOFILTER", lfoFilterRange, 0.0f, nullptr, nullptr);
+    NormalisableRange<float> modEnvFilterRange(0, 1);
+    apvt.createAndAddParameter("MODENVFILTER", "MODENVFILTER", "MODENVFILTER", modEnvFilterRange, 0.0f, nullptr, nullptr);
+
+    NormalisableRange<float> masterLevelRange(0, 1.5);
+    apvt.createAndAddParameter("MASTERLEVEL", "MASTERLEVEL", "MASTERLEVEL", masterLevelRange, 1.0f, nullptr, nullptr);
 
     apvt.state = ValueTree("apvt");
 
@@ -247,13 +253,24 @@ void ThirdYearProjectAudioProcessor::prepareToPlay (double sampleRate, int sampl
 void ThirdYearProjectAudioProcessor::updateFilter() {
     float cutoff = *apvt.getRawParameterValue("CUTOFF");
     float resonance = *apvt.getRawParameterValue("RESONANCE");
+    float coeff = 0.8f;
 
     if (modEnvelope->isOn()) {
         cutoff = cutoff * modEnvelope->getOutput(2);
-        DBG(cutoff);
+    }
+    
+    cutoff = cutoff - abs(modLfo->getOutput(2) * 10);
+    currentCutoff = cutoff + coeff * (currentCutoff - cutoff);
+
+    if (currentCutoff <= 0) {
+        currentCutoff = 1;
     }
 
-    *lowPassFilter.state = *dsp::IIR::Coefficients<float>::makeLowPass(lastSampleRate, cutoff, resonance);
+    if (currentCutoff > static_cast<float> (lastSampleRate * 0.5)) {
+        currentCutoff = lastSampleRate * 0.5;
+    }
+
+    *lowPassFilter.state = *dsp::IIR::Coefficients<float>::makeLowPass(lastSampleRate, currentCutoff, resonance);
 }
 
 void ThirdYearProjectAudioProcessor::releaseResources()
@@ -333,6 +350,7 @@ void ThirdYearProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buf
     modLfo->setFrequency((float*)apvt.getRawParameterValue("LFOFREQ"));
     modLfo->setLevel((float*)apvt.getRawParameterValue("LFOAMOUNT"));
     modLfo->toggleDest((float*)apvt.getRawParameterValue("LFOPITCH"), 1);
+    modLfo->toggleDest((float*)apvt.getRawParameterValue("LFOFILTER"), 2);
 
     modEnvelope->setAttack((float*)apvt.getRawParameterValue("MODENVATTACK"));
     modEnvelope->setDecay((float*)apvt.getRawParameterValue("MODENVDECAY"));
@@ -340,7 +358,7 @@ void ThirdYearProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buf
     modEnvelope->setRelease((float*)apvt.getRawParameterValue("MODENVRELEASE"));
     modEnvelope->setAmount((float*)apvt.getRawParameterValue("MODENVAMOUNT"));
     modEnvelope->toggleDest((float*)apvt.getRawParameterValue("MODENVPITCH"), 1);
-
+    modEnvelope->toggleDest((float*)apvt.getRawParameterValue("MODENVFILTER"), 2);
 
     for (int i = 0; i < mySynth.getNumVoices(); i++) {
         // Check that myVoice is a SynthVoice*
@@ -402,6 +420,10 @@ void ThirdYearProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buf
     dsp::AudioBlock<float> block(buffer);
     updateFilter();
     lowPassFilter.process(dsp::ProcessContextReplacing<float>(block));
+
+    currentLevel = *(float*)apvt.getRawParameterValue("MASTERLEVEL");
+    buffer.applyGainRamp(0, buffer.getNumSamples(), masterLevel, currentLevel);
+    masterLevel = currentLevel;
     
     for (int channel = 0; channel < totalNumOutputChannels; ++channel)
     {
@@ -432,12 +454,21 @@ void ThirdYearProjectAudioProcessor::getStateInformation (juce::MemoryBlock& des
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
+
+    auto state = apvt.copyState();
+    std::unique_ptr<XmlElement> xml(state.createXml());
+    copyXmlToBinary(*xml, destData);
 }
 
 void ThirdYearProjectAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
+
+    std::unique_ptr<XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
+    if (xmlState != nullptr) 
+        if (xmlState->hasTagName(apvt.state.getType()))
+            apvt.state = ValueTree::fromXml(*xmlState);
 }
 
 //==============================================================================

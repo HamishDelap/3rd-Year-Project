@@ -19,9 +19,9 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	// editor's size to whatever you need it to be.
 	setSize (1600, 800);
 
-	myImage = ImageFileFormat::loadFrom(File("C:/Users/hamis/Documents/3rd Year Project/3rd-Year-Project/Assets/BG-04.png"));
+	myImage = ImageFileFormat::loadFrom(File("C:/Users/hamis/Documents/3rd Year Project/3rd-Year-Project/Assets/bg_1.png"));
 
-	startTimerHz(15);
+	startTimerHz(5);
 
 	// Keyboard
 	addAndMakeVisible(keyboardComponent);
@@ -408,11 +408,27 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	resonanceSlider.setTextBoxStyle(noDisplay, false, 1, 1);
 	resonanceSliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.apvt, "RESONANCE", resonanceSlider);
 
+	// Adding slider
+	addAndMakeVisible(masterLevelSlider);
+	masterLevelSlider.setRange(0, 12);
+	masterLevelSlider.setTextValueSuffix("s");
+	masterLevelSlider.addListener(this);
+	masterLevelSlider.setSliderStyle(juce::Slider::Rotary);
+	masterLevelSlider.hideTextBox(true);
+	masterLevelSlider.setTextBoxStyle(noDisplay, false, 1, 1);
+	masterLevelSliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.apvt, "MASTERLEVEL", masterLevelSlider);
+
 	addAndMakeVisible(lfoPitchButton);
 	lfoPitchButtonAttachment = new AudioProcessorValueTreeState::ButtonAttachment(audioProcessor.apvt, "LFOPITCH", lfoPitchButton);
 
 	addAndMakeVisible(envPitchButton);
 	envPitchButtonAttachment = new AudioProcessorValueTreeState::ButtonAttachment(audioProcessor.apvt, "MODENVPITCH", envPitchButton);
+
+	addAndMakeVisible(lfoCutoffButton);
+	lfoCutoffButtonAttachment = new AudioProcessorValueTreeState::ButtonAttachment(audioProcessor.apvt, "LFOFILTER", lfoCutoffButton);
+
+	addAndMakeVisible(envCutoffButton);
+	envCutoffButtonAttachment = new AudioProcessorValueTreeState::ButtonAttachment(audioProcessor.apvt, "MODENVFILTER", envCutoffButton);
 
 	addAndMakeVisible(op1ModIndexLabel);
 	op1ModIndexLabel.setFont(juce::Font(24.0f, juce::Font::bold));
@@ -452,52 +468,52 @@ void ThirdYearProjectAudioProcessorEditor::resized()
 	// subcomponents in your editor..
 	auto sliderLeft = 120;
 
-	algoMenu.setBounds(sliderLeft + 800, 140, getWidth() / 8, 20);
+	algoMenu.setBounds(sliderLeft + 773, 140, getWidth() / 8, 20);
 
 
-	op1WaveformMenu.setBounds(60, 55, getWidth() / 16, 20);
-	op1LevelSlider.setBounds(182, 97, 20, 95);
-	op1ModIndexSlider.setBounds(sliderLeft + 118, 88, 60, 60);
-	op1ModIndexLabel.setBounds(sliderLeft + 178, 101, 90, 30);
+	op1WaveformMenu.setBounds(65, 50, getWidth() / 16, 20);
+	op1LevelSlider.setBounds(217, 100, 20, 95);
+	op1ModIndexSlider.setBounds(sliderLeft + 145, 100, 60, 60);
+	op1ModIndexLabel.setBounds(sliderLeft + 201, 113, 90, 30);
 
-	op1AttackSlider.setBounds(62, 97, 20, 95);
-	op1DecaySlider.setBounds(87, 97, 20, 95);
-	op1SustainSlider.setBounds(112, 97, 20, 95);
-	op1ReleaseSlider.setBounds(138, 97, 20, 95);
+	op1AttackSlider.setBounds(70, 100, 20, 95);
+	op1DecaySlider.setBounds(101, 100, 20, 95);
+	op1SustainSlider.setBounds(134, 100, 20, 95);
+	op1ReleaseSlider.setBounds(166, 100, 20, 95);
 
-	auto secondColumn = 398;
+	auto secondColumn = 386;
 
-	op2WaveformMenu.setBounds(secondColumn + 60, 55, getWidth() / 10, 20);
-	op2LevelSlider.setBounds(secondColumn + 182, 97, 20, 95);
-	op2ModIndexSlider.setBounds(secondColumn + sliderLeft + 118, 88, 60, 60);
-	op2ModIndexLabel.setBounds(secondColumn + sliderLeft + 178, 101, 90, 30);
+	op2WaveformMenu.setBounds(secondColumn + 67, 50, getWidth() / 10, 20);
+	op2LevelSlider.setBounds(secondColumn + 217, 100, 20, 95);
+	op2ModIndexSlider.setBounds(secondColumn + sliderLeft + 145, 100, 60, 60);
+	op2ModIndexLabel.setBounds(secondColumn + sliderLeft + 201, 113, 90, 30);
 
-	op2AttackSlider.setBounds(secondColumn + 62, 97, 20, 95);
-	op2DecaySlider.setBounds(secondColumn + 87, 97, 20, 95);
-	op2SustainSlider.setBounds(secondColumn + 112, 97, 20, 95);
-	op2ReleaseSlider.setBounds(secondColumn + 138, 97, 20, 95);
+	op2AttackSlider.setBounds(secondColumn + 70, 100, 20, 95);
+	op2DecaySlider.setBounds(secondColumn + 101, 100, 20, 95);
+	op2SustainSlider.setBounds(secondColumn + 134, 100, 20, 95);
+	op2ReleaseSlider.setBounds(secondColumn + 166, 100, 20, 95);
 
-	auto secondRow = 197;
+	auto secondRow = 213;
 
-	op3WaveformMenu.setBounds(60, secondRow + 55, getWidth() / 10, 20);
-	op3LevelSlider.setBounds(182, secondRow + 97, 20, 95);
-	op3ModIndexSlider.setBounds(sliderLeft + 118, secondRow + 88, 60, 60);
-	op3ModIndexLabel.setBounds(sliderLeft + 178, secondRow + 101, 90, 30);
+	op3WaveformMenu.setBounds(65, secondRow + 50, getWidth() / 10, 20);
+	op3LevelSlider.setBounds(217, secondRow + 100, 20, 95);
+	op3ModIndexSlider.setBounds(sliderLeft + 145, secondRow + 100, 60, 60);
+	op3ModIndexLabel.setBounds(sliderLeft + 201, secondRow + 113, 90, 30);
 
-	op3AttackSlider.setBounds(62, secondRow + 97, 20, 95);
-	op3DecaySlider.setBounds(87, secondRow + 97, 20, 95);
-	op3SustainSlider.setBounds(112, secondRow + 97, 20, 95);
-	op3ReleaseSlider.setBounds(138, secondRow + 97, 20, 95);
+	op3AttackSlider.setBounds(70, secondRow + 100, 20, 95);
+	op3DecaySlider.setBounds(101, secondRow + 100, 20, 95);
+	op3SustainSlider.setBounds(134, secondRow + 100, 20, 95);
+	op3ReleaseSlider.setBounds(166, secondRow + 100, 20, 95);
 
-	op4WaveformMenu.setBounds(secondColumn + 60, secondRow + 55, getWidth() / 10, 20);
-	op4LevelSlider.setBounds(secondColumn + 182, secondRow + 97, 20, 95);
-	op4ModIndexSlider.setBounds(secondColumn + sliderLeft + 118, secondRow + 88, 60, 60);
-	op4ModIndexLabel.setBounds(secondColumn + sliderLeft + 178, secondRow + 101, 90, 30);
+	op4WaveformMenu.setBounds(secondColumn + 66, secondRow + 50, getWidth() / 10, 20);
+	op4LevelSlider.setBounds(secondColumn + 217, secondRow + 100, 20, 95);
+	op4ModIndexSlider.setBounds(secondColumn + sliderLeft + 145, secondRow + 100, 60, 60);
+	op4ModIndexLabel.setBounds(secondColumn + sliderLeft + 201, secondRow + 113, 90, 30);
 
-	op4AttackSlider.setBounds(secondColumn + 62, secondRow + 97, 20, 95);
-	op4DecaySlider.setBounds(secondColumn + 87, secondRow + 97, 20, 95);
-	op4SustainSlider.setBounds(secondColumn + 112, secondRow + 97, 20, 95);
-	op4ReleaseSlider.setBounds(secondColumn + 138, secondRow + 97, 20, 95);
+	op4AttackSlider.setBounds(secondColumn + 70, secondRow + 100, 20, 95);
+	op4DecaySlider.setBounds(secondColumn + 101, secondRow + 100, 20, 95);
+	op4SustainSlider.setBounds(secondColumn + 134, secondRow + 100, 20, 95);
+	op4ReleaseSlider.setBounds(secondColumn + 166, secondRow + 100, 20, 95);
 
 
 	modAttackSlider.setBounds((getWidth() / 4) * 3 + 76, 296, 20, 95);
@@ -513,9 +529,13 @@ void ThirdYearProjectAudioProcessorEditor::resized()
 
 	cutoffSlider.setBounds((getWidth() / 4) * 3 + 75, 130, 60, 60);
 	resonanceSlider.setBounds((getWidth() / 4) * 3 + 155, 130, 60, 60);
+	masterLevelSlider.setBounds((getWidth() / 4) * 3 + 235, 130, 60, 60);
 
-	lfoPitchButton.setBounds((getWidth() / 4) * 3 + 325, 240, 22, 22);
-	envPitchButton.setBounds((getWidth() / 4) * 3 + 290, 240, 22, 22);
+	lfoPitchButton.setBounds((getWidth() / 4) * 3 + 290, 240, 22, 22);
+	envPitchButton.setBounds((getWidth() / 4) * 3 + 325, 240, 22, 22);
+
+	lfoCutoffButton.setBounds((getWidth() / 4) * 3 + 290, 260, 22, 22);
+	envCutoffButton.setBounds((getWidth() / 4) * 3 + 325, 260, 22, 22);
 
 	int w = (int)keyboardComponent.getKeyWidth() * (7 * 10 + 5), h = 100;
 	keyboardComponent.setSize(w, h);

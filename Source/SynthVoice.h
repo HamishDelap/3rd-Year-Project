@@ -141,7 +141,6 @@ public:
 
         // Calculate frequency of the note in Hz.
         frequency = MidiMessage::getMidiNoteInHertz(midiNoteNumber);
-        DBG("midiNoteNumber");
         level = velocity * 0.15;
         tailOff = 0.0;
 

@@ -172,9 +172,6 @@ private:
 	juce::ToggleButton lfoLevelButton;
 	ScopedPointer<AudioProcessorValueTreeState::ButtonAttachment> lfoLevelButtonAttachment;
 
-	juce::ToggleButton lfoModIndexButton;
-	ScopedPointer<AudioProcessorValueTreeState::ButtonAttachment> lfoModIndexButtonAttachment;
-
 	juce::ToggleButton envPitchButton;
 	ScopedPointer<AudioProcessorValueTreeState::ButtonAttachment> envPitchButtonAttachment;
 
@@ -184,15 +181,16 @@ private:
 	juce::ToggleButton envLevelButton;
 	ScopedPointer<AudioProcessorValueTreeState::ButtonAttachment> envLevelButtonAttachment;
 
-	juce::ToggleButton envModIndexButton;
-	ScopedPointer<AudioProcessorValueTreeState::ButtonAttachment> envModIndexButtonAttachment;
-
 	// Filter
 	juce::Slider cutoffSlider;
 	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> cutoffSliderAttachment;
 
 	juce::Slider resonanceSlider;
 	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> resonanceSliderAttachment;
+
+	// Master Level
+	juce::Slider masterLevelSlider;
+	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> masterLevelSliderAttachment;
 
 	juce::Label op1ModIndexLabel;
 	juce::Label op2ModIndexLabel;

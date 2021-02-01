@@ -95,6 +95,13 @@ private:
     float fftData[2 * fftSize];
     int fifoIndex = 0;
 
+    float currentCutoff = 1000;
+    
+    float masterLevel = 1;
+    float currentLevel = 1;
+
+    float smoothingCoeff = 0.8;
+
     std::shared_ptr<ModEnvelope> modEnvelope;
     std::shared_ptr<Lfo> modLfo;
 
