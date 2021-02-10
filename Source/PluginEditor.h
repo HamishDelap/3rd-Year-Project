@@ -31,6 +31,7 @@ public:
 	void timerCallback() override;
 
 	void drawSpecFrame(juce::Graphics& g);
+	void drawAlgoDiagram(juce::Graphics& g);
 
 	// Taken from https://www.geeksforgeeks.org/rounding-floating-point-number-two-decimal-places-c-c/
 	float round(float var) {
@@ -52,6 +53,10 @@ private:
 	int specHeight;
 
 	juce::Image myImage;
+	juce::Image algOneImage;
+	juce::Image algTwoImage;
+	juce::Image algThreeImage;
+	juce::Image algFourImage;
 
 	// Algorithm Dropdown
 	juce::Label algoLabel{ {}, "Algorithm" };

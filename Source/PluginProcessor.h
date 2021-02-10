@@ -13,6 +13,9 @@
 #include "SynthVoice.h"
 #include "LFO.h"
 #include "ModEnvelope.h"
+#include "StateManager.h"
+
+class StateManager;
 
 //==============================================================================
 /**
@@ -59,12 +62,15 @@ public:
 
     void updateFilter();
 
+    void checkAlgoChanged();
 
     void pushNextSampleIntoFifo(float sample) noexcept;
 
     void drawNextFrameOfSpectrum();
 
-    AudioProcessorValueTreeState apvt;
+ //   AudioProcessorValueTreeState apvt;
+
+    StateManager stateManager; // <-- Unique pointer??s
 
     enum
     {
@@ -73,11 +79,13 @@ public:
         scopeSize = 512
     };
     bool nextFFTBlockReady = false;
+    bool algoChanged = true;
     float scopeData[scopeSize];
 
     MidiKeyboardState keyboardState;
 
 private:
+
     Synthesiser mySynth;
     SynthVoice* myVoice;
 
@@ -95,12 +103,15 @@ private:
     float fftData[2 * fftSize];
     int fifoIndex = 0;
 
+    float algo = 1.0;
+
     float currentCutoff = 1000;
     
     float masterLevel = 1;
     float currentLevel = 1;
 
     float smoothingCoeff = 0.8;
+    float previousLfoLevel = 0.0;
 
     std::shared_ptr<ModEnvelope> modEnvelope;
     std::shared_ptr<Lfo> modLfo;

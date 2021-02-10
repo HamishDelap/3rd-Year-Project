@@ -9,6 +9,7 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 #include "Oscillator.h"
+#include "StateManager.h"
 
 //==============================================================================
 ThirdYearProjectAudioProcessor::ThirdYearProjectAudioProcessor()
@@ -21,122 +22,9 @@ ThirdYearProjectAudioProcessor::ThirdYearProjectAudioProcessor()
         .withOutput("Output", juce::AudioChannelSet::stereo(), true)
 #endif
     ),
-    apvt(*this, nullptr), fft(fftOrder), windowFunction(fftSize, juce::dsp::WindowingFunction<float>::hann)
+    /*apvt(*this, nullptr),*/ fft(fftOrder), windowFunction(fftSize, juce::dsp::WindowingFunction<float>::hann), stateManager(*this)
 #endif
 {
-    // OP Mod Indexes
-    // Preparing the value tree state
-    NormalisableRange<float> op1ModIndexRange(0, 12, 0.5);
-    apvt.createAndAddParameter("OP1MODINDEX", "OP1MODINDEX", "OP1MODINDEX", op1ModIndexRange, 0.0f, nullptr, nullptr);
-	NormalisableRange<float> op2ModIndexRange(0, 12, 0.5);
-	apvt.createAndAddParameter("OP2MODINDEX", "OP2MODINDEX", "OP2MODINDEX", op2ModIndexRange, 0.0f, nullptr, nullptr);
-	NormalisableRange<float> op3ModIndexRange(0, 12, 0.5);
-	apvt.createAndAddParameter("OP3MODINDEX", "OP3MODINDEX", "OP3MODINDEX", op3ModIndexRange, 0.0f, nullptr, nullptr);
-	NormalisableRange<float> op4ModIndexRange(0, 12, 0.5);
-	apvt.createAndAddParameter("OP4MODINDEX", "OP4MODINDEX", "OP4MODINDEX", op4ModIndexRange, 0.0f, nullptr, nullptr);
-
-    // OP Levels
-    NormalisableRange<float> op1LevelRange(0, 1);
-    apvt.createAndAddParameter("OP1LEVEL", "OP1LEVEL", "OP1LEVEL", op1LevelRange, 1.0f, nullptr, nullptr);
-    NormalisableRange<float> op2LevelRange(0, 1);
-    apvt.createAndAddParameter("OP2LEVEL", "OP2LEVEL", "OP2LEVEL", op2LevelRange, 0.0f, nullptr, nullptr);
-	NormalisableRange<float> op3LevelRange(0, 1);
-	apvt.createAndAddParameter("OP3LEVEL", "OP3LEVEL", "OP3LEVEL", op3LevelRange, 0.0f, nullptr, nullptr);
-	NormalisableRange<float> op4LevelRange(0, 1);
-	apvt.createAndAddParameter("OP4LEVEL", "OP4LEVEL", "OP4LEVEL", op4LevelRange, 0.0f, nullptr, nullptr);
-
-    // OP1 Envelope
-	NormalisableRange<float> op1AttackRange(0, 6);
-	apvt.createAndAddParameter("OP1ATTACK", "OP1ATTACK", "OP1ATTACK", op1AttackRange, 0.2f, nullptr, nullptr);
-	NormalisableRange<float> op1DecayRange(0, 3);
-	apvt.createAndAddParameter("OP1DECAY", "OP1DECAY", "OP1DECAY", op1DecayRange, 0.0f, nullptr, nullptr);
-	NormalisableRange<float> op1SustainRange(0, 1);
-	apvt.createAndAddParameter("OP1SUSTAIN", "OP1SUSTAIN", "OP1SUSTAIN", op1SustainRange, 1.0f, nullptr, nullptr);
-	NormalisableRange<float> op1ReleaseRange(0, 3);
-	apvt.createAndAddParameter("OP1RELEASE", "OP1RELEASE", "OP1RELEASE", op1ReleaseRange, 0.5f, nullptr, nullptr);
-   
-    // OP2 Envelope
-    NormalisableRange<float> op2AttackRange(0, 6);
-    apvt.createAndAddParameter("OP2ATTACK", "OP2ATTACK", "OP2ATTACK", op2AttackRange, 0.0f, nullptr, nullptr);
-    NormalisableRange<float> op2DecayRange(0, 3);
-    apvt.createAndAddParameter("OP2DECAY", "OP2DECAY", "OP2DECAY", op2DecayRange, 0.0f, nullptr, nullptr);
-    NormalisableRange<float> op2SustainRange(0, 1);
-    apvt.createAndAddParameter("OP2SUSTAIN", "OP2SUSTAIN", "OP2SUSTAIN", op2SustainRange, 0.0f, nullptr, nullptr);
-    NormalisableRange<float> op2ReleaseRange(0, 3);
-    apvt.createAndAddParameter("OP2RELEASE", "OP2RELEASE", "OP2RELEASE", op2ReleaseRange, 0.0f, nullptr, nullptr);
-
-    // OP3 Envelope
-    NormalisableRange<float> op3AttackRange(0, 6);
-    apvt.createAndAddParameter("OP3ATTACK", "OP3ATTACK", "OP3ATTACK", op3AttackRange, 0.0f, nullptr, nullptr);
-    NormalisableRange<float> op3DecayRange(0, 3);
-    apvt.createAndAddParameter("OP3DECAY", "OP3DECAY", "OP3DECAY", op3DecayRange, 0.0f, nullptr, nullptr);
-    NormalisableRange<float> op3SustainRange(0, 1);
-    apvt.createAndAddParameter("OP3SUSTAIN", "OP3SUSTAIN", "OP3SUSTAIN", op3SustainRange, 0.0f, nullptr, nullptr);
-    NormalisableRange<float> op3ReleaseRange(0, 3);
-    apvt.createAndAddParameter("OP3RELEASE", "OP3RELEASE", "OP3RELEASE", op3ReleaseRange, 0.0f, nullptr, nullptr);
-
-    // OP4 Envelope
-    NormalisableRange<float> op4AttackRange(0, 6);
-    apvt.createAndAddParameter("OP4ATTACK", "OP4ATTACK", "OP4ATTACK", op4AttackRange, 0.0f, nullptr, nullptr);
-    NormalisableRange<float> op4DecayRange(0, 3);
-    apvt.createAndAddParameter("OP4DECAY", "OP4DECAY", "OP4DECAY", op4DecayRange, 0.0f, nullptr, nullptr);
-    NormalisableRange<float> op4SustainRange(0, 1);
-    apvt.createAndAddParameter("OP4SUSTAIN", "OP4SUSTAIN", "OP4SUSTAIN", op4SustainRange, 0.0f, nullptr, nullptr);
-    NormalisableRange<float> op4ReleaseRange(0, 3);
-    apvt.createAndAddParameter("OP4RELEASE", "OP4RELEASE", "OP4RELEASE", op4ReleaseRange, 0.0f, nullptr, nullptr);
-    
-    // MOD Envelope
-    NormalisableRange<float> modEnvAttackRange(0, 3);
-    apvt.createAndAddParameter("MODENVATTACK", "MODENVATTACK", "MODENVATTACK", modEnvAttackRange, 0.5f, nullptr, nullptr);
-    NormalisableRange<float> modEnvDecayRange(0, 1);
-    apvt.createAndAddParameter("MODENVDECAY", "MODENVDECAY", "MODENVDECAY", modEnvDecayRange, 0.5f, nullptr, nullptr);
-    NormalisableRange<float> modEnvSustainRange(0, 1);
-    apvt.createAndAddParameter("MODENVSUSTAIN", "MODENVSUSTAIN", "MODENVSUSTAIN", modEnvSustainRange, 0.5f, nullptr, nullptr);
-    NormalisableRange<float> modEnvReleaseRange(0, 2);
-    apvt.createAndAddParameter("MODENVRELEASE", "MODENVRELEASE", "MODENVRELEASE", modEnvReleaseRange, 0.5f, nullptr, nullptr);
-    NormalisableRange<float> modEnvAmountRange(0, 1);
-    apvt.createAndAddParameter("MODENVAMOUNT", "MODENVAMOUNT", "MODENVAMOUNT", modEnvAmountRange, 1.0f, nullptr, nullptr);
-    
-    // LFO
-    NormalisableRange<float> lfoAmountRange(0, 100);
-    apvt.createAndAddParameter("LFOAMOUNT", "LFOAMOUNT", "LFOAMOUNT", lfoAmountRange, 1.0f, nullptr, nullptr);
-    NormalisableRange<float> lfoFreqRange(0.1, 30);
-    apvt.createAndAddParameter("LFOFREQ", "LFOFREQ", "LFOFREQ", lfoFreqRange, 1.0f, nullptr, nullptr);
-
-    // Filter
-    NormalisableRange<float> cutoffRange(0.1, 20000);
-	apvt.createAndAddParameter("CUTOFF", "CUTOFF", "CUTOFF", cutoffRange, 20000.0f, nullptr, nullptr);
-	NormalisableRange<float> resonanceRange(0.1,1);
-	apvt.createAndAddParameter("RESONANCE", "RESONANCE", "RESONANCE", resonanceRange, 1.0f, nullptr, nullptr);
-
-    NormalisableRange<float> algoRange(1, 4);
-    apvt.createAndAddParameter("ALGO", "ALGO", "ALGO", algoRange, 1.0f, nullptr, nullptr);
-
-    NormalisableRange<float> op1WaveformRange(1, 3);
-    apvt.createAndAddParameter("OP1WAVEFORM", "OP1WAVEFORM", "OP1WAVEFORM", op1WaveformRange, 1.0f, nullptr, nullptr);
-    NormalisableRange<float> op2WaveformRange(1, 3);
-    apvt.createAndAddParameter("OP2WAVEFORM", "OP2WAVEFORM", "OP2WAVEFORM", op2WaveformRange, 1.0f, nullptr, nullptr);
-    NormalisableRange<float> op3WaveformRange(1, 3);
-    apvt.createAndAddParameter("OP3WAVEFORM", "OP3WAVEFORM", "OP3WAVEFORM", op3WaveformRange, 1.0f, nullptr, nullptr);
-    NormalisableRange<float> op4WaveformRange(1, 3);
-    apvt.createAndAddParameter("OP4WAVEFORM", "OP4WAVEFORM", "OP4WAVEFORM", op4WaveformRange, 1.0f, nullptr, nullptr);
-
-    NormalisableRange<float> lfoPitchRange(0, 1);
-    apvt.createAndAddParameter("LFOPITCH", "LFOPITCH", "LFOPITCH", lfoPitchRange, 0.0f, nullptr, nullptr);
-    NormalisableRange<float> modEnvPitchRange(0, 1);
-    apvt.createAndAddParameter("MODENVPITCH", "MODENVPITCH", "MODENVPITCH", modEnvPitchRange, 0.0f, nullptr, nullptr);
-    NormalisableRange<float> lfoFilterRange(0, 1);
-    apvt.createAndAddParameter("LFOFILTER", "LFOFILTER", "LFOFILTER", lfoFilterRange, 0.0f, nullptr, nullptr);
-    NormalisableRange<float> modEnvFilterRange(0, 1);
-    apvt.createAndAddParameter("MODENVFILTER", "MODENVFILTER", "MODENVFILTER", modEnvFilterRange, 0.0f, nullptr, nullptr);
-
-    NormalisableRange<float> masterLevelRange(0, 1.5);
-    apvt.createAndAddParameter("MASTERLEVEL", "MASTERLEVEL", "MASTERLEVEL", masterLevelRange, 1.0f, nullptr, nullptr);
-
-    apvt.state = ValueTree("apvt");
-
-
-
     mySynth.clearVoices();
     // Create 5 voices.
     for (int i = 0; i < 10; i++) {
@@ -251,8 +139,8 @@ void ThirdYearProjectAudioProcessor::prepareToPlay (double sampleRate, int sampl
 }
 
 void ThirdYearProjectAudioProcessor::updateFilter() {
-    float cutoff = *apvt.getRawParameterValue("CUTOFF");
-    float resonance = *apvt.getRawParameterValue("RESONANCE");
+    float cutoff = *stateManager.apvt.getRawParameterValue("CUTOFF");
+    float resonance = *stateManager.apvt.getRawParameterValue("RESONANCE");
     float coeff = 0.8f;
 
     if (modEnvelope->isOn()) {
@@ -271,6 +159,12 @@ void ThirdYearProjectAudioProcessor::updateFilter() {
     }
 
     *lowPassFilter.state = *dsp::IIR::Coefficients<float>::makeLowPass(lastSampleRate, currentCutoff, resonance);
+}
+
+void ThirdYearProjectAudioProcessor::checkAlgoChanged() {
+    if (*(float*)stateManager.apvt.getRawParameterValue("ALGO") != algo) {
+        algoChanged = true;
+    }
 }
 
 void ThirdYearProjectAudioProcessor::releaseResources()
@@ -346,45 +240,50 @@ void ThirdYearProjectAudioProcessor::drawNextFrameOfSpectrum()
 
 void ThirdYearProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
-    keyboardState.processNextMidiBuffer(midiMessages, 0, buffer.getNumSamples(), true);
-    modLfo->setFrequency((float*)apvt.getRawParameterValue("LFOFREQ"));
-    modLfo->setLevel((float*)apvt.getRawParameterValue("LFOAMOUNT"));
-    modLfo->toggleDest((float*)apvt.getRawParameterValue("LFOPITCH"), 1);
-    modLfo->toggleDest((float*)apvt.getRawParameterValue("LFOFILTER"), 2);
+    checkAlgoChanged();
+    algo = *(float*)stateManager.apvt.getRawParameterValue("ALGO");
 
-    modEnvelope->setAttack((float*)apvt.getRawParameterValue("MODENVATTACK"));
-    modEnvelope->setDecay((float*)apvt.getRawParameterValue("MODENVDECAY"));
-    modEnvelope->setSustain((float*)apvt.getRawParameterValue("MODENVSUSTAIN"));
-    modEnvelope->setRelease((float*)apvt.getRawParameterValue("MODENVRELEASE"));
-    modEnvelope->setAmount((float*)apvt.getRawParameterValue("MODENVAMOUNT"));
-    modEnvelope->toggleDest((float*)apvt.getRawParameterValue("MODENVPITCH"), 1);
-    modEnvelope->toggleDest((float*)apvt.getRawParameterValue("MODENVFILTER"), 2);
+    keyboardState.processNextMidiBuffer(midiMessages, 0, buffer.getNumSamples(), true);
+    modLfo->setFrequency((float*)stateManager.apvt.getRawParameterValue("LFOFREQ"));
+    modLfo->setLevel((float*)stateManager.apvt.getRawParameterValue("LFOAMOUNT"));
+    modLfo->toggleDest((float*)stateManager.apvt.getRawParameterValue("LFOPITCH"), 1);
+    modLfo->toggleDest((float*)stateManager.apvt.getRawParameterValue("LFOFILTER"), 2);
+    modLfo->toggleDest((float*)stateManager.apvt.getRawParameterValue("LFOLEVEL"), 3);
+
+    modEnvelope->setAttack((float*)stateManager.apvt.getRawParameterValue("MODENVATTACK"));
+    modEnvelope->setDecay((float*)stateManager.apvt.getRawParameterValue("MODENVDECAY"));
+    modEnvelope->setSustain((float*)stateManager.apvt.getRawParameterValue("MODENVSUSTAIN"));
+    modEnvelope->setRelease((float*)stateManager.apvt.getRawParameterValue("MODENVRELEASE"));
+    modEnvelope->setAmount((float*)stateManager.apvt.getRawParameterValue("MODENVAMOUNT"));
+    modEnvelope->toggleDest((float*)stateManager.apvt.getRawParameterValue("MODENVPITCH"), 1);
+    modEnvelope->toggleDest((float*)stateManager.apvt.getRawParameterValue("MODENVFILTER"), 2);
+    modEnvelope->toggleDest((float*)stateManager.apvt.getRawParameterValue("MODENVLEVEL"), 3);
 
     for (int i = 0; i < mySynth.getNumVoices(); i++) {
         // Check that myVoice is a SynthVoice*
         if (myVoice = dynamic_cast<SynthVoice*>(mySynth.getVoice(i))) {
-            myVoice->setOP1MODINDEX((float*)apvt.getRawParameterValue("OP1MODINDEX"));
-            myVoice->setOP2MODINDEX((float*)apvt.getRawParameterValue("OP2MODINDEX"));
-            myVoice->setOP3MODINDEX((float*)apvt.getRawParameterValue("OP3MODINDEX"));
-            myVoice->setOP4MODINDEX((float*)apvt.getRawParameterValue("OP4MODINDEX"));
+            myVoice->setOP1MODINDEX((float*)stateManager.apvt.getRawParameterValue("OP1MODINDEX"));
+            myVoice->setOP2MODINDEX((float*)stateManager.apvt.getRawParameterValue("OP2MODINDEX"));
+            myVoice->setOP3MODINDEX((float*)stateManager.apvt.getRawParameterValue("OP3MODINDEX"));
+            myVoice->setOP4MODINDEX((float*)stateManager.apvt.getRawParameterValue("OP4MODINDEX"));
 
-            myVoice->setOP1LEVEL((float*)apvt.getRawParameterValue("OP1LEVEL"));
-            myVoice->setOP2LEVEL((float*)apvt.getRawParameterValue("OP2LEVEL"));
-            myVoice->setOP3LEVEL((float*)apvt.getRawParameterValue("OP3LEVEL"));
-            myVoice->setOP4LEVEL((float*)apvt.getRawParameterValue("OP4LEVEL"));
+            myVoice->setOP1LEVEL((float*)stateManager.apvt.getRawParameterValue("OP1LEVEL"));
+            myVoice->setOP2LEVEL((float*)stateManager.apvt.getRawParameterValue("OP2LEVEL"));
+            myVoice->setOP3LEVEL((float*)stateManager.apvt.getRawParameterValue("OP3LEVEL"));
+            myVoice->setOP4LEVEL((float*)stateManager.apvt.getRawParameterValue("OP4LEVEL"));
 
             myVoice->setADSRSampleRate(lastSampleRate);
-			myVoice->setOp1Adsr((float*)apvt.getRawParameterValue("OP1ATTACK"), (float*)apvt.getRawParameterValue("OP1DECAY"), (float*)apvt.getRawParameterValue("OP1SUSTAIN"), (float*)apvt.getRawParameterValue("OP1RELEASE"));
-            myVoice->setOp2Adsr((float*)apvt.getRawParameterValue("OP2ATTACK"), (float*)apvt.getRawParameterValue("OP2DECAY"), (float*)apvt.getRawParameterValue("OP2SUSTAIN"), (float*)apvt.getRawParameterValue("OP2RELEASE"));
-            myVoice->setOp3Adsr((float*)apvt.getRawParameterValue("OP3ATTACK"), (float*)apvt.getRawParameterValue("OP3DECAY"), (float*)apvt.getRawParameterValue("OP3SUSTAIN"), (float*)apvt.getRawParameterValue("OP3RELEASE"));
-            myVoice->setOp4Adsr((float*)apvt.getRawParameterValue("OP4ATTACK"), (float*)apvt.getRawParameterValue("OP4DECAY"), (float*)apvt.getRawParameterValue("OP4SUSTAIN"), (float*)apvt.getRawParameterValue("OP4RELEASE"));
+			myVoice->setOp1Adsr((float*)stateManager.apvt.getRawParameterValue("OP1ATTACK"), (float*)stateManager.apvt.getRawParameterValue("OP1DECAY"), (float*)stateManager.apvt.getRawParameterValue("OP1SUSTAIN"), (float*)stateManager.apvt.getRawParameterValue("OP1RELEASE"));
+            myVoice->setOp2Adsr((float*)stateManager.apvt.getRawParameterValue("OP2ATTACK"), (float*)stateManager.apvt.getRawParameterValue("OP2DECAY"), (float*)stateManager.apvt.getRawParameterValue("OP2SUSTAIN"), (float*)stateManager.apvt.getRawParameterValue("OP2RELEASE"));
+            myVoice->setOp3Adsr((float*)stateManager.apvt.getRawParameterValue("OP3ATTACK"), (float*)stateManager.apvt.getRawParameterValue("OP3DECAY"), (float*)stateManager.apvt.getRawParameterValue("OP3SUSTAIN"), (float*)stateManager.apvt.getRawParameterValue("OP3RELEASE"));
+            myVoice->setOp4Adsr((float*)stateManager.apvt.getRawParameterValue("OP4ATTACK"), (float*)stateManager.apvt.getRawParameterValue("OP4DECAY"), (float*)stateManager.apvt.getRawParameterValue("OP4SUSTAIN"), (float*)stateManager.apvt.getRawParameterValue("OP4RELEASE"));
             
-            myVoice->setAlgo((float*)apvt.getRawParameterValue("ALGO"));
+            myVoice->setAlgo((float*)stateManager.apvt.getRawParameterValue("ALGO"));
 
-            myVoice->setOP1WAVEFORM((float*)apvt.getRawParameterValue("OP1WAVEFORM"));
-            myVoice->setOP2WAVEFORM((float*)apvt.getRawParameterValue("OP2WAVEFORM"));
-            myVoice->setOP3WAVEFORM((float*)apvt.getRawParameterValue("OP3WAVEFORM"));
-            myVoice->setOP4WAVEFORM((float*)apvt.getRawParameterValue("OP4WAVEFORM"));
+            myVoice->setOP1WAVEFORM((float*)stateManager.apvt.getRawParameterValue("OP1WAVEFORM"));
+            myVoice->setOP2WAVEFORM((float*)stateManager.apvt.getRawParameterValue("OP2WAVEFORM"));
+            myVoice->setOP3WAVEFORM((float*)stateManager.apvt.getRawParameterValue("OP3WAVEFORM"));
+            myVoice->setOP4WAVEFORM((float*)stateManager.apvt.getRawParameterValue("OP4WAVEFORM"));
 
            // myVoice->setModAdsrParams((float*)apvt.getRawParameterValue("MODATTACK"), (float*)apvt.getRawParameterValue("MODDECAY"), (float*)apvt.getRawParameterValue("MODSUSTAIN"), (float*)apvt.getRawParameterValue("MODRELEASE"));
         }
@@ -421,7 +320,10 @@ void ThirdYearProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buf
     updateFilter();
     lowPassFilter.process(dsp::ProcessContextReplacing<float>(block));
 
-    currentLevel = *(float*)apvt.getRawParameterValue("MASTERLEVEL");
+    currentLevel = *(float*)stateManager.apvt.getRawParameterValue("MASTERLEVEL");
+    float lfoLevel = modLfo->getOutput(3) * 0.01;
+    previousLfoLevel = lfoLevel + 0.7f * (previousLfoLevel - lfoLevel);
+    currentLevel += previousLfoLevel;
     buffer.applyGainRamp(0, buffer.getNumSamples(), masterLevel, currentLevel);
     masterLevel = currentLevel;
     
@@ -455,9 +357,11 @@ void ThirdYearProjectAudioProcessor::getStateInformation (juce::MemoryBlock& des
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
 
-    auto state = apvt.copyState();
-    std::unique_ptr<XmlElement> xml(state.createXml());
-    copyXmlToBinary(*xml, destData);
+    //auto state = stateManager.apvt.copyState();
+    //std::unique_ptr<XmlElement> xml(state.createXml());
+    //copyXmlToBinary(*xml, destData);
+
+    stateManager.readState(destData);
 }
 
 void ThirdYearProjectAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
@@ -465,10 +369,12 @@ void ThirdYearProjectAudioProcessor::setStateInformation (const void* data, int 
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
 
-    std::unique_ptr<XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
-    if (xmlState != nullptr) 
-        if (xmlState->hasTagName(apvt.state.getType()))
-            apvt.state = ValueTree::fromXml(*xmlState);
+    //std::unique_ptr<XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
+    //if (xmlState != nullptr) 
+       // if (xmlState->hasTagName(stateManager.apvt.state.getType()))
+         //   stateManager.apvt.state = ValueTree::fromXml(*xmlState);
+
+    stateManager.writeState(data, sizeInBytes);
 }
 
 //==============================================================================

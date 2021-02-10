@@ -82,6 +82,8 @@ public:
 
 	float oscStep(double fmTable[][4], double frequency, std::shared_ptr<ModEnvelope> modAdsr, std::shared_ptr<Lfo> modLfo) {
 
+		float adsrLevel;
+
 		auto cyclesPerSecond = (frequency + modLfo->getOutput(1) / 10);
 		if (modAdsr->isOn()) {
 			cyclesPerSecond *= modAdsr->getOutput(1);
@@ -136,6 +138,10 @@ public:
 							operator3->operatorStep((fmTable[0][2] + 
 								operator4->operatorStep(fmTable[0][3], fmTable[1][3])), fmTable[1][2])), fmTable[1][1])), fmTable[1][0]);
 			break;
+		}
+		if (modAdsr->isOn()) {
+			adsrLevel = modAdsr->getOutput(3);
+			output = output * adsrLevel;
 		}
 		return output;
 	}
