@@ -19,14 +19,14 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	// editor's size to whatever you need it to be.
 	setSize (1600, 800);
 
-	myImage = ImageFileFormat::loadFrom(File("C:/Users/hamis/Documents/3rd Year Project/3rd-Year-Project/Assets/bg_3.png"));
+	myImage = ImageFileFormat::loadFrom(File("C:/Users/hamis/Documents/3rd Year Project/3rd-Year-Project/Assets/bg_4.png"));
 	
 	algOneImage = ImageFileFormat::loadFrom(File("C:/Users/hamis/Documents/3rd Year Project/3rd-Year-Project/Assets/ALG1.png"));
 	algTwoImage = ImageFileFormat::loadFrom(File("C:/Users/hamis/Documents/3rd Year Project/3rd-Year-Project/Assets/ALG2.png"));
 	algThreeImage = ImageFileFormat::loadFrom(File("C:/Users/hamis/Documents/3rd Year Project/3rd-Year-Project/Assets/ALG3.png"));
 	algFourImage = ImageFileFormat::loadFrom(File("C:/Users/hamis/Documents/3rd Year Project/3rd-Year-Project/Assets/ALG4.png"));
 
-	startTimerHz(10);
+	startTimerHz(6);
 
 	// Keyboard
 	addAndMakeVisible(keyboardComponent);
@@ -84,8 +84,25 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	op4WaveformMenu.setSelectedId(1);
 	op4WaveformMenuAttachment = new AudioProcessorValueTreeState::ComboBoxAttachment(audioProcessor.stateManager.apvt, "OP4WAVEFORM", op4WaveformMenu);
 
+	// Op4 Waveform Dropdown
+	// add items to the combo-box
+	//addAndMakeVisible(lfoWaveformMenu);
+	//lfoWaveformMenu.addItem("Sine", 1);
+	//lfoWaveformMenu.addItem("Triangle", 2);
+	//lfoWaveformMenu.addItem("Square", 3);
+	//lfoWaveformMenu.setSelectedId(1);
+	//lfoWaveformMenuAttachment = new AudioProcessorValueTreeState::ComboBoxAttachment(audioProcessor.stateManager.apvt, "LFOWAVEFORM", lfoWaveformMenu);
 
 	juce::Slider::TextEntryBoxPosition noDisplay = juce::Slider::TextEntryBoxPosition::NoTextBox;
+
+	addAndMakeVisible(lfoWaveformSlider);
+	lfoWaveformSlider.setRange(1, 3);
+	lfoWaveformSlider.setTextValueSuffix("");
+	lfoWaveformSlider.addListener(this);
+	lfoWaveformSlider.setSliderStyle(juce::Slider::Rotary);
+	lfoWaveformSlider.hideTextBox(true);
+	lfoWaveformSlider.setTextBoxStyle(noDisplay, false, 1, 1);
+	lfoWaveformSliderAttachment = new AudioProcessorValueTreeState::SliderAttachment(audioProcessor.stateManager.apvt, "LFOWAVEFORM", lfoWaveformSlider);
 
 	//Mod Index Sliders
 	//Adding slider
@@ -532,8 +549,9 @@ void ThirdYearProjectAudioProcessorEditor::resized()
 	modReleaseSlider.setBounds((getWidth() / 4) * 3 + 109, 333, 20, 95);
 	modAmountSlider.setBounds((getWidth() / 4) * 3 + 156, 333, 20, 95);
 
-	lfoAmountSlider.setBounds((getWidth() / 4) * 3 + 129, 253, 60, 60);
-	lfoFreqSlider.setBounds((getWidth() / 4) * 3 + 66, 253, 60, 60);
+	lfoAmountSlider.setBounds((getWidth() / 4) * 3 + 129, 256, 60, 60);
+	lfoFreqSlider.setBounds((getWidth() / 4) * 3 + 66, 256, 60, 60);
+	lfoWaveformSlider.setBounds((getWidth() / 4) * 3 + 15, 262, 50, 50);
 
 
 	cutoffSlider.setBounds((getWidth() / 4) * 3 + 19, 130, 60, 60);

@@ -51,7 +51,8 @@ StateManager::StateManager(AudioProcessor& audioProcessor) :
             std::make_unique<AudioParameterFloat>("MODENVAMOUNT", "MODENVAMOUNT", NormalisableRange<float>(0, 1), 1.0f),
 
             std::make_unique<AudioParameterFloat>("LFOAMOUNT", "LFOAMOUNT", NormalisableRange<float>(0, 100), 1.0f),
-            std::make_unique<AudioParameterFloat>("LFOFREQ", "LFOFREQ", NormalisableRange<float>(0.1, 3), 1.0f),
+            std::make_unique<AudioParameterFloat>("LFOFREQ", "LFOFREQ", NormalisableRange<float>(0.1, 10), 1.0f),
+            std::make_unique<AudioParameterFloat>("LFOWAVEFORM", "LFOWAVEFORM", NormalisableRange<float>(1, 3, 1), 1.0f),
             
             std::make_unique<AudioParameterFloat>("CUTOFF", "CUTOFF", NormalisableRange<float>(0.1, 20000), 20000.0f),
             std::make_unique<AudioParameterFloat>("RESONANCE", "RESONANCE", NormalisableRange<float>(0.1, 1), 1.0f),

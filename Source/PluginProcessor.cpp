@@ -246,6 +246,7 @@ void ThirdYearProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buf
     keyboardState.processNextMidiBuffer(midiMessages, 0, buffer.getNumSamples(), true);
     modLfo->setFrequency((float*)stateManager.apvt.getRawParameterValue("LFOFREQ"));
     modLfo->setLevel((float*)stateManager.apvt.getRawParameterValue("LFOAMOUNT"));
+    modLfo->setWaveform((float*)stateManager.apvt.getRawParameterValue("LFOWAVEFORM"));
     modLfo->toggleDest((float*)stateManager.apvt.getRawParameterValue("LFOPITCH"), 1);
     modLfo->toggleDest((float*)stateManager.apvt.getRawParameterValue("LFOFILTER"), 2);
     modLfo->toggleDest((float*)stateManager.apvt.getRawParameterValue("LFOLEVEL"), 3);

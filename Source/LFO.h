@@ -38,8 +38,8 @@ public:
         }
     }
 
-    void setWaveform(int waveform) {
-        oscillator->setWaveform(waveform);
+    void setWaveform(float* waveform) {
+        oscillator->setWaveform(*waveform);
     }
 
     void setFrequency(float* freq) {

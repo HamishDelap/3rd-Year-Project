@@ -82,6 +82,13 @@ private:
 	juce::ComboBox op4WaveformMenu;
 	ScopedPointer<AudioProcessorValueTreeState::ComboBoxAttachment> op4WaveformMenuAttachment;
 
+	//juce::Font lfoWaveformFont{ 12.0f };
+	//juce::ComboBox lfoWaveformMenu;
+	//ScopedPointer<AudioProcessorValueTreeState::ComboBoxAttachment> lfoWaveformMenuAttachment;
+
+	juce::Slider lfoWaveformSlider;
+	ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> lfoWaveformSliderAttachment;
+
     // Mod Index Sliders
     juce::Slider op1ModIndexSlider;
     ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> op1ModIndexSliderAttachment;
