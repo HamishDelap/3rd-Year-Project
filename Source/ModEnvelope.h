@@ -84,7 +84,6 @@ public:
 
     void toggleDest(float* toggle, int destination) {
         if (*toggle == 1.0f) {
-            DBG(destination);
             selectDest(destination);
         }
         else {

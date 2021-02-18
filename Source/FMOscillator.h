@@ -99,7 +99,7 @@ public:
 			fmTable[0][1] = fmTable[0][0] * fmTable[2][1];
 			fmTable[0][2] = fmTable[0][1] * fmTable[2][2];
 			fmTable[0][3] = fmTable[0][2] * fmTable[2][3];
-
+			                    
 			output = operator1->operatorStep((fmTable[0][0] + 
 						operator2->operatorStep((fmTable[0][1] + 
 							operator3->operatorStep((fmTable[0][2] + 

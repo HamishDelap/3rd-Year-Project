@@ -12,14 +12,15 @@
 
 //==============================================================================
 ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (ThirdYearProjectAudioProcessor& p)
-	: AudioProcessorEditor (&p), audioProcessor (p), keyboardComponent(audioProcessor.keyboardState, MidiKeyboardComponent::horizontalKeyboard)
+	: AudioProcessorEditor (&p), audioProcessor (p), keyboardComponent(audioProcessor.keyboardState, MidiKeyboardComponent::horizontalKeyboard),
+	nextPresetButton("nextPreset", 0.0, Colour(235, 235, 235)), prevPresetButton("prevPreset", 0.5, Colour(235, 235, 235)), savePresetButton("save")
 {
 
 	// Make sure that before the constructor has finished, you've set the
 	// editor's size to whatever you need it to be.
 	setSize (1600, 800);
 
-	myImage = ImageFileFormat::loadFrom(File("C:/Users/hamis/Documents/3rd Year Project/3rd-Year-Project/Assets/bg_4.png"));
+	myImage = ImageFileFormat::loadFrom(File("C:/Users/hamis/Documents/3rd Year Project/3rd-Year-Project/Assets/bg_6.png"));
 	
 	algOneImage = ImageFileFormat::loadFrom(File("C:/Users/hamis/Documents/3rd Year Project/3rd-Year-Project/Assets/ALG1.png"));
 	algTwoImage = ImageFileFormat::loadFrom(File("C:/Users/hamis/Documents/3rd Year Project/3rd-Year-Project/Assets/ALG2.png"));
@@ -467,6 +468,21 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	addAndMakeVisible(op4ModIndexLabel);
 	op4ModIndexLabel.setFont(juce::Font(24.0f, juce::Font::bold));
 	op4ModIndexLabel.setColour(juce::Label::textColourId, juce::Colours::whitesmoke);
+
+	//Preset Section
+	addAndMakeVisible(nextPresetButton);
+	nextPresetButton.addListener(this);
+	addAndMakeVisible(prevPresetButton);
+	prevPresetButton.addListener(this);
+	addAndMakeVisible(savePresetButton);
+	savePresetButton.addListener(this);
+	addAndMakeVisible(presetDropdownMenu);
+	presetDropdownMenu.setColour(ComboBox::backgroundColourId, Colour(141, 35, 35));
+	populatePresets();
+	presetDropdownMenu.setSelectedId(1);
+	presetDropdownMenu.valueChanged(Value(1));
+	presetDropdownMenu.setEditableText(true);
+	presetDropdownMenu.addListener(this);
 }
 
 ThirdYearProjectAudioProcessorEditor::~ThirdYearProjectAudioProcessorEditor()
@@ -570,6 +586,11 @@ void ThirdYearProjectAudioProcessorEditor::resized()
 	int w = (int)keyboardComponent.getKeyWidth() * (7 * 10 + 5), h = 100;
 	keyboardComponent.setSize(w, h);
 	keyboardComponent.setCentrePosition(getWidth() / 2, getHeight() - 50);
+
+	nextPresetButton.setBounds((getWidth() / 4) * 2 + 253, 35, 22, 22);
+	prevPresetButton.setBounds((getWidth() / 4) * 2 + 115, 35, 22, 22);
+	savePresetButton.setBounds((getWidth() / 4) * 2 + 279, 30, 45, 30);
+	presetDropdownMenu.setBounds((getWidth() / 4) * 2 + 138, 34, 111, 22);
 }
 
 void ThirdYearProjectAudioProcessorEditor::drawSpecFrame(Graphics& g)
@@ -636,4 +657,42 @@ void ThirdYearProjectAudioProcessorEditor::timerCallback()
 		repaint();
 	}
 
+}
+
+void ThirdYearProjectAudioProcessorEditor::buttonClicked(Button* button) {
+	if (button == &savePresetButton) {
+		audioProcessor.stateManager.writePreset(presetDropdownMenu.getText());
+		populatePresets();
+		presetDropdownMenu.setSelectedId(audioProcessor.stateManager.getPresets().indexOf(presetDropdownMenu.getText())+1);
+	}
+	else if (button == &nextPresetButton) {
+		if (audioProcessor.preset + 1 > audioProcessor.stateManager.getPresets().size()) {
+			audioProcessor.preset = 1;
+		}
+		else {
+			audioProcessor.preset++;
+		}
+		presetDropdownMenu.setSelectedId(audioProcessor.preset);
+	}
+	else if (button == &prevPresetButton) {
+		if (audioProcessor.preset - 1 < 1) {
+			audioProcessor.preset = audioProcessor.stateManager.getPresets().size();
+		}
+		else {
+			audioProcessor.preset--;
+		}
+		presetDropdownMenu.setSelectedId(audioProcessor.preset);
+	}
+}
+
+void ThirdYearProjectAudioProcessorEditor::populatePresets() {
+	presetDropdownMenu.clear();
+	presetDropdownMenu.addItemList(audioProcessor.stateManager.getPresets(), 1);
+}
+
+void ThirdYearProjectAudioProcessorEditor::comboBoxChanged(ComboBox* comboBoxThatHasChanged) {
+	if (comboBoxThatHasChanged = &presetDropdownMenu) {
+		DBG(comboBoxThatHasChanged->getSelectedId());
+		audioProcessor.preset = comboBoxThatHasChanged->getSelectedId();
+	}
 }

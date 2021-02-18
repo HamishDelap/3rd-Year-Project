@@ -22,8 +22,6 @@
       <FILE id="e60RW2" name="ModEnvelope.h" compile="0" resource="0" file="Source/ModEnvelope.h"/>
       <FILE id="V0fUX7" name="StateManager.cpp" compile="1" resource="0"
             file="Source/StateManager.cpp"/>
-      <FILE id="E8V7IP" name="StateProcessorLink.h" compile="0" resource="0"
-            file="Source/StateProcessorLink.h"/>
       <FILE id="nt8YUM" name="StateManager.h" compile="0" resource="0" file="Source/StateManager.h"/>
     </GROUP>
   </MAINGROUP>

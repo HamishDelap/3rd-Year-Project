@@ -171,11 +171,11 @@ public:
     }
 
     void pitchWheelMoved(int newPitchWheelValue) {
-
+        
     }
 
     void controllerMoved(int controllerNumber, int newControllerValue) {
-
+        DBG(controllerNumber + ": " + newControllerValue);
     }
 
     void renderNextBlock(AudioBuffer< float >& outputBuffer, int startSample, int numSamples) {

@@ -14,7 +14,7 @@
 //==============================================================================
 /**
 */
-class ThirdYearProjectAudioProcessorEditor : public AudioProcessorEditor, public Slider::Listener, public MidiKeyboardState, juce::MidiKeyboardStateListener, public Timer
+class ThirdYearProjectAudioProcessorEditor : public AudioProcessorEditor, public Slider::Listener, public MidiKeyboardState, juce::MidiKeyboardStateListener, public Timer, public Button::Listener, public ComboBox::Listener
 {
 public:
     ThirdYearProjectAudioProcessorEditor (ThirdYearProjectAudioProcessor&);
@@ -30,8 +30,13 @@ public:
 
 	void timerCallback() override;
 
+	void buttonClicked(juce::Button* button) override;
+	void comboBoxChanged(ComboBox* comboBoxThatHasChanged) override;
+
 	void drawSpecFrame(juce::Graphics& g);
 	void drawAlgoDiagram(juce::Graphics& g);
+
+	void populatePresets();
 
 	// Taken from https://www.geeksforgeeks.org/rounding-floating-point-number-two-decimal-places-c-c/
 	float round(float var) {
@@ -208,6 +213,12 @@ private:
 	juce::Label op2ModIndexLabel;
 	juce::Label op3ModIndexLabel;
 	juce::Label op4ModIndexLabel;
+
+	// Preset Buttons
+	juce::ArrowButton nextPresetButton;
+	juce::ArrowButton prevPresetButton;
+	juce::TextButton savePresetButton;
+	juce::ComboBox presetDropdownMenu;
 
 	//==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ThirdYearProjectAudioProcessorEditor)

@@ -167,6 +167,15 @@ void ThirdYearProjectAudioProcessor::checkAlgoChanged() {
     }
 }
 
+void ThirdYearProjectAudioProcessor::checkPresetChanged() {
+    if (preset != lastPreset) {
+        StringArray presets = stateManager.getPresets();
+        stateManager.readPreset(presets[preset-1]);
+        lastPreset = preset;
+    }
+    
+}
+
 void ThirdYearProjectAudioProcessor::releaseResources()
 {
     // When playback stops, you can use this as an opportunity to free up any
@@ -240,6 +249,7 @@ void ThirdYearProjectAudioProcessor::drawNextFrameOfSpectrum()
 
 void ThirdYearProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
+    checkPresetChanged();
     checkAlgoChanged();
     algo = *(float*)stateManager.apvt.getRawParameterValue("ALGO");
 
@@ -362,7 +372,7 @@ void ThirdYearProjectAudioProcessor::getStateInformation (juce::MemoryBlock& des
     //std::unique_ptr<XmlElement> xml(state.createXml());
     //copyXmlToBinary(*xml, destData);
 
-    stateManager.readState(destData);
+    stateManager.writeState(destData);
 }
 
 void ThirdYearProjectAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
@@ -374,8 +384,7 @@ void ThirdYearProjectAudioProcessor::setStateInformation (const void* data, int 
     //if (xmlState != nullptr) 
        // if (xmlState->hasTagName(stateManager.apvt.state.getType()))
          //   stateManager.apvt.state = ValueTree::fromXml(*xmlState);
-
-    stateManager.writeState(data, sizeInBytes);
+    stateManager.readState(data, sizeInBytes);
 }
 
 //==============================================================================

@@ -64,6 +64,8 @@ public:
 
     void checkAlgoChanged();
 
+    void checkPresetChanged();
+
     void pushNextSampleIntoFifo(float sample) noexcept;
 
     void drawNextFrameOfSpectrum();
@@ -84,6 +86,8 @@ public:
 
     MidiKeyboardState keyboardState;
 
+    float preset = 1.0f;
+    float lastPreset = 0.0f;
 private:
 
     Synthesiser mySynth;

@@ -10,8 +10,9 @@
 
 #include "StateManager.h"
 
+
 StateManager::StateManager(AudioProcessor& audioProcessor) :
-    apvt(audioProcessor, nullptr, "PARAMETERS",
+    apvt(audioProcessor, nullptr, "DEFAULT",
         {
             // Initialise VST Parameters.
             std::make_unique<AudioParameterFloat>("OP1MODINDEX", "OP1MODINDEX", NormalisableRange<float>(0, 12, 0.5), 0.0f),
@@ -75,18 +76,76 @@ StateManager::StateManager(AudioProcessor& audioProcessor) :
         }
     )
 {
-    apvt.state = ValueTree("apvt");
+    apvt.state = ValueTree("PRESETS");
 }
 
-void StateManager::readState(juce::MemoryBlock& destData) {
+void StateManager::writeState(juce::MemoryBlock& destData) {
+    // Copy the state to new variable
     auto state = apvt.copyState();
+    // Create XML object
     std::unique_ptr<XmlElement> xml(state.createXml());
+    // Write XML to file
+    //xml->writeTo(File("C:/Users/hamis/Documents/Fmator/preset.xml"));
+
+    // Write to binary just so readState is called on startup.
     AudioProcessor::copyXmlToBinary(*xml, destData);
 }
 
-void StateManager::writeState(const void* data, int sizeInBytes) {
-    std::unique_ptr<XmlElement> xmlState(AudioProcessor::getXmlFromBinary(data, sizeInBytes));
+void StateManager::readState(const void* data, int sizeInBytes) {
+    // Get XML document
+    XmlDocument myDocument(File("C:/Users/hamis/Documents/Fmator/preset.xml"));
+    // Parse the document
+    std::unique_ptr<XmlElement> xmlState(myDocument.getDocumentElement());
+    
+    // If it is not a nullptr (parsing succeeded) then continue.
     if (xmlState != nullptr)
-        if (xmlState->hasTagName(apvt.state.getType()))
-            apvt.state = ValueTree::fromXml(*xmlState);
+        // Get value tree from xml.
+        apvt.state = ValueTree::fromXml(*xmlState);
+    StateManager::getPresets();
+    
+}
+
+void StateManager::readPreset(String presetName) {
+    XmlDocument myDocument(File("C:/Users/hamis/Documents/Fmator/"+presetName));
+    std::unique_ptr<XmlElement> xmlState(myDocument.getDocumentElement());;
+    DBG(myDocument.getLastParseError());
+    if (xmlState != nullptr) {
+        apvt.state = ValueTree::fromXml(*xmlState);
+    }
+}
+
+void StateManager::writePreset(String presetName) {
+    // Copy the state to new variable
+    auto state = apvt.copyState();
+    // Create XML object
+    std::unique_ptr<XmlElement> xml(state.createXml());
+    // Write XML to file
+    xml->writeTo(File("C:/Users/hamis/Documents/Fmator/"+presetName));
+
+}
+
+StringArray StateManager::getPresets() {
+    filenames.clear();
+    DBG("getting presets");
+    // Taken from https://stackoverflow.com/questions/612097/how-can-i-get-the-list-of-files-in-a-directory-using-c-or-c
+    DIR* directory;
+    struct dirent* ent;
+    if ((directory = opendir("C:/Users/hamis/Documents/Fmator/")) != NULL) {
+        /* print all the files and directories within directory */
+        int skipDots = 0;
+        while ((ent = readdir(directory)) != NULL) {
+            if (skipDots > 1) {
+                std::string filename = ent->d_name;
+                filenames.add(filename);
+            }
+            skipDots++;
+        }
+        closedir(directory);
+        return(filenames);
+
+    }
+    else {
+        /* could not open directory */
+        return StringArray();
+    }
 }
