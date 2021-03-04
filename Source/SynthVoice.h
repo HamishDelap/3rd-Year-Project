@@ -171,11 +171,21 @@ public:
     }
 
     void pitchWheelMoved(int newPitchWheelValue) {
+        DBG(newPitchWheelValue);
+        if (newPitchWheelValue <= 8192) {
+            pitchWheel = jmap((double)newPitchWheelValue, 0.0, 8192.0, 0.5, 1.0);
+        }
+        else {
+            pitchWheel = jmap((double)newPitchWheelValue, 8192.0, 16383.0, 1.0, 2.0);
+        }
         
+        DBG(pitchWheel);
     }
 
+    // Modwheel is controllerNumber 1
     void controllerMoved(int controllerNumber, int newControllerValue) {
-        DBG(controllerNumber + ": " + newControllerValue);
+        
+        DBG(newControllerValue);
     }
 
     void renderNextBlock(AudioBuffer< float >& outputBuffer, int startSample, int numSamples) {
@@ -195,7 +205,7 @@ public:
                     // Calculate sample value.
                     modAdsr->envelopeStep();
                     fmosc->updateWaveforms(waveforms);
-                    auto currentSample = fmosc->oscStep(fmTable, frequency, modAdsr, modLfo) * level;
+                    auto currentSample = fmosc->oscStep(fmTable, frequency, modAdsr, modLfo, pitchWheel) * level;
                     // Add sample to outputBuffer
                     for (auto i = outputBuffer.getNumChannels(); --i >= 0;) {
                         outputBuffer.addSample(i, startSample, currentSample);
@@ -220,7 +230,7 @@ public:
                 while (--numSamples >= 0) {
                     modAdsr->envelopeStep();
                     fmosc->updateWaveforms(waveforms);
-                    auto currentSample = fmosc->oscStep(fmTable, frequency, modAdsr, modLfo) * level;
+                    auto currentSample = fmosc->oscStep(fmTable, frequency, modAdsr, modLfo, pitchWheel) * level;
                     //auto currentSample = (float)(std::sin(fmTable[0][0] + (float)std::sin(fmTable[0][1]) * fmTable[1][1]) * fmTable[1][0]);
 
                     for (auto i = outputBuffer.getNumChannels(); --i >= 0;) {
@@ -241,6 +251,8 @@ private:
     int algorithm;
 
     int waveforms[4];
+
+    float pitchWheel = 1;
 
     double frequency;
 

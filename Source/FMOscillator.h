@@ -80,11 +80,11 @@ public:
 		operator4->updateWaveform(waveforms[3]);
 	}
 
-	float oscStep(double fmTable[][4], double frequency, std::shared_ptr<ModEnvelope> modAdsr, std::shared_ptr<Lfo> modLfo) {
+	float oscStep(double fmTable[][4], double frequency, std::shared_ptr<ModEnvelope> modAdsr, std::shared_ptr<Lfo> modLfo, float pitchWheel) {
 
 		float adsrLevel;
 
-		auto cyclesPerSecond = (frequency + modLfo->getOutput(1) / 10);
+		auto cyclesPerSecond = ((frequency * pitchWheel)+ modLfo->getOutput(1) / 10);
 		if (modAdsr->isOn()) {
 			cyclesPerSecond *= modAdsr->getOutput(1);
 		}
