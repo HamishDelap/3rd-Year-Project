@@ -10,6 +10,14 @@
             file="Source/PluginProcessor.cpp"/>
       <FILE id="naq7Zm" name="PluginProcessor.h" compile="0" resource="0"
             file="Source/PluginProcessor.h"/>
+      <FILE id="t3qvmd" name="SpectrumEditor.cpp" compile="1" resource="0"
+            file="Source/SpectrumEditor.cpp"/>
+      <FILE id="bnB0PZ" name="SpectrumEditor.h" compile="0" resource="0"
+            file="Source/SpectrumEditor.h"/>
+      <FILE id="x9CAKq" name="SpectrumProcessor.cpp" compile="1" resource="0"
+            file="Source/SpectrumProcessor.cpp"/>
+      <FILE id="BKm5Is" name="SpectrumProcessor.h" compile="0" resource="0"
+            file="Source/SpectrumProcessor.h"/>
       <FILE id="QeMPXY" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="SySk6Z" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>

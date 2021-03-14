@@ -13,7 +13,7 @@
 //==============================================================================
 ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (ThirdYearProjectAudioProcessor& p)
 	: AudioProcessorEditor (&p), audioProcessor (p), keyboardComponent(audioProcessor.keyboardState, MidiKeyboardComponent::horizontalKeyboard),
-	nextPresetButton("nextPreset", 0.0, Colour(235, 235, 235)), prevPresetButton("prevPreset", 0.5, Colour(235, 235, 235)), savePresetButton("save")
+	nextPresetButton("nextPreset", 0.0, Colour(235, 235, 235)), prevPresetButton("prevPreset", 0.5, Colour(235, 235, 235)), savePresetButton("Save")
 {
 
 	// Make sure that before the constructor has finished, you've set the
@@ -692,7 +692,6 @@ void ThirdYearProjectAudioProcessorEditor::populatePresets() {
 
 void ThirdYearProjectAudioProcessorEditor::comboBoxChanged(ComboBox* comboBoxThatHasChanged) {
 	if (comboBoxThatHasChanged = &presetDropdownMenu) {
-		DBG(comboBoxThatHasChanged->getSelectedId());
 		audioProcessor.preset = comboBoxThatHasChanged->getSelectedId();
 	}
 }

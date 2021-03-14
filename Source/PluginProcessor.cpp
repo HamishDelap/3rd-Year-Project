@@ -148,7 +148,8 @@ void ThirdYearProjectAudioProcessor::updateFilter() {
     }
     
     cutoff = cutoff - abs(modLfo->getOutput(2) * 10);
-    currentCutoff = cutoff + coeff * (currentCutoff - cutoff);
+    cutoff = cutoff * controllerValMapped;
+	currentCutoff = cutoff + coeff * (currentCutoff - cutoff);
 
     if (currentCutoff <= 0) {
         currentCutoff = 1;
@@ -169,7 +170,7 @@ void ThirdYearProjectAudioProcessor::checkAlgoChanged() {
 
 void ThirdYearProjectAudioProcessor::checkPresetChanged() {
     if (preset != lastPreset) {
-        StringArray presets = stateManager.getPresets();
+    	StringArray presets = stateManager.getPresets();
         stateManager.readPreset(presets[preset-1]);
         lastPreset = preset;
     }
@@ -255,6 +256,7 @@ void ThirdYearProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buf
 
     keyboardState.processNextMidiBuffer(midiMessages, 0, buffer.getNumSamples(), true);
     modLfo->setFrequency((float*)stateManager.apvt.getRawParameterValue("LFOFREQ"));
+    modLfo->setFrequency((float*)stateManager.apvt.getRawParameterValue("LFOFREQ"));
     modLfo->setLevel((float*)stateManager.apvt.getRawParameterValue("LFOAMOUNT"));
     modLfo->setWaveform((float*)stateManager.apvt.getRawParameterValue("LFOWAVEFORM"));
     modLfo->toggleDest((float*)stateManager.apvt.getRawParameterValue("LFOPITCH"), 1);
@@ -273,6 +275,7 @@ void ThirdYearProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buf
     for (int i = 0; i < mySynth.getNumVoices(); i++) {
         // Check that myVoice is a SynthVoice*
         if (myVoice = dynamic_cast<SynthVoice*>(mySynth.getVoice(i))) {
+            controllerValue = myVoice->getControllerValue();
             myVoice->setOP1MODINDEX((float*)stateManager.apvt.getRawParameterValue("OP1MODINDEX"));
             myVoice->setOP2MODINDEX((float*)stateManager.apvt.getRawParameterValue("OP2MODINDEX"));
             myVoice->setOP3MODINDEX((float*)stateManager.apvt.getRawParameterValue("OP3MODINDEX"));
@@ -300,6 +303,8 @@ void ThirdYearProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buf
         }
     }
 
+    controllerValMapped = jmap<float>(controllerValue, 0.0f, 127.0f, 0.0f, 1.0f);
+
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
@@ -320,11 +325,6 @@ void ThirdYearProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buf
     // Alternatively, you can process the samples with the channels
     // interleaved by keeping the same state.
 
-
-    for (auto i = 0; i < buffer.getNumSamples(); ++i) {
-        modLfo->lfoStep();
-    }
-
     mySynth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
 
     dsp::AudioBlock<float> block(buffer);
@@ -338,13 +338,19 @@ void ThirdYearProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buf
     buffer.applyGainRamp(0, buffer.getNumSamples(), masterLevel, currentLevel);
     masterLevel = currentLevel;
     
+    // A simple switch to only step the LFO on one channels buffer to remove the need for second for loop.
+    int lfoOnceSwitch = 1;
+
     for (int channel = 0; channel < totalNumOutputChannels; ++channel)
     {
         auto* channelData = buffer.getReadPointer (channel);
 
         for (auto i = 0; i < buffer.getNumSamples(); ++i) {
             pushNextSampleIntoFifo(channelData[i]);
+            
+            if (lfoOnceSwitch == 1) { modLfo->lfoStep(); }
         }
+        lfoOnceSwitch = 0;
         // ..do something to the data...
     }
 

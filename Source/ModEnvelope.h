@@ -29,7 +29,6 @@ public:
 
         outputs[1] = 1;
         outputs[3] = 1;
-        outputs[4] = 1;
 
     }
 

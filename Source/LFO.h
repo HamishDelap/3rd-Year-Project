@@ -21,11 +21,9 @@ public:
     Lfo(double samplerate, int waveform, double freq, double level) {
         oscillator.reset(new Oscillator(samplerate, waveform));
         frequency = freq;
-        level = level;
         deselectDest(1);
         deselectDest(2);
         deselectDest(3);
-        deselectDest(4);
     }
 
     void lfoStep() {

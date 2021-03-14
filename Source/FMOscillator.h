@@ -82,8 +82,6 @@ public:
 
 	float oscStep(double fmTable[][4], double frequency, std::shared_ptr<ModEnvelope> modAdsr, std::shared_ptr<Lfo> modLfo, float pitchWheel) {
 
-		float adsrLevel;
-
 		auto cyclesPerSecond = ((frequency * pitchWheel)+ modLfo->getOutput(1) / 10);
 		if (modAdsr->isOn()) {
 			cyclesPerSecond *= modAdsr->getOutput(1);
@@ -140,7 +138,7 @@ public:
 			break;
 		}
 		if (modAdsr->isOn()) {
-			adsrLevel = modAdsr->getOutput(3);
+			float adsrLevel = modAdsr->getOutput(3);
 			output = output * adsrLevel;
 		}
 		return output;

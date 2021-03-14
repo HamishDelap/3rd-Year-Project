@@ -121,12 +121,10 @@ void StateManager::writePreset(String presetName) {
     std::unique_ptr<XmlElement> xml(state.createXml());
     // Write XML to file
     xml->writeTo(File("C:/Users/hamis/Documents/Fmator/"+presetName));
-
 }
 
 StringArray StateManager::getPresets() {
     filenames.clear();
-    DBG("getting presets");
     // Taken from https://stackoverflow.com/questions/612097/how-can-i-get-the-list-of-files-in-a-directory-using-c-or-c
     DIR* directory;
     struct dirent* ent;

@@ -39,9 +39,9 @@ public:
 	void populatePresets();
 
 	// Taken from https://www.geeksforgeeks.org/rounding-floating-point-number-two-decimal-places-c-c/
-	float round(float var) {
-		float value = (int)(var * 100 + .5);
-		return (float)value / 100;
+	static float round(const float var) {
+		const float value = static_cast<int>(var * 100 + .5);
+		return static_cast<float>(value / 100);
 	}
 
 private:

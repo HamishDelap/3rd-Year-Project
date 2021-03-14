@@ -120,7 +120,8 @@ private:
     std::shared_ptr<ModEnvelope> modEnvelope;
     std::shared_ptr<Lfo> modLfo;
 
-
+    int controllerValue = 1;
+    float controllerValMapped;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ThirdYearProjectAudioProcessor)
