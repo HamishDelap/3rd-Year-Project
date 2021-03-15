@@ -27,16 +27,18 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	algThreeImage = ImageFileFormat::loadFrom(File("C:/Users/hamis/Documents/3rd Year Project/3rd-Year-Project/Assets/ALG3.png"));
 	algFourImage = ImageFileFormat::loadFrom(File("C:/Users/hamis/Documents/3rd Year Project/3rd-Year-Project/Assets/ALG4.png"));
 
-	startTimerHz(6);
-
+	startTimerHz(30);
+	
 	// Keyboard
 	addAndMakeVisible(keyboardComponent);
 	audioProcessor.keyboardState.addListener(this);
 	keyboardComponent.setAvailableRange(0, 127);
 
+	//Spectrum
 	specWidth = getLocalBounds().getWidth();
 	specHeight = getLocalBounds().getHeight() / 4 - 65;
-
+	spectrumEditor.reset(new SpectrumEditor(specHeight, specWidth));
+	
 	// add items to the combo-box
 	addAndMakeVisible(algoMenu);
 	algoMenu.addItem("op1(op2(op3(op4)))", 1);
@@ -480,7 +482,8 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	presetDropdownMenu.setColour(ComboBox::backgroundColourId, Colour(141, 35, 35));
 	populatePresets();
 	presetDropdownMenu.setSelectedId(1);
-	presetDropdownMenu.valueChanged(Value(1));
+	Value valueOne = Value(1);
+	presetDropdownMenu.valueChanged(valueOne);
 	presetDropdownMenu.setEditableText(true);
 	presetDropdownMenu.addListener(this);
 }
@@ -500,7 +503,7 @@ void ThirdYearProjectAudioProcessorEditor::paint (juce::Graphics& g)
 	g.setColour (juce::Colours::white);
 	g.setFont (15.0f);
 
-	drawSpecFrame(g);
+	spectrumEditor->drawSpecFrame(g, audioProcessor);
  
 	drawAlgoDiagram(g);
 }
@@ -593,23 +596,6 @@ void ThirdYearProjectAudioProcessorEditor::resized()
 	presetDropdownMenu.setBounds((getWidth() / 4) * 2 + 138, 34, 111, 22);
 }
 
-void ThirdYearProjectAudioProcessorEditor::drawSpecFrame(Graphics& g)
-{
-
-	AffineTransform transform = AffineTransform::translation((float)0, (float)specHeight + 325);
-
-	for (int i = 1; i < audioProcessor.scopeSize; ++i)
-	{
-		Line<float> line ((float)jmap(i - 1, 0, audioProcessor.scopeSize - 1, 0, specWidth),
-												  jmap(audioProcessor.scopeData[i - 1], 0.0f, 1.0f, (float)(specHeight * 1.5), 0.0f),
-										   (float)jmap(i, 0, audioProcessor.scopeSize - 1, 0, specWidth),
-												  jmap(audioProcessor.scopeData[i], 0.0f, 1.0f, (float)(specHeight * 1.5), 0.0f));
-
-		line.applyTransform(transform);
-		g.drawLine(line);
-	}
-}
-
 void ThirdYearProjectAudioProcessorEditor::drawAlgoDiagram(Graphics& g) {
 	float* algo = (float*)audioProcessor.stateManager.apvt.getRawParameterValue("ALGO");
 	if (*algo == 1.0)
@@ -650,9 +636,9 @@ void ThirdYearProjectAudioProcessorEditor::timerCallback()
 	op3ModIndexLabel.setText(op3ModIndexLabelText.substr(0, op3ModIndexLabelText.size() - 3), juce::dontSendNotification);
 	op4ModIndexLabel.setText(op4ModIndexLabelText.substr(0, op4ModIndexLabelText.size() - 3), juce::dontSendNotification);
 
-	if (audioProcessor.nextFFTBlockReady) {
-		audioProcessor.drawNextFrameOfSpectrum();
-		audioProcessor.nextFFTBlockReady = false;
+	if (audioProcessor.spectrumProcessor->nextFFTBlockReady) {
+		audioProcessor.spectrumProcessor->calcNextFrameOfSpectrum();
+		audioProcessor.spectrumProcessor->nextFFTBlockReady = false;
 		audioProcessor.algoChanged = false;
 		repaint();
 	}

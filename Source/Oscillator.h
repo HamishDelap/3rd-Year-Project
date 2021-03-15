@@ -28,10 +28,7 @@ public:
 
 		angleDelta = cyclesPerSample * 2.0 * MathConstants<double>::pi;
 
-		float triangleDelta = 0.1;
-
 		currentAngle += angleDelta;
-
 
 		switch (waveform) {
 		// Sin
@@ -48,6 +45,9 @@ public:
 			break;
 		// Square
 		case 3:
+			sineValue = sin(currentAngle);
+
+			value = (sineValue >= 0) ? 1 : -1;
 			break;
 		}
 

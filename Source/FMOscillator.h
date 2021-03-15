@@ -8,15 +8,14 @@
   ==============================================================================
 */
 
+
+
+#pragma once
 #include <../JuceLibraryCode/JuceHeader.h>
-#include "SynthVoice.h"
-#include "Oscillator.h"
 #include "Operator.h"
 #include "ModEnvelope.h"
 #include "LFO.h"
 #include <memory>
-
-#pragma once
 
 #ifndef FUNCTIONS_H_INCLUDED
 #define FUNCTIONS_H_INCLUDED
@@ -68,7 +67,8 @@ public:
 		operator4.reset(new Operator(samplerate, waveforms[3], op4Env));
 	}
 
-	float op(double angle, double level, ADSR* env) {
+	float op(double angle, double level, ADSR* env)
+	{
 		float nextEnvSample = env->getNextSample();
 		return (float)(env->getNextSample() * std::sin(angle) * level);
 	}
@@ -80,7 +80,7 @@ public:
 		operator4->updateWaveform(waveforms[3]);
 	}
 
-	float oscStep(double fmTable[][4], double frequency, std::shared_ptr<ModEnvelope> modAdsr, std::shared_ptr<Lfo> modLfo, float pitchWheel) {
+	double oscStep(double fmTable[][4], double frequency, std::shared_ptr<ModEnvelope> modAdsr, std::shared_ptr<Lfo> modLfo, float pitchWheel) {
 
 		auto cyclesPerSecond = ((frequency * pitchWheel)+ modLfo->getOutput(1) / 10);
 		if (modAdsr->isOn()) {
@@ -88,7 +88,7 @@ public:
 		}
 		auto cyclesPerSample = cyclesPerSecond / samplerate;
 
-		float angleDelta = cyclesPerSample * 2.0 * MathConstants<double>::pi;
+		double angleDelta = cyclesPerSample * 2.0 * MathConstants<double>::pi;
 
 		float output = 0;
 		switch (algo) {
@@ -138,7 +138,7 @@ public:
 			break;
 		}
 		if (modAdsr->isOn()) {
-			float adsrLevel = modAdsr->getOutput(3);
+			double adsrLevel = modAdsr->getOutput(3);
 			output = output * adsrLevel;
 		}
 		return output;

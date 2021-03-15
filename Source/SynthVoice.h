@@ -13,7 +13,6 @@
 #include <../JuceLibraryCode/JuceHeader.h>
 #include "SynthSound.h"
 #include "FMOscillator.h"
-#include "Oscillator.h"
 #include "ModEnvelope.h"
 #include "LFO.h"
 
@@ -29,64 +28,64 @@ public:
     }
 	//===============================================//
 
-    void setOP1MODINDEX(float* modindex) {
-        fmTable[2][0] = *modindex;
+    void setOP1MODINDEX(float modindex) {
+        fmTable[2][0] = modindex;
     }
 
-	void setOP2MODINDEX(float* modindex) {
-        fmTable[2][1] = *modindex;
+	void setOP2MODINDEX(float modindex) {
+        fmTable[2][1] = modindex;
 	}
 
-	void setOP3MODINDEX(float* modindex) {
-        fmTable[2][2] = *modindex;
+	void setOP3MODINDEX(float modindex) {
+        fmTable[2][2] = modindex;
 	}
 
-	void setOP4MODINDEX(float* modindex) {
-        fmTable[2][3] = *modindex;
+	void setOP4MODINDEX(float modindex) {
+        fmTable[2][3] = modindex;
 	}
 
-	void setOP1LEVEL(float* level) {
-		fmTable[1][0] = *level;
+	void setOP1LEVEL(float level) {
+		fmTable[1][0] = level;
 	}
 
-	void setOP2LEVEL(float* level) {
-		fmTable[1][1] = *level;
+	void setOP2LEVEL(float level) {
+		fmTable[1][1] = level;
 	}
 
-	void setOP3LEVEL(float* level) {
-		fmTable[1][2] = *level;
+	void setOP3LEVEL(float level) {
+		fmTable[1][2] = level;
 	}
 
-	void setOP4LEVEL(float* level) {
-		fmTable[1][3] = *level;
+	void setOP4LEVEL(float level) {
+		fmTable[1][3] = level;
 	}
 
-    void setOp1Adsr(float* attack, float* decay, float* sustain, float* release) {
-        op1AdsrParams.attack = *attack;
-        op1AdsrParams.decay = *decay;
-        op1AdsrParams.sustain = *sustain;
-        op1AdsrParams.release = *release;
+    void setOp1Adsr(float attack, float decay, float sustain, float release) {
+        op1AdsrParams.attack = attack;
+        op1AdsrParams.decay = decay;
+        op1AdsrParams.sustain = sustain;
+        op1AdsrParams.release = release;
     }
 
-    void setOp2Adsr(float* attack, float* decay, float* sustain, float* release) {
-        op2AdsrParams.attack = *attack;
-        op2AdsrParams.decay = *decay;
-        op2AdsrParams.sustain = *sustain;
-        op2AdsrParams.release = *release;
+    void setOp2Adsr(float attack, float decay, float sustain, float release) {
+        op2AdsrParams.attack = attack;
+        op2AdsrParams.decay = decay;
+        op2AdsrParams.sustain = sustain;
+        op2AdsrParams.release = release;
     }
 
-    void setOp3Adsr(float* attack, float* decay, float* sustain, float* release) {
-        op3AdsrParams.attack = *attack;
-        op3AdsrParams.decay = *decay;
-        op3AdsrParams.sustain = *sustain;
-        op3AdsrParams.release = *release;
+    void setOp3Adsr(float attack, float decay, float sustain, float release) {
+        op3AdsrParams.attack = attack;
+        op3AdsrParams.decay = decay;
+        op3AdsrParams.sustain = sustain;
+        op3AdsrParams.release = release;
     }
 
-    void setOp4Adsr(float* attack, float* decay, float* sustain, float* release) {
-        op4AdsrParams.attack = *attack;
-        op4AdsrParams.decay = *decay;
-        op4AdsrParams.sustain = *sustain;
-        op4AdsrParams.release = *release;
+    void setOp4Adsr(float attack, float decay, float sustain, float release) {
+        op4AdsrParams.attack = attack;
+        op4AdsrParams.decay = decay;
+        op4AdsrParams.sustain = sustain;
+        op4AdsrParams.release = release;
     }
 
     void setModAdsr(std::shared_ptr<ModEnvelope> env) {
@@ -112,24 +111,24 @@ public:
         modAdsr->setSampleRate(sampleRate);
     }
 
-    void setAlgo(float* algo) {
-        algorithm = (int) *algo;
+    void setAlgo(float algo) {
+        algorithm = static_cast<int>(algo);
     }
 
-    void setOP1WAVEFORM(float* waveform) {
-        waveforms[0] = (int)*waveform;
+    void setOP1WAVEFORM(float waveform) {
+        waveforms[0] = static_cast<int>(waveform);
     }
 
-    void setOP2WAVEFORM(float* waveform) {
-        waveforms[1] = (int)*waveform;
+    void setOP2WAVEFORM(float waveform) {
+        waveforms[1] = static_cast<int>(waveform);
     }
 
-    void setOP3WAVEFORM(float* waveform) {
-        waveforms[2] = (int)*waveform;
+    void setOP3WAVEFORM(float waveform) {
+        waveforms[2] = static_cast<int>(waveform);
     }
 
-    void setOP4WAVEFORM(float* waveform) {
-        waveforms[3] = (int)*waveform;
+    void setOP4WAVEFORM(float waveform) {
+        waveforms[3] = static_cast<int>(waveform);
     }
 
     //===============================================//
@@ -171,21 +170,23 @@ public:
     }
 
     void pitchWheelMoved(int newPitchWheelValue) {
-        DBG(newPitchWheelValue);
         if (newPitchWheelValue <= 8192) {
             pitchWheel = jmap((double)newPitchWheelValue, 0.0, 8192.0, 0.5, 1.0);
         }
         else {
             pitchWheel = jmap((double)newPitchWheelValue, 8192.0, 16383.0, 1.0, 2.0);
         }
-        
-        DBG(pitchWheel);
     }
 
     // Modwheel is controllerNumber 1
     void controllerMoved(int controllerNumber, int newControllerValue) {
-        
-        DBG(newControllerValue);
+        controllerValue = newControllerValue;
+        //DBG(controllerValue);
+    }
+
+	float getControllerValue() {
+        DBG(controllerValue);
+    	return controllerValue;
     }
 
     void renderNextBlock(AudioBuffer< float >& outputBuffer, int startSample, int numSamples) {
@@ -246,6 +247,8 @@ public:
     }
     
 private:
+    int controllerValue = 126;
+	
     std::unique_ptr <FMOscillator> fmosc;
 
     int algorithm;
@@ -264,18 +267,18 @@ private:
     double level = 0.0;
     double tailOff = 0.0;
 
-    std::shared_ptr<ADSR> op1Adsr = std::shared_ptr<ADSR>(new ADSR());
+    std::shared_ptr<ADSR> op1Adsr = std::make_shared<ADSR>(ADSR());
     ADSR::Parameters op1AdsrParams;
 
-    std::shared_ptr<ADSR> op2Adsr = std::shared_ptr<ADSR>(new ADSR());
+    std::shared_ptr<ADSR> op2Adsr = std::make_shared<ADSR>(ADSR());
     ADSR::Parameters op2AdsrParams;
 
-    std::shared_ptr<ADSR> op3Adsr = std::shared_ptr<ADSR>(new ADSR());
+    std::shared_ptr<ADSR> op3Adsr = std::make_shared<ADSR>(ADSR());
     ADSR::Parameters op3AdsrParams;
 
-    std::shared_ptr<ADSR> op4Adsr = std::shared_ptr<ADSR>(new ADSR());
+    std::shared_ptr<ADSR> op4Adsr = std::make_shared<ADSR>(ADSR());
     ADSR::Parameters op4AdsrParams;
 
-    std::shared_ptr<ModEnvelope> modAdsr = std::shared_ptr<ModEnvelope>(new ModEnvelope(10000, 0, 0, 0, 0));
-    std::shared_ptr<Lfo> modLfo = std::shared_ptr<Lfo>(new Lfo(0, 1, 1, 1));
+    std::shared_ptr<ModEnvelope> modAdsr = std::make_shared<ModEnvelope>(ModEnvelope(10000, 0, 0, 0, 0));
+    std::shared_ptr<Lfo> modLfo = std::make_shared<Lfo>(Lfo(0, 1, 1, 1));
 };

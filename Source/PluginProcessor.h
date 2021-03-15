@@ -9,11 +9,11 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "SynthSound.h"
 #include "SynthVoice.h"
 #include "LFO.h"
 #include "ModEnvelope.h"
 #include "StateManager.h"
+#include "SpectrumProcessor.h"
 
 class StateManager;
 
@@ -66,12 +66,6 @@ public:
 
     void checkPresetChanged();
 
-    void pushNextSampleIntoFifo(float sample) noexcept;
-
-    void drawNextFrameOfSpectrum();
-
- //   AudioProcessorValueTreeState apvt;
-
     StateManager stateManager; // <-- Unique pointer??s
 
     enum
@@ -85,6 +79,8 @@ public:
     float scopeData[scopeSize];
 
     MidiKeyboardState keyboardState;
+
+    std::unique_ptr<SpectrumProcessor> spectrumProcessor;
 
     float preset = 1.0f;
     float lastPreset = 0.0f;
@@ -107,21 +103,77 @@ private:
     float fftData[2 * fftSize];
     int fifoIndex = 0;
 
+    float currentLfoLevel = 0;
     float algo = 1.0;
 
-    float currentCutoff = 1000;
+    double currentCutoff = 1000;
     
     float masterLevel = 1;
     float currentLevel = 1;
 
-    float smoothingCoeff = 0.8;
+    float smoothingCoeff = 0.8f;
     float previousLfoLevel = 0.0;
 
     std::shared_ptr<ModEnvelope> modEnvelope;
     std::shared_ptr<Lfo> modLfo;
 
-    int controllerValue = 1;
-    float controllerValMapped;
+    int controllerValue = 127;
+    float controllerValMapped = 1.0f;
+
+	// Parameter Pointers
+    std::atomic<float>* lfoFreq;
+    std::atomic<float>* lfoAmount;
+    std::atomic<float>* lfoWaveform;
+    std::atomic<float>* lfoPitch;
+    std::atomic<float>* lfoFilter;
+    std::atomic<float>* lfoLevel;
+
+    std::atomic<float>* modEnvAttack;
+    std::atomic<float>* modEnvDecay;
+    std::atomic<float>* modEnvSustain;
+    std::atomic<float>* modEnvRelease;
+    std::atomic<float>* modEnvAmount;
+    std::atomic<float>* modEnvPitch;
+    std::atomic<float>* modEnvFilter;
+    std::atomic<float>* modEnvLevel;
+
+    std::atomic<float>* op1ModIndex;
+    std::atomic<float>* op2ModIndex;
+    std::atomic<float>* op3ModIndex;
+    std::atomic<float>* op4ModIndex;
+
+    std::atomic<float>* op1Level;
+    std::atomic<float>* op2Level;
+    std::atomic<float>* op3Level;
+    std::atomic<float>* op4Level;
+
+    std::atomic<float>* op1Attack;
+    std::atomic<float>* op1Decay;
+    std::atomic<float>* op1Sustain;
+    std::atomic<float>* op1Release;
+
+    std::atomic<float>* op2Attack;
+    std::atomic<float>* op2Decay;
+    std::atomic<float>* op2Sustain;
+    std::atomic<float>* op2Release;
+
+    std::atomic<float>* op3Attack;
+    std::atomic<float>* op3Decay;
+    std::atomic<float>* op3Sustain;
+    std::atomic<float>* op3Release;
+
+    std::atomic<float>* op4Attack;
+    std::atomic<float>* op4Decay;
+    std::atomic<float>* op4Sustain;
+    std::atomic<float>* op4Release;
+	
+    std::atomic<float>* algoPointer;
+
+    std::atomic<float>* op1Waveform;
+    std::atomic<float>* op2Waveform;
+    std::atomic<float>* op3Waveform;
+    std::atomic<float>* op4Waveform;
+
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ThirdYearProjectAudioProcessor)

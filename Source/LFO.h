@@ -36,24 +36,24 @@ public:
         }
     }
 
-    void setWaveform(float* waveform) {
-        oscillator->setWaveform(*waveform);
+    void setWaveform(float waveform) {
+        oscillator->setWaveform(waveform);
     }
 
-    void setFrequency(float* freq) {
-        frequency = *freq;
+    void setFrequency(float freq) {
+        frequency = freq;
     }
 
-    void setLevel(float* level) {
-        amount = *level;
+    void setLevel(float level) {
+        amount = level;
     }
 
     float getOutput(int destination) {
         return outputs[destination];
     }
 
-    void toggleDest(float* toggle, int destination) {
-        if (*toggle == 1.0f) {
+    void toggleDest(float toggle, int destination) {
+        if (toggle == 1.0f) {
             selectDest(destination);
         }
         else {

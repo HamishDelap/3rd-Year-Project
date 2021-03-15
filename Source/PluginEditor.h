@@ -10,6 +10,7 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
+#include "SpectrumEditor.h"
 
 //==============================================================================
 /**
@@ -33,7 +34,6 @@ public:
 	void buttonClicked(juce::Button* button) override;
 	void comboBoxChanged(ComboBox* comboBoxThatHasChanged) override;
 
-	void drawSpecFrame(juce::Graphics& g);
 	void drawAlgoDiagram(juce::Graphics& g);
 
 	void populatePresets();
@@ -56,6 +56,7 @@ private:
 
 	int specWidth;
 	int specHeight;
+	std::unique_ptr<SpectrumEditor> spectrumEditor;
 
 	juce::Image myImage;
 	juce::Image algOneImage;

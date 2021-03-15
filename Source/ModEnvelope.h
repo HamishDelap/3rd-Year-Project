@@ -57,32 +57,32 @@ public:
         envelope->setSampleRate(samplerate);
     }
 
-    void setAttack(float* attack) {
-        envelopeParams.attack = *attack;
+    void setAttack(float attack) {
+        envelopeParams.attack = attack;
     }
 
-    void setDecay(float* decay) {
-        envelopeParams.decay = *decay;
+    void setDecay(float decay) {
+        envelopeParams.decay = decay;
     }
 
-    void setSustain(float* sustain) {
-        envelopeParams.sustain = *sustain;
+    void setSustain(float sustain) {
+        envelopeParams.sustain = sustain;
     }
 
-    void setRelease(float* release) {
-        envelopeParams.release = *release;
+    void setRelease(float release) {
+        envelopeParams.release = release;
     }
     
-    void setAmount(float* level) {
-        amount = *level;
+    void setAmount(float level) {
+        amount = level;
     }
 
     float getOutput(int destination) {
         return outputs[destination];
     }
 
-    void toggleDest(float* toggle, int destination) {
-        if (*toggle == 1.0f) {
+    void toggleDest(float toggle, int destination) {
+        if (toggle == 1.0f) {
             selectDest(destination);
         }
         else {

@@ -28,6 +28,10 @@
       <FILE id="Cx5tSw" name="Operator.h" compile="0" resource="0" file="Source/Operator.h"/>
       <FILE id="wUxiyE" name="Oscillator.h" compile="0" resource="0" file="Source/Oscillator.h"/>
       <FILE id="e60RW2" name="ModEnvelope.h" compile="0" resource="0" file="Source/ModEnvelope.h"/>
+      <FILE id="ZaFIt0" name="ModWheelController.cpp" compile="1" resource="0"
+            file="Source/ModWheelController.cpp"/>
+      <FILE id="N3PQEr" name="ModWheelController.h" compile="0" resource="0"
+            file="Source/ModWheelController.h"/>
       <FILE id="V0fUX7" name="StateManager.cpp" compile="1" resource="0"
             file="Source/StateManager.cpp"/>
       <FILE id="nt8YUM" name="StateManager.h" compile="0" resource="0" file="Source/StateManager.h"/>
