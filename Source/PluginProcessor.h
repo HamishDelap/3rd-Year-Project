@@ -14,6 +14,7 @@
 #include "ModEnvelope.h"
 #include "StateManager.h"
 #include "SpectrumProcessor.h"
+#include "ModWheelController.h"
 
 class StateManager;
 
@@ -120,6 +121,8 @@ private:
     int controllerValue = 127;
     float controllerValMapped = 1.0f;
 
+    std::shared_ptr<ModWheelController> modWheelController;
+
 	// Parameter Pointers
     std::atomic<float>* lfoFreq;
     std::atomic<float>* lfoAmount;
@@ -173,6 +176,10 @@ private:
     std::atomic<float>* op2Waveform;
     std::atomic<float>* op3Waveform;
     std::atomic<float>* op4Waveform;
+
+    std::atomic<float>* modWheelLfoFreq;
+    std::atomic<float>* modWheelLfoAmt;
+    std::atomic<float>* modWheelCutoff;
 
 
     //==============================================================================

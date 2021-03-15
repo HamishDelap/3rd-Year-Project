@@ -181,11 +181,9 @@ public:
     // Modwheel is controllerNumber 1
     void controllerMoved(int controllerNumber, int newControllerValue) {
         controllerValue = newControllerValue;
-        //DBG(controllerValue);
     }
 
 	float getControllerValue() {
-        DBG(controllerValue);
     	return controllerValue;
     }
 

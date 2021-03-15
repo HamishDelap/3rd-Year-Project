@@ -221,6 +221,16 @@ private:
 	juce::TextButton savePresetButton;
 	juce::ComboBox presetDropdownMenu;
 
+	// Modwheel
+	juce::ToggleButton modWheelLfoFreqButton;
+	ScopedPointer<AudioProcessorValueTreeState::ButtonAttachment> modWheelLfoFreqButtonAttachment;
+
+	juce::ToggleButton modWheelLfoAmtButton;
+	ScopedPointer<AudioProcessorValueTreeState::ButtonAttachment> modWheelLfoAmtButtonAttachment;
+
+	juce::ToggleButton modWheelCutoffButton;
+	ScopedPointer<AudioProcessorValueTreeState::ButtonAttachment> modWheelCutoffButtonAttachment;
+
 	//==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ThirdYearProjectAudioProcessorEditor)
 };

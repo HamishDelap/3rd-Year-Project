@@ -28,7 +28,7 @@ ThirdYearProjectAudioProcessor::ThirdYearProjectAudioProcessor()
     spectrumProcessor.reset(new SpectrumProcessor());
     mySynth.clearVoices();
     // Create 5 voices.
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 4; i++) {
         mySynth.addVoice(new SynthVoice());
     }
     // Tidy up unwanted sounds.
@@ -89,6 +89,12 @@ ThirdYearProjectAudioProcessor::ThirdYearProjectAudioProcessor()
     op2Waveform = stateManager.apvt.getRawParameterValue("OP2WAVEFORM");
     op3Waveform = stateManager.apvt.getRawParameterValue("OP3WAVEFORM");
     op4Waveform = stateManager.apvt.getRawParameterValue("OP4WAVEFORM");
+
+    modWheelController.reset(new ModWheelController());
+
+	modWheelLfoFreq = stateManager.apvt.getRawParameterValue("MODWHEELLFOFREQ");
+	modWheelLfoAmt = stateManager.apvt.getRawParameterValue("MODWHEELLFOAMT");
+	modWheelCutoff = stateManager.apvt.getRawParameterValue("MODWHEELCUTOFF");
 
 }
 
@@ -203,7 +209,12 @@ void ThirdYearProjectAudioProcessor::updateFilter() {
     }
     
     cutoff = cutoff - abs(modLfo->getOutput(2) * 10);
-    cutoff = cutoff * (controllerValMapped+0.01f);
+	
+	if (modWheelController->destActive(2))
+	{
+        cutoff = cutoff * (controllerValMapped + 0.01f);
+	}
+
 	currentCutoff = cutoff + coeff * (currentCutoff - cutoff);
 
     if (currentCutoff <= 0) {
@@ -269,8 +280,23 @@ void ThirdYearProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buf
     algo = algoPointer->load();
 
     keyboardState.processNextMidiBuffer(midiMessages, 0, buffer.getNumSamples(), true);
-    modLfo->setFrequency(lfoFreq->load());
-    modLfo->setLevel(lfoAmount->load());
+
+    modWheelController->toggleDest(modWheelLfoFreq->load(), 0);
+    modWheelController->toggleDest(modWheelLfoAmt->load(), 1);
+    modWheelController->toggleDest(modWheelCutoff->load(), 2);
+	
+    if (modWheelController->destActive(0)) {
+        modLfo->setFrequency(lfoFreq->load() * controllerValMapped);
+    } else {
+        modLfo->setFrequency(lfoFreq->load());
+    }
+    if (modWheelController->destActive(1)) {
+        modLfo->setLevel(lfoAmount->load() * controllerValMapped);
+    }
+    else {
+        modLfo->setLevel(lfoAmount->load());
+    }
+    
     modLfo->setWaveform(lfoWaveform->load());
     modLfo->toggleDest(lfoPitch->load(), 1);
     modLfo->toggleDest(lfoFilter->load(), 2);

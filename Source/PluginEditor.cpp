@@ -27,7 +27,7 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	algThreeImage = ImageFileFormat::loadFrom(File("C:/Users/hamis/Documents/3rd Year Project/3rd-Year-Project/Assets/ALG3.png"));
 	algFourImage = ImageFileFormat::loadFrom(File("C:/Users/hamis/Documents/3rd Year Project/3rd-Year-Project/Assets/ALG4.png"));
 
-	startTimerHz(30);
+	startTimerHz(20);
 	
 	// Keyboard
 	addAndMakeVisible(keyboardComponent);
@@ -486,6 +486,17 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	presetDropdownMenu.valueChanged(valueOne);
 	presetDropdownMenu.setEditableText(true);
 	presetDropdownMenu.addListener(this);
+
+	// Modwheel
+	addAndMakeVisible(modWheelLfoFreqButton);
+	modWheelLfoFreqButtonAttachment = new AudioProcessorValueTreeState::ButtonAttachment(audioProcessor.stateManager.apvt, "LFOPITCH", lfoPitchButton);
+
+	addAndMakeVisible(modWheelLfoAmtButton);
+	modWheelLfoAmtButtonAttachment = new AudioProcessorValueTreeState::ButtonAttachment(audioProcessor.stateManager.apvt, "LFOPITCH", lfoPitchButton);
+
+	addAndMakeVisible(modWheelCutoffButton);
+	modWheelCutoffButtonAttachment = new AudioProcessorValueTreeState::ButtonAttachment(audioProcessor.stateManager.apvt, "LFOPITCH", lfoPitchButton);
+
 }
 
 ThirdYearProjectAudioProcessorEditor::~ThirdYearProjectAudioProcessorEditor()
@@ -594,6 +605,10 @@ void ThirdYearProjectAudioProcessorEditor::resized()
 	prevPresetButton.setBounds((getWidth() / 4) * 2 + 115, 35, 22, 22);
 	savePresetButton.setBounds((getWidth() / 4) * 2 + 279, 30, 45, 30);
 	presetDropdownMenu.setBounds((getWidth() / 4) * 2 + 138, 34, 111, 22);
+
+	modWheelLfoFreqButton.setBounds((getWidth() / 4) * 3 + 334, 720, 30, 30);
+	modWheelLfoAmtButton.setBounds((getWidth() / 4) * 3 + 248, 720, 30, 30);
+	modWheelCutoffButton.setBounds((getWidth() / 4) * 3 + 293, 770, 30, 30);
 }
 
 void ThirdYearProjectAudioProcessorEditor::drawAlgoDiagram(Graphics& g) {

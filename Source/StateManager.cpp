@@ -72,7 +72,11 @@ StateManager::StateManager(AudioProcessor& audioProcessor) :
             std::make_unique<AudioParameterFloat>("LFOLEVEL", "LFOLEVEL", NormalisableRange<float>(0, 1), 0.0f),
             std::make_unique<AudioParameterFloat>("MODENVLEVEL", "MODENVLEVEL", NormalisableRange<float>(0, 1), 0.0f),
             
-            std::make_unique<AudioParameterFloat>("MASTERLEVEL", "MASTERLEVEL", NormalisableRange<float>(0, 1.5), 1.0f)
+            std::make_unique<AudioParameterFloat>("MASTERLEVEL", "MASTERLEVEL", NormalisableRange<float>(0, 1.5), 1.0f),
+
+            std::make_unique<AudioParameterFloat>("MODWHEELLFOFREQ", "MODWHEELLFOFREQ", NormalisableRange<float>(0, 1), 0.0f),
+            std::make_unique<AudioParameterFloat>("MODWHEELLFOAMT", "MODWHEELLFOAMT", NormalisableRange<float>(0, 1), 0.0f),
+            std::make_unique<AudioParameterFloat>("MODWHEELCUTOFF", "MODWHEELCUTOFF", NormalisableRange<float>(0, 1), 0.0f)
         }
     )
 {
