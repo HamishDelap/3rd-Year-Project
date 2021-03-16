@@ -489,13 +489,13 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 
 	// Modwheel
 	addAndMakeVisible(modWheelLfoFreqButton);
-	modWheelLfoFreqButtonAttachment = new AudioProcessorValueTreeState::ButtonAttachment(audioProcessor.stateManager.apvt, "LFOPITCH", lfoPitchButton);
+	modWheelLfoFreqButtonAttachment = new AudioProcessorValueTreeState::ButtonAttachment(audioProcessor.stateManager.apvt, "MODWHEELLFOFREQ", modWheelLfoFreqButton);
 
 	addAndMakeVisible(modWheelLfoAmtButton);
-	modWheelLfoAmtButtonAttachment = new AudioProcessorValueTreeState::ButtonAttachment(audioProcessor.stateManager.apvt, "LFOPITCH", lfoPitchButton);
+	modWheelLfoAmtButtonAttachment = new AudioProcessorValueTreeState::ButtonAttachment(audioProcessor.stateManager.apvt, "MODWHEELLFOAMT", modWheelLfoAmtButton);
 
 	addAndMakeVisible(modWheelCutoffButton);
-	modWheelCutoffButtonAttachment = new AudioProcessorValueTreeState::ButtonAttachment(audioProcessor.stateManager.apvt, "LFOPITCH", lfoPitchButton);
+	modWheelCutoffButtonAttachment = new AudioProcessorValueTreeState::ButtonAttachment(audioProcessor.stateManager.apvt, "MODWHEELCUTOFF", modWheelCutoffButton);
 
 }
 

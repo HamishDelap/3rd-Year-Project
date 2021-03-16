@@ -18,7 +18,7 @@ ModWheelController::ModWheelController()
 }
 
 void ModWheelController::toggleDest(float toggle, int destination) {
-    if (toggle == 1.0f) {
+	if (toggle == 1.0f) {
         selectDest(destination);
     }
     else {
