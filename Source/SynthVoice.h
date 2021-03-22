@@ -96,13 +96,6 @@ public:
         modLfo = lfo;
     }
 
- //   void setModAdsrParams(float* attack, float* decay, float* sustain, float* release) {
- //       modAdsr->setAttack(*attack);
- //       modAdsr->setDecay(*decay);
- //       modAdsr->setSustain(*sustain);
- //       modAdsr->setRelease(*release);
- //   }
-
     void setADSRSampleRate (double sampleRate) {
         op1Adsr->setSampleRate(sampleRate);
         op2Adsr->setSampleRate(sampleRate);
@@ -192,10 +185,8 @@ public:
         op2Adsr->setParameters(op2AdsrParams);
         op3Adsr->setParameters(op3AdsrParams);
         op4Adsr->setParameters(op4AdsrParams);
-       // if (modAdsr->isOn()) {
-       //     modAdsr->envelopeStep();
-       // }
-            // Written using JUCE midi synthesizer tutorial.
+
+        // Written using JUCE midi synthesizer tutorial.
         if (fmosc != NULL) {
             // Check if note should have ended.
             if (tailOff > 0.0) {
@@ -210,12 +201,9 @@ public:
                         outputBuffer.addSample(i, startSample, currentSample);
                     }
 
-                    // Move wave along.
-                    //fmTable[0][0] += angleDelta;
-                    //fmTable[0][1] = fmTable[0][0] * modIndex;
                     // Increment start sample;
                     ++startSample;
-
+                    //
                     tailOff *= 0.99999;
 
                     if (tailOff <= 0.005) {
