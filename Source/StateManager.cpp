@@ -81,6 +81,7 @@ StateManager::StateManager(AudioProcessor& audioProcessor) :
     )
 {
     apvt.state = ValueTree("PRESETS");
+    presetDirectory = getPresetDirectory();
 }
 
 void StateManager::writeState(juce::MemoryBlock& destData) {
@@ -97,7 +98,7 @@ void StateManager::writeState(juce::MemoryBlock& destData) {
 
 void StateManager::readState(const void* data, int sizeInBytes) {
     // Get XML document
-    XmlDocument myDocument(File("C:/Users/hamis/Documents/Fmator/preset.xml"));
+    XmlDocument myDocument(File(presetDirectory.getFullPathName() + File::getSeparatorString() + "preset.xml"));
     // Parse the document
     std::unique_ptr<XmlElement> xmlState(myDocument.getDocumentElement());
     
@@ -110,7 +111,7 @@ void StateManager::readState(const void* data, int sizeInBytes) {
 }
 
 void StateManager::readPreset(String presetName) {
-    XmlDocument myDocument(File("C:/Users/hamis/Documents/Fmator/"+presetName));
+    XmlDocument myDocument(File(presetDirectory.getFullPathName() + File::getSeparatorString() + presetName));
     std::unique_ptr<XmlElement> xmlState(myDocument.getDocumentElement());;
     DBG(myDocument.getLastParseError());
     if (xmlState != nullptr) {
@@ -123,31 +124,17 @@ void StateManager::writePreset(String presetName) {
     auto state = apvt.copyState();
     // Create XML object
     std::unique_ptr<XmlElement> xml(state.createXml());
-    // Write XML to file
-    xml->writeTo(File("C:/Users/hamis/Documents/Fmator/"+presetName));
+	
+	// Write XML to file
+    xml->writeTo(File(presetDirectory.getFullPathName() + File::getSeparatorString() + presetName));
 }
 
 StringArray StateManager::getPresets() {
     filenames.clear();
-    // Taken from https://stackoverflow.com/questions/612097/how-can-i-get-the-list-of-files-in-a-directory-using-c-or-c
-    DIR* directory;
-    struct dirent* ent;
-    if ((directory = opendir("C:/Users/hamis/Documents/Fmator/")) != NULL) {
-        /* print all the files and directories within directory */
-        int skipDots = 0;
-        while ((ent = readdir(directory)) != NULL) {
-            if (skipDots > 1) {
-                std::string filename = ent->d_name;
-                filenames.add(filename);
-            }
-            skipDots++;
-        }
-        closedir(directory);
-        return(filenames);
+	
+    for (DirectoryEntry entry : RangedDirectoryIterator(presetDirectory, true)) {
+		filenames.add(entry.getFile().getFileName());
+    }
+	return(filenames);
 
-    }
-    else {
-        /* could not open directory */
-        return StringArray();
-    }
 }

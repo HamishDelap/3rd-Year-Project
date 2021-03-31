@@ -27,6 +27,18 @@ class StateManager
         StringArray getPresets();
         AudioProcessorValueTreeState apvt;
     private:
+		static File getPresetDirectory()
+		{
+            const String presetFolderString(File::getSpecialLocation(File::SpecialLocationType::userDocumentsDirectory).getFullPathName() + File::getSeparatorString() + "FMATOR");
+            const File presetFolder(presetFolderString);
+            if (presetFolder.isDirectory() == false)
+            {
+                bool b = presetFolder.createDirectory();
+            }
+            return(presetFolder);
+		}
+
+        File presetDirectory;
         StringArray filenames;
 };
 
