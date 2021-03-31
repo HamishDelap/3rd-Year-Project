@@ -89,8 +89,6 @@ void StateManager::writeState(juce::MemoryBlock& destData) {
     auto state = apvt.copyState();
     // Create XML object
     std::unique_ptr<XmlElement> xml(state.createXml());
-    // Write XML to file
-    //xml->writeTo(File("C:/Users/hamis/Documents/Fmator/preset.xml"));
 
     // Write to binary just so readState is called on startup.
     AudioProcessor::copyXmlToBinary(*xml, destData);

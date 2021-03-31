@@ -20,12 +20,13 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	// editor's size to whatever you need it to be.
 	setSize (1600, 800);
 
-	myImage = ImageFileFormat::loadFrom(File("C:/Users/hamis/Documents/3rd Year Project/3rd-Year-Project/Assets/bg_7.png"));
 	
-	algOneImage = ImageFileFormat::loadFrom(File("C:/Users/hamis/Documents/3rd Year Project/3rd-Year-Project/Assets/ALG1.png"));
-	algTwoImage = ImageFileFormat::loadFrom(File("C:/Users/hamis/Documents/3rd Year Project/3rd-Year-Project/Assets/ALG2.png"));
-	algThreeImage = ImageFileFormat::loadFrom(File("C:/Users/hamis/Documents/3rd Year Project/3rd-Year-Project/Assets/ALG3.png"));
-	algFourImage = ImageFileFormat::loadFrom(File("C:/Users/hamis/Documents/3rd Year Project/3rd-Year-Project/Assets/ALG4.png"));
+	myImage = ImageFileFormat::loadFrom(BinaryData::bg_7_png, BinaryData::bg_7_pngSize);
+	
+	algOneImage = ImageFileFormat::loadFrom(BinaryData::ALG1_png, BinaryData::ALG1_pngSize);
+	algTwoImage = ImageFileFormat::loadFrom(BinaryData::ALG2_png, BinaryData::ALG2_pngSize);
+	algThreeImage = ImageFileFormat::loadFrom(BinaryData::ALG3_png, BinaryData::ALG3_pngSize);
+	algFourImage = ImageFileFormat::loadFrom(BinaryData::ALG4_png, BinaryData::ALG4_pngSize);
 
 	startTimerHz(20);
 	

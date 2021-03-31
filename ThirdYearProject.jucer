@@ -35,6 +35,11 @@
       <FILE id="V0fUX7" name="StateManager.cpp" compile="1" resource="0"
             file="Source/StateManager.cpp"/>
       <FILE id="nt8YUM" name="StateManager.h" compile="0" resource="0" file="Source/StateManager.h"/>
+      <FILE id="hFj69r" name="ALG1.png" compile="0" resource="1" file="Assets/ALG1.png"/>
+      <FILE id="uLdRhb" name="ALG2.png" compile="0" resource="1" file="Assets/ALG2.png"/>
+      <FILE id="egpd74" name="ALG3.png" compile="0" resource="1" file="Assets/ALG3.png"/>
+      <FILE id="PTCFVa" name="ALG4.png" compile="0" resource="1" file="Assets/ALG4.png"/>
+      <FILE id="KTs1mg" name="bg_7.png" compile="0" resource="1" file="Assets/bg_7.png"/>
     </GROUP>
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
