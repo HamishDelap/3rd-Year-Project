@@ -10,7 +10,6 @@
 
 #pragma once
 #include <JuceHeader.h>
-#include "dirent.h"
 
 class ThirdYearProjectAudioProcessor;
 
