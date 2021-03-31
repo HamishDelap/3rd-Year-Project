@@ -107,14 +107,17 @@ public:
 			break;
 		case 4:
 			fmTable[0][0] += angleDelta;
+	
+			fmTable[0][0] = fmTable[0][0] * fmTable[2][0];
 			fmTable[0][1] = fmTable[0][0] * fmTable[2][1];
-			fmTable[0][2] = fmTable[0][1] * fmTable[2][2];
-			fmTable[0][3] = fmTable[0][2] * fmTable[2][3];
+			fmTable[0][2] = fmTable[0][0] * fmTable[2][2];
+			fmTable[0][3] = fmTable[0][0] * fmTable[2][3];
 
-			output = operator1->operatorStep((fmTable[0][0] + 
-						operator2->operatorStep((fmTable[0][1] + 
-							operator3->operatorStep((fmTable[0][2] + 
-								operator4->operatorStep(fmTable[0][3], fmTable[1][3])), fmTable[1][2])), fmTable[1][1])), fmTable[1][0]);
+
+			output = operator1->operatorStep(fmTable[0][0], fmTable[1][0]) + 
+						operator2->operatorStep(fmTable[0][1], fmTable[1][1]) +
+						operator3->operatorStep(fmTable[0][2], fmTable[1][2]) +
+						operator4->operatorStep(fmTable[0][3], fmTable[1][3]);
 			break;
 		}
 		if (modAdsr->isOn()) {
