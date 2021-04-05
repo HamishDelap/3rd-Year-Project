@@ -22,13 +22,18 @@ public:
 		waveform = wave;
 	}
 
-	float oscCycleWithFreq( double frequency, double level) {
+	void freqToAngle(double frequency) {
 		auto cyclesPerSecond = frequency;
 		auto cyclesPerSample = cyclesPerSecond / localSampleRate;
 
 		angleDelta = cyclesPerSample * 2.0 * MathConstants<double>::pi;
 
 		currentAngle += angleDelta;
+	}
+
+	float oscCycleWithFreq( double frequency, double level) {
+
+		freqToAngle(frequency);
 
 		switch (waveform) {
 		// Sin
