@@ -29,35 +29,35 @@ public:
 	//===============================================//
 
     void setOP1MODINDEX(float modindex) {
-        fmTable[2][0] = modindex;
+        if (fmosc) fmosc->setModIndex(0, modindex);
     }
 
 	void setOP2MODINDEX(float modindex) {
-        fmTable[2][1] = modindex;
+        if (fmosc) fmosc->setModIndex(1, modindex);
 	}
 
 	void setOP3MODINDEX(float modindex) {
-        fmTable[2][2] = modindex;
+        if (fmosc) fmosc->setModIndex(2, modindex);
 	}
 
 	void setOP4MODINDEX(float modindex) {
-        fmTable[2][3] = modindex;
+        if (fmosc) fmosc->setModIndex(3, modindex);
 	}
 
 	void setOP1LEVEL(float level) {
-		fmTable[1][0] = level;
+        if (fmosc) fmosc->setVolume(0, level);
 	}
 
 	void setOP2LEVEL(float level) {
-		fmTable[1][1] = level;
+        if (fmosc) fmosc->setVolume(1, level);
 	}
 
 	void setOP3LEVEL(float level) {
-		fmTable[1][2] = level;
+        if (fmosc) fmosc->setVolume(2, level);
 	}
 
 	void setOP4LEVEL(float level) {
-		fmTable[1][3] = level;
+        if (fmosc) fmosc->setVolume(3, level);
 	}
 
     void setOp1Adsr(float attack, float decay, float sustain, float release) {
@@ -195,7 +195,7 @@ public:
                     // Calculate sample value.
                     modAdsr->envelopeStep();
                     fmosc->updateWaveforms(waveforms);
-                    auto currentSample = fmosc->oscStep(fmTable, frequency, modAdsr, modLfo, pitchWheel) * level;
+                    auto currentSample = fmosc->oscStep(frequency, modAdsr, modLfo, pitchWheel) * level;
                     // Add sample to outputBuffer
                     for (auto i = outputBuffer.getNumChannels(); --i >= 0;) {
                         outputBuffer.addSample(i, startSample, currentSample);
@@ -203,7 +203,7 @@ public:
 
                     // Increment start sample;
                     ++startSample;
-                    //
+                    
                     tailOff *= 0.99999;
 
                     if (tailOff <= 0.005) {
@@ -217,7 +217,7 @@ public:
                 while (--numSamples >= 0) {
                     modAdsr->envelopeStep();
                     fmosc->updateWaveforms(waveforms);
-                    auto currentSample = fmosc->oscStep(fmTable, frequency, modAdsr, modLfo, pitchWheel) * level;
+                    auto currentSample = fmosc->oscStep(frequency, modAdsr, modLfo, pitchWheel) * level;
                     //auto currentSample = (float)(std::sin(fmTable[0][0] + (float)std::sin(fmTable[0][1]) * fmTable[1][1]) * fmTable[1][0]);
 
                     for (auto i = outputBuffer.getNumChannels(); --i >= 0;) {
@@ -247,7 +247,7 @@ private:
 
     double modIndex = 3.2;
 
-    double fmTable[3][4];
+//    double fmTable[3][4];
 
     double angleDelta = 0.0;
     double level = 0.0;

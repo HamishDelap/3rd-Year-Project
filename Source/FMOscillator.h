@@ -59,11 +59,23 @@ public:
 		operator4->updateWaveform(waveforms[3]);
 	}
 
+	void setVolume(int operatorIndex, float level) {
+		fmTable[1][operatorIndex] = level;
+	}
+
+	void setModIndex(int operatorIndex, float modIndex) {
+		fmTable[2][operatorIndex] = modIndex;
+	}
+
 	// Processes each step of audio.
-	double oscStep(double fmTable[][4], double frequency, std::shared_ptr<ModEnvelope> modAdsr, std::shared_ptr<Lfo> modLfo, float pitchWheel) {
+	double oscStep(double frequency, std::shared_ptr<ModEnvelope> modAdsr, std::shared_ptr<Lfo> modLfo, float pitchWheel) {
 		// Calculate the frequency in cycles per second accounting for pitch wheel and lfo. (Divide by 10 simply scales the lfo for a better sound)
-		auto cyclesPerSecond = ((frequency * pitchWheel)+ modLfo->getOutput(1) / 10);
+		auto cyclesPerSecond = ((frequency * pitchWheel) + modLfo->getOutput(1) / 10);
 		
+		if (modAdsr->isOn()) {
+			cyclesPerSecond *= modAdsr->getOutput(1);
+		}
+
 		// Calculate cycles per sample
 		auto cyclesPerSample = cyclesPerSecond / samplerate;
 
@@ -81,7 +93,10 @@ public:
 			fmTable[0][3] = fmTable[0][2] * fmTable[2][3];
 
 			// Apply the fm algorithm.
-			output = operator1->operatorStep((fmTable[0][0] + operator2->operatorStep((fmTable[0][1] + operator3->operatorStep((fmTable[0][2] + operator4->operatorStep(fmTable[0][3], fmTable[1][3])), fmTable[1][2])), fmTable[1][1])), fmTable[1][0]);
+			output = operator1->operatorStep((fmTable[0][0] + 
+					 operator2->operatorStep((fmTable[0][1] + 
+				     operator3->operatorStep((fmTable[0][2] + 
+					 operator4->operatorStep(fmTable[0][3], fmTable[1][3])), fmTable[1][2])), fmTable[1][1])), fmTable[1][0]);
 			break;
 		case 2:
 			fmTable[0][0] += angleDelta;
@@ -129,6 +144,9 @@ public:
 private:
 	int algo;
 	double samplerate;
+
+	double fmTable[3][4] = {};
+
 	std::shared_ptr<ADSR> op2Env;
 	std::shared_ptr<ADSR> op1Env;
 	std::shared_ptr<ADSR> op3Env;

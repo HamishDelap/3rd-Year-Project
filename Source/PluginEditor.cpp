@@ -28,7 +28,7 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	algThreeImage = ImageFileFormat::loadFrom(BinaryData::ALG3_png, BinaryData::ALG3_pngSize);
 	algFourImage = ImageFileFormat::loadFrom(BinaryData::ALG4_png, BinaryData::ALG4_pngSize);
 
-	startTimerHz(20);
+	startTimerHz(15);
 	
 	// Keyboard
 	addAndMakeVisible(keyboardComponent);

@@ -25,7 +25,6 @@ public:
         deselectDest(1);
         deselectDest(2);
         deselectDest(3);
-        deselectDest(4);
 
         outputs[1] = 1;
         outputs[3] = 1;
