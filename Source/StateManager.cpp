@@ -15,10 +15,10 @@ StateManager::StateManager(AudioProcessor& audioProcessor) :
     apvt(audioProcessor, nullptr, "DEFAULT",
         {
             // Initialise VST Parameters.
-            std::make_unique<AudioParameterFloat>("OP1MODINDEX", "OP1MODINDEX", NormalisableRange<float>(0, 12, 0.5), 0.0f),
-            std::make_unique<AudioParameterFloat>("OP2MODINDEX", "OP2MODINDEX", NormalisableRange<float>(0, 12, 0.5), 0.0f),
-            std::make_unique<AudioParameterFloat>("OP3MODINDEX", "OP3MODINDEX", NormalisableRange<float>(0, 12, 0.5), 0.0f),
-            std::make_unique<AudioParameterFloat>("OP4MODINDEX", "OP4MODINDEX", NormalisableRange<float>(0, 12, 0.5), 0.0f),
+            std::make_unique<AudioParameterFloat>("OP1MODINDEX", "OP1MODINDEX", NormalisableRange<float>(0, 12, 0.1), 0.0f),
+            std::make_unique<AudioParameterFloat>("OP2MODINDEX", "OP2MODINDEX", NormalisableRange<float>(0, 12, 0.1), 0.0f),
+            std::make_unique<AudioParameterFloat>("OP3MODINDEX", "OP3MODINDEX", NormalisableRange<float>(0, 12, 0.1), 0.0f),
+            std::make_unique<AudioParameterFloat>("OP4MODINDEX", "OP4MODINDEX", NormalisableRange<float>(0, 12, 0.1), 0.0f),
 
             std::make_unique<AudioParameterFloat>("OP1LEVEL", "OP1LEVEL", NormalisableRange<float>(0, 1), 1.0f),
             std::make_unique<AudioParameterFloat>("OP2LEVEL", "OP2LEVEL", NormalisableRange<float>(0, 1), 1.0f),
@@ -84,6 +84,8 @@ StateManager::StateManager(AudioProcessor& audioProcessor) :
     presetDirectory = getPresetDirectory();
 }
 
+
+// Write State to memory
 void StateManager::writeState(juce::MemoryBlock& destData) {
     // Copy the state to new variable
     auto state = apvt.copyState();
@@ -94,6 +96,7 @@ void StateManager::writeState(juce::MemoryBlock& destData) {
     AudioProcessor::copyXmlToBinary(*xml, destData);
 }
 
+// Read state from memory
 void StateManager::readState(const void* data, int sizeInBytes) {
     // Get XML document
     XmlDocument myDocument(File(presetDirectory.getFullPathName() + File::getSeparatorString() + "preset.xml"));

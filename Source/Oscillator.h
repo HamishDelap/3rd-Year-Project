@@ -80,6 +80,7 @@ public:
 			sineValue = sin(currentAngle);
 
 			value = (sineValue >= 0) ? 1 : -1;
+			value *= level;
 			break;
 		}
 

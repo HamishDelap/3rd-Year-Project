@@ -28,7 +28,7 @@ ThirdYearProjectAudioProcessor::ThirdYearProjectAudioProcessor()
     spectrumProcessor.reset(new SpectrumProcessor());
     mySynth.clearVoices();
     // Create 5 voices.
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 9; i++) {
         mySynth.addVoice(new SynthVoice());
     }
     // Tidy up unwanted sounds.
@@ -172,6 +172,8 @@ void ThirdYearProjectAudioProcessor::prepareToPlay (double sampleRate, int sampl
 
     ignoreUnused(samplesPerBlock);
 
+    keyboardState.reset();
+
     lastSampleRate = sampleRate;
 
     mySynth.setCurrentPlaybackSampleRate(lastSampleRate);
@@ -202,7 +204,7 @@ void ThirdYearProjectAudioProcessor::prepareToPlay (double sampleRate, int sampl
 void ThirdYearProjectAudioProcessor::updateFilter() {
     float cutoff = *stateManager.apvt.getRawParameterValue("CUTOFF");
     float resonance = *stateManager.apvt.getRawParameterValue("RESONANCE");
-    float coeff = 0.8f;
+    float coeff = 0.7f;
 
     if (modEnvelope->isOn()) {
         cutoff = cutoff * modEnvelope->getOutput(2);
@@ -217,8 +219,8 @@ void ThirdYearProjectAudioProcessor::updateFilter() {
 
 	currentCutoff = cutoff + coeff * (currentCutoff - cutoff);
 
-    if (currentCutoff <= 0) {
-        currentCutoff = 1;
+    if (currentCutoff < 20) {
+        currentCutoff = 20;
     }
 
     if (currentCutoff > static_cast<float> (lastSampleRate * 0.5)) {
@@ -245,6 +247,7 @@ void ThirdYearProjectAudioProcessor::checkPresetChanged() {
 
 void ThirdYearProjectAudioProcessor::releaseResources()
 {
+    keyboardState.reset();
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
 }
@@ -370,6 +373,7 @@ void ThirdYearProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buf
     currentLfoLevel = modLfo->getOutput(3) * 0.01;
     previousLfoLevel = currentLfoLevel + 0.7f * (previousLfoLevel - currentLfoLevel);
     currentLevel += previousLfoLevel;
+
     buffer.applyGainRamp(0, buffer.getNumSamples(), masterLevel, currentLevel);
     masterLevel = currentLevel;
     

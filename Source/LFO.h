@@ -28,6 +28,12 @@ public:
 
     void lfoStep() {
         value = amount * oscillator->oscCycleWithFreq(frequency, 10);
+        if (waveform == 2) {
+            value *= 0.1;
+        }
+        if (waveform == 3) {
+            value *= 3;
+        }
         for (int i = 1; i < 5; i++) {
             if (active[i] == 1)
                 outputs[i] = value;
@@ -36,8 +42,9 @@ public:
         }
     }
 
-    void setWaveform(float waveform) {
-        oscillator->setWaveform(waveform);
+    void setWaveform(float waveForm) {
+        oscillator->setWaveform(waveForm);
+        waveform = waveForm;
     }
 
     void setFrequency(float freq) {
@@ -84,6 +91,7 @@ private:
     double frequency;
     double amount;
     float value;
+    int waveform = 0;
     
     std::unique_ptr<Oscillator> oscillator;
 };

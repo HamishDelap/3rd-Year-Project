@@ -186,7 +186,7 @@ public:
         op3Adsr->setParameters(op3AdsrParams);
         op4Adsr->setParameters(op4AdsrParams);
 
-        // Written using JUCE midi synthesizer tutorial.
+        // Structure adapted from JUCE midi synthesizer tutorial.
         if (fmosc != NULL) {
             // Check if note should have ended.
             if (tailOff > 0.0) {
@@ -196,6 +196,7 @@ public:
                     modAdsr->envelopeStep();
                     fmosc->updateWaveforms(waveforms);
                     auto currentSample = fmosc->oscStep(frequency, modAdsr, modLfo, pitchWheel) * level;
+
                     // Add sample to outputBuffer
                     for (auto i = outputBuffer.getNumChannels(); --i >= 0;) {
                         outputBuffer.addSample(i, startSample, currentSample);
@@ -218,14 +219,10 @@ public:
                     modAdsr->envelopeStep();
                     fmosc->updateWaveforms(waveforms);
                     auto currentSample = fmosc->oscStep(frequency, modAdsr, modLfo, pitchWheel) * level;
-                    //auto currentSample = (float)(std::sin(fmTable[0][0] + (float)std::sin(fmTable[0][1]) * fmTable[1][1]) * fmTable[1][0]);
-
                     for (auto i = outputBuffer.getNumChannels(); --i >= 0;) {
                         outputBuffer.addSample(i, startSample, currentSample);
                     }
 
-                    //fmTable[0][0] += angleDelta;
-                    //fmTable[0][1] = fmTable[0][0] * modIndex;
                     ++startSample;
                 }
             }
@@ -246,8 +243,6 @@ private:
     double frequency;
 
     double modIndex = 3.2;
-
-//    double fmTable[3][4];
 
     double angleDelta = 0.0;
     double level = 0.0;

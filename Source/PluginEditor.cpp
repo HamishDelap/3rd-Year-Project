@@ -8,11 +8,10 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
-#include "VerticalSlider.h"
 
 //==============================================================================
 ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (ThirdYearProjectAudioProcessor& p)
-	: AudioProcessorEditor (&p), audioProcessor (p), keyboardComponent(audioProcessor.keyboardState, MidiKeyboardComponent::horizontalKeyboard),
+	: AudioProcessorEditor (&p), audioProcessor (p), keyboardComponent(p.keyboardState, MidiKeyboardComponent::horizontalKeyboard),
 	nextPresetButton("nextPreset", 0.0, Colour(235, 235, 235)), prevPresetButton("prevPreset", 0.5, Colour(235, 235, 235)), savePresetButton("Save")
 {
 
@@ -20,7 +19,6 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	// editor's size to whatever you need it to be.
 	setSize (1600, 800);
 
-	
 	myImage = ImageFileFormat::loadFrom(BinaryData::bg_7_png, BinaryData::bg_7_pngSize);
 	
 	algOneImage = ImageFileFormat::loadFrom(BinaryData::ALG1_png, BinaryData::ALG1_pngSize);
@@ -482,7 +480,7 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 	addAndMakeVisible(presetDropdownMenu);
 	presetDropdownMenu.setColour(ComboBox::backgroundColourId, Colour(141, 35, 35));
 	populatePresets();
-	presetDropdownMenu.setSelectedId(1);
+	presetDropdownMenu.setSelectedId(audioProcessor.preset);
 	Value valueOne = Value(1);
 	presetDropdownMenu.valueChanged(valueOne);
 	presetDropdownMenu.setEditableText(true);
@@ -502,6 +500,7 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 
 ThirdYearProjectAudioProcessorEditor::~ThirdYearProjectAudioProcessorEditor()
 {
+	audioProcessor.keyboardState.reset();
 }
 
 //==============================================================================
@@ -585,9 +584,9 @@ void ThirdYearProjectAudioProcessorEditor::resized()
 	lfoWaveformSlider.setBounds((getWidth() / 4) * 3 + 15, 262, 50, 50);
 
 
-	cutoffSlider.setBounds((getWidth() / 4) * 3 + 19, 130, 60, 60);
-	resonanceSlider.setBounds((getWidth() / 4) * 3 + 106, 130, 60, 60);
-	masterLevelSlider.setBounds((getWidth() / 4) * 3 + 224, 130, 60, 60);
+	cutoffSlider.setBounds((getWidth() / 4) * 3 + 13, 134, 65, 65);
+	resonanceSlider.setBounds((getWidth() / 4) * 3 + 106, 134, 65, 65);
+	masterLevelSlider.setBounds((getWidth() / 4) * 3 + 224, 134, 65, 65);
 
 	lfoPitchButton.setBounds((getWidth() / 4) * 3 + 269, 295, 22, 22);
 	envPitchButton.setBounds((getWidth() / 4) * 3 + 314, 295, 22, 22);
@@ -630,14 +629,14 @@ void ThirdYearProjectAudioProcessorEditor::sliderValueChanged(Slider* slider) {
 
 void ThirdYearProjectAudioProcessorEditor::handleNoteOn(juce::MidiKeyboardState*, int midiChannel, int midiNoteNumber, float velocity)
 {
-	midiChannel = 1;
-	juce::MidiMessage::noteOn(midiChannel, midiNoteNumber, velocity);
+	//midiChannel = 1;
+	//juce::MidiMessage::noteOn(midiChannel, midiNoteNumber, velocity);
 
 }
 
 void ThirdYearProjectAudioProcessorEditor::handleNoteOff(juce::MidiKeyboardState*, int midiChannel, int midiNoteNumber, float /*velocity*/)
 {
-	juce::MidiMessage::noteOff(midiChannel, midiNoteNumber);
+	//juce::MidiMessage::noteOff(midiChannel, midiNoteNumber);
 }
 
 void ThirdYearProjectAudioProcessorEditor::timerCallback()
