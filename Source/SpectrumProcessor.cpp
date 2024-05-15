@@ -53,5 +53,4 @@ void SpectrumProcessor::calcNextFrameOfSpectrum()
             Decibels::gainToDecibels((float)fftSize)), minLevel, maxLevel, 0.0f, 1.0f);
         scopeData[i] = currentLevel;
     }
-
 }

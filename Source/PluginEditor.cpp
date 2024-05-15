@@ -49,6 +49,9 @@ ThirdYearProjectAudioProcessorEditor::ThirdYearProjectAudioProcessorEditor (Thir
 
 	algoMenuAttachment = new AudioProcessorValueTreeState::ComboBoxAttachment(audioProcessor.stateManager.apvt, "ALGO", algoMenu);
 
+	testSliders.push_back(new juce::Slider);
+
+	addAndMakeVisible(testSliders[0]);
 
 	// Op1 Waveform Dropdown
 	// add items to the combo-box
@@ -583,6 +586,7 @@ void ThirdYearProjectAudioProcessorEditor::resized()
 	lfoFreqSlider.setBounds((getWidth() / 4) * 3 + 66, 256, 60, 60);
 	lfoWaveformSlider.setBounds((getWidth() / 4) * 3 + 15, 262, 50, 50);
 
+	(*testSliders.front()).setBounds(50, 50, 50, 50);
 
 	cutoffSlider.setBounds((getWidth() / 4) * 3 + 13, 134, 65, 65);
 	resonanceSlider.setBounds((getWidth() / 4) * 3 + 106, 134, 65, 65);

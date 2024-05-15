@@ -68,6 +68,7 @@ private:
 	juce::ComboBox algoMenu;
 	ScopedPointer<AudioProcessorValueTreeState::ComboBoxAttachment> algoMenuAttachment;
 
+	std::vector<juce::Slider*> testSliders = { new juce::Slider };
 
 	//Waveform Dropdowns
 	juce::Font op1WaveformFont{ 12.0f };
